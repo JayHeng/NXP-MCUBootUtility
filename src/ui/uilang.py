@@ -137,6 +137,7 @@ kMainLanguageContentDict = {
         'sText_memBinFile':                   ['bin/s19/hex:',                          u"源文件："],
         'button_readMem':                     ['Read',                                  u"回读"],
         'button_eraseMem':                    ['Erase',                                 u"擦除"],
+        'button_massEraseMem':                ['Mass Erase',                            u"全擦"],
         'button_writeMem':                    ['Write (Auto Erase)',                    u"下载（含自动擦除）"],
         'button_executeApp':                  ['Execute From Start',                    u"从首地址处执行"],
         'button_viewMem':                     ['View Bootable Image',                   u"回读查看标注的程序"],
@@ -212,6 +213,17 @@ kSubLanguageContentDict = {
         'button_completeFdcb':                ['Complete FDCB Configuration (512bytes)', u"完整FDCB配置(512字节)"],
         'button_flexspinor_ok':               ['Ok',                                    u"确定"],
         'button_flexspinor_cancel':           ['Cancel',                                u"取消"],
+
+        #flexspinand
+        'flexspinand_title':                  ['FlexSPI NAND Device Configuration',     u"配置FlexSPI接口NAND Flash启动设备"],
+        'sText_flashSize':                    ['Flash Size:',                           u"Flash容量："],
+        'sText_hasMultiplanes':               ['Has Multiplanes:',                      u"多层情况："],
+        'sText_pagesPerBlock':                ['Pages Per Block:',                      u"每块所含页个数："],
+        'sText_nandPageSize':                 ['Page Size:',                            u"页大小："],
+        'sText_manufacturerId':               ['Manufacturer ID:',                      u"厂商代码："],
+        'sText_addressType':                  ['Address Type:',                         u"地址类型："],
+        'button_flexspinand_ok':              ['Ok',                                    u"确定"],
+        'button_flexspinand_cancel':          ['Cancel',                                u"取消"],
 
         #lpspinor
         'lpspinor_title':                     ['LPSPI NOR/EEPROM Device Configuration', u"配置LPSPI接口NOR/EEPROM启动设备"],
@@ -688,6 +700,18 @@ kRevision_3_3_1_zh = u"【v3.3.1】 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTxxx/LPC] 修复SBL设备无法连接的问题 \n" + \
                      u"     2. [LPC] 修复SBL设备无法擦写的问题 \n\n"
+kRevision_3_4_0_en =  "【v3.4.0】 \n" + \
+                      "  Feature: \n" + \
+                      "     1. [RTyyyy] Support for loading bootable image into FlexSPI NAND boot device  \n" + \
+                      "     2. Add memory mass erase support \n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RTyyyy] Support bootable image generated from SDK 2.10 \n\n"
+kRevision_3_4_0_zh = u"【v3.4.0】 \n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTyyyy] 支持下载Bootable image进主动启动设备 - FlexSPI NAND接口Flash \n" + \
+                     u"     2. 支持对启动设备进行全擦操作 \n" + \
+                     u"  改进: \n" + \
+                     u"     1. [RTyyyy] 支持SDK 2.10及其之后生成的可启动文件作为源文件 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -719,6 +743,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v3_2_0':             [kRevision_3_2_0_en,                      kRevision_3_2_0_zh],
         'revisionHistory_v3_3_0':             [kRevision_3_3_0_en,                      kRevision_3_3_0_zh],
         'revisionHistory_v3_3_1':             [kRevision_3_3_1_en,                      kRevision_3_3_1_zh],
+        'revisionHistory_v3_4_0':             [kRevision_3_4_0_en,                      kRevision_3_4_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
@@ -784,6 +809,8 @@ kMsgLanguageContentDict = {
                                               u"序列号必须是8位数字!"],
         'inputError_keyPass':                 ['You forget to set key_pass!',
                                               u"密钥因子没有设置正确！"],
+        'genImgError_vectorNotFound':         ['Cannot find the vector table address in this bootable image file: ',
+                                              u"无法根据该可启动文件IVT头找到有效中断向量表地址: "],
         'genImgError_formatNotValid':         ['Cannot recognise/convert the format of image file: ',
                                               u"无法识别/转换该程序文件格式: "],
         'genDcdError_failToGen':              ['DCD binary is not generated successfully! Check your DCD descriptor file and make sure you don\'t put the tool in path with blank space!',

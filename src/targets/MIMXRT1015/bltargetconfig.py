@@ -58,6 +58,7 @@ availableSecureBootTypes = [RTyyyy_uidef.kSecureBootType_Development,
                             RTyyyy_uidef.kSecureBootType_BeeCrypto]
 hasRemappedFuse = False
 availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
+                        RTyyyy_uidef.kBootDevice_FlexspiNand,
                         RTyyyy_uidef.kBootDevice_LpspiNor]
 flexspiNorDevice = uidef.kFlexspiNorDevice_Adesto_AT25SF128A
 flexspiNorMemBase0 = 0x60000000

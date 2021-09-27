@@ -99,6 +99,8 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.bootDeviceMemBase = None
         self.semcNandImageCopies = None
         self.semcNandBlockSize = None
+        self.flexspiNandImageCopies = None
+        self.flexspiNandBlockSize = None
         self.isFlexspiNorErasedForImage = False
 
         self.mcuDeviceHabStatus = None
@@ -675,6 +677,38 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             pass
         return True
 
+    def _calcFlexspiNandDeviceInfo ( self ):
+        flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
+        imageCopies = 1
+        while (imageCopies <= 8):
+            if flexspiNandImageInfoList[imageCopies - 1] == None:
+                imageCopies -= 1
+                break
+            else:
+                imageCopies += 1
+        self.flexspiNandImageCopies = imageCopies
+        pageSize = ((flexspiNandOpt0 & 0x000000F0) >> 4) * 1024
+        pagesPerBlock = (flexspiNandOpt0 & 0x00000F00) >> 8
+        if pagesPerBlock == 0:
+            pagesPerBlock = 64
+        elif pagesPerBlock == 1:
+            pagesPerBlock = 128
+        elif pagesPerBlock == 2:
+            pagesPerBlock = 256
+        elif pagesPerBlock == 3:
+            pagesPerBlock = 32
+        else:
+            pass
+        self.flexspiNandBlockSize = pageSize * pagesPerBlock
+        self.comMemWriteUnit = pageSize
+        self.comMemEraseUnit = pageSize * pagesPerBlock
+        self.comMemReadUnit = pageSize
+
+    def _getFlexspiNandDeviceInfo ( self ):
+        self._calcFlexspiNandDeviceInfo()
+        self.printDeviceStatus("Page Size         = " + self.showAsOptimalMemoryUnit(self.comMemWriteUnit))
+        self.printDeviceStatus("Pages In Block    = " + str(self.comMemEraseUnit / self.comMemWriteUnit))
+
     def _getLpspiNorDeviceInfo ( self ):
         pageByteSize = 0
         sectorByteSize = 0
@@ -747,6 +781,9 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 if not self._programFlexspiNorConfigBlock():
                     return False
                 self._getFlexspiNorDeviceInfo(True)
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
+            self.printDeviceStatus("--------FlexSPI NAND memory-------")
+            self._getFlexspiNandDeviceInfo()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             self.printDeviceStatus("--------LPSPI NOR/EEPROM memory---")
             self._getLpspiNorDeviceInfo()
@@ -866,6 +903,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
             configOptList.extend([flexspiNorOpt0, flexspiNorOpt1])
             self.RTyyyy_setFlexspiNorInstance()
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
+            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            configOptList.extend([flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt])
+            for i in range(len(flexspiNandImageInfoList)):
+                if flexspiNandImageInfoList[i] != None:
+                    configOptList.extend([flexspiNandImageInfoList[i]])
+                else:
+                    break
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             lpspiNorOpt0, lpspiNorOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([lpspiNorOpt0, lpspiNorOpt1])
@@ -1377,6 +1422,31 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             self.isFdcbFromSrcApp = False
             if status != boot.status.kStatus_Success:
                 return False
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
+            self._calcFlexspiNandDeviceInfo()
+            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            isAddressTypeBlockIdx = (((flexspiNandFcbOpt & 0x00000F00) >> 8) == 1)
+            loadRegionStart = 0
+            loadRegionEnd = 0
+            for i in range(self.flexspiNandImageCopies):
+                if isAddressTypeBlockIdx:
+                    loadRegionStart = flexspiNandImageInfoList[i] >> 16
+                    loadRegionEnd = loadRegionStart + flexspiNandImageInfoList[i] & 0xFFFF
+                else:
+                    loadRegionStart = self.bootDeviceMemBase + (flexspiNandImageInfoList[i] >> 16) * self.flexspiNandBlockSize
+                    loadRegionEnd = loadRegionStart + (flexspiNandImageInfoList[i] & 0xFFFF) * self.flexspiNandBlockSize
+                if self.isSbFileEnabledToGen:
+                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(loadRegionStart))) + ".." + self.convertLongIntHexText(str(hex(loadRegionEnd))) + ";\n")
+                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(loadRegionStart))) + ";\n")
+                else:
+                    status, results, cmdStr = self.blhost.flashEraseRegion(loadRegionStart, loadRegionEnd - loadRegionStart, self.bootDeviceMemId)
+                    self.printLog(cmdStr)
+                    if status != boot.status.kStatus_Success:
+                        return False
+                    status, results, cmdStr = self.blhost.writeMemory(loadRegionStart, self.destAppFilename, self.bootDeviceMemId)
+                    self.printLog(cmdStr)
+                    if status != boot.status.kStatus_Success:
+                        return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
             imageLoadAddr = self.bootDeviceMemBase
@@ -1463,6 +1533,8 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                         self.popupMsgBox(uilang.kMsgLanguageContentDict['burnFuseError_failToBurnMiscConf1'][self.languageIndex])
                         return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
+            pass
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             pass
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             setLpspiCfg = 0

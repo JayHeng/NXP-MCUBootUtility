@@ -1,5 +1,7 @@
 import sys, os
 
+kCortexmVectorTableAlignment = 0x400
+
 kBootImageTypeFlag_Unsigned  = '0x00'
 kBootImageTypeFlag_Signed    = '0x08'
 kBootImageTypeFlag_Encrypted = '0x0c'

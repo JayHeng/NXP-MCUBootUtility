@@ -148,6 +148,17 @@ class secBootMem(runcore.secBootRun):
                 else:
                     pass
 
+    def massEraseBootDeviceMemory( self ):
+        status, results, cmdStr = self.blhost.flashEraseAll(self.bootDeviceMemId)
+        self.printLog(cmdStr)
+        if status != boot.status.kStatus_Success:
+            if self.languageIndex == uilang.kLanguageIndex_English:
+                self.popupMsgBox('Failed to mass erase boot device, error code is %d !' %(status))
+            elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                self.popupMsgBox(u"全擦启动设备失败，错误的代码是 %d ！" %(status))
+            else:
+                pass
+
     def writeBootDeviceMemory( self ):
         status, memStart, memBinFile, useFlashImageCmd = self._getUserComMemParameters(True)
         if status:

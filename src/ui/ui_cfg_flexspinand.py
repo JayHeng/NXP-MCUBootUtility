@@ -2,326 +2,322 @@
 import wx
 import sys
 import os
-import uivar
+import math
 import RTyyyy_uidef
+import uidef
+import uivar
+import uilang
 sys.path.append(os.path.abspath(".."))
 from win import bootDeviceWin_FlexspiNand
+from utils import sound
 
 class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
     def __init__(self, parent):
         bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand.__init__(self, parent)
-        flexspiNandOpt, flexspiNandFcbOpt, flexspiNandImageInfo, flexspiNandKeyBlob = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
-        self.flexspiNandOpt = flexspiNandOpt
+        self._setLanguage()
+        flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
+        self.flexspiNandOpt0 = flexspiNandOpt0
+        self.flexspiNandOpt1 = flexspiNandOpt1
         self.flexspiNandFcbOpt = flexspiNandFcbOpt
-        self.flexspiNandImageInfo = flexspiNandImageInfo
-        self.flexspiNandKeyBlob = flexspiNandKeyBlob
+        self.flexspiNandImageInfoList = flexspiNandImageInfoList[:]
+        self._recoverLastSettings()
 
-    def _getFrequence( self ):
-        txt = self.m_choice_Max_Freq.GetString(self.m_choice_Max_Freq.GetSelection())
-        if txt == '30MHz':
-            val = 0x1
-        elif txt == '50MHz':
-            val = 0x2
-        elif txt == '60MHz':
-            val = 0x3
-        elif txt == '75MHz':
-            val = 0x4
-        elif txt == '80MHz':
-            val = 0x5
-        elif txt == '100MHz':
-            val = 0x6
+    def _setLanguage( self ):
+        runtimeSettings = uivar.getRuntimeSettings()
+        langIndex = runtimeSettings[3]
+        self.m_notebook_nandOpt.SetPageText(0, uilang.kSubLanguageContentDict['panel_nandOpt'][langIndex])
+        self.m_staticText_flashSize.SetLabel(uilang.kSubLanguageContentDict['sText_flashSize'][langIndex])
+        self.m_staticText_hasMultiplanes.SetLabel(uilang.kSubLanguageContentDict['sText_hasMultiplanes'][langIndex])
+        self.m_staticText_pagesPerBlock.SetLabel(uilang.kSubLanguageContentDict['sText_pagesPerBlock'][langIndex])
+        self.m_staticText_pageSize.SetLabel(uilang.kSubLanguageContentDict['sText_nandPageSize'][langIndex])
+        self.m_staticText_maxFreq.SetLabel(uilang.kSubLanguageContentDict['sText_maxFrequency'][langIndex])
+        self.m_staticText_manufacturerId.SetLabel(uilang.kSubLanguageContentDict['sText_manufacturerId'][langIndex])
+        self.m_notebook_fcbOpt.SetPageText(0, uilang.kSubLanguageContentDict['panel_fcbOpt'][langIndex])
+        self.m_staticText_searchCount.SetLabel(uilang.kSubLanguageContentDict['sText_searchCount'][langIndex])
+        self.m_staticText_searchStride.SetLabel(uilang.kSubLanguageContentDict['sText_searchStride'][langIndex])
+        self.m_staticText_addressType.SetLabel(uilang.kSubLanguageContentDict['sText_addressType'][langIndex])
+        self.m_staticText_imageCopies.SetLabel(uilang.kSubLanguageContentDict['sText_imageCopies'][langIndex])
+        self.m_notebook_imageInfo.SetPageText(0, uilang.kSubLanguageContentDict['panel_imageInfo'][langIndex])
+        self.m_staticText_blockIndex.SetLabel(uilang.kSubLanguageContentDict['sText_blockIndex'][langIndex])
+        self.m_staticText_blockCount.SetLabel(uilang.kSubLanguageContentDict['sText_blockCount'][langIndex])
+        self.m_button_ok.SetLabel(uilang.kSubLanguageContentDict['button_semcnand_ok'][langIndex])
+        self.m_button_cancel.SetLabel(uilang.kSubLanguageContentDict['button_semcnand_cancel'][langIndex])
+
+    def _updateImageInfoField ( self, imageCopies ):
+        if imageCopies < 2:
+            self.m_textCtrl_image1Idx.Clear()
+            self.m_textCtrl_image1Cnt.Clear()
+            self.m_textCtrl_image1Idx.Enable( False )
+            self.m_textCtrl_image1Cnt.Enable( False )
         else:
-            pass
-        self.flexspiNandOpt = (self.flexspiNandOpt & 0xFFFFFFF0) | (val << 0)
-
-    def _getPageSize( self ):
-        txt = self.m_choice_Page_Size.GetString(self.m_choice_Page_Size.GetSelection())
-        if txt == '2KB':
-            val = 0x2
-        elif txt == '4KB':
-            val = 0x4
+            self.m_textCtrl_image1Idx.Enable( True )
+            self.m_textCtrl_image1Cnt.Enable( True )
+        if imageCopies < 3:
+            self.m_textCtrl_image2Idx.Clear()
+            self.m_textCtrl_image2Cnt.Clear()
+            self.m_textCtrl_image2Idx.Enable( False )
+            self.m_textCtrl_image2Cnt.Enable( False )
         else:
-            pass
-        self.flexspiNandOpt = (self.flexspiNandOpt & 0xFFFFFF0F) | (val << 4)
-
-    def _getPagePerBlock( self ):
-        txt = self.m_choice_Pages.GetString(self.m_choice_Pages.GetSelection())
-        if txt == '64':
-            val = 0x0
-        elif txt == '128':
-            val = 0x1
-        elif txt == '256':
-            val = 0x2
-        elif txt == '32':
-            val = 0x3
+            self.m_textCtrl_image2Idx.Enable( True )
+            self.m_textCtrl_image2Cnt.Enable( True )
+        if imageCopies < 4:
+            self.m_textCtrl_image3Idx.Clear()
+            self.m_textCtrl_image3Cnt.Clear()
+            self.m_textCtrl_image3Idx.Enable( False )
+            self.m_textCtrl_image3Cnt.Enable( False )
         else:
-            pass
-        self.flexspiNandOpt = (self.flexspiNandOpt & 0xFFFFF0FF) | (val << 8)
+            self.m_textCtrl_image3Idx.Enable( True )
+            self.m_textCtrl_image3Cnt.Enable( True )
+        if imageCopies < 5:
+            self.m_textCtrl_image4Idx.Clear()
+            self.m_textCtrl_image4Cnt.Clear()
+            self.m_textCtrl_image4Idx.Enable( False )
+            self.m_textCtrl_image4Cnt.Enable( False )
+        else:
+            self.m_textCtrl_image4Idx.Enable( True )
+            self.m_textCtrl_image4Cnt.Enable( True )
+        if imageCopies < 6:
+            self.m_textCtrl_image5Idx.Clear()
+            self.m_textCtrl_image5Cnt.Clear()
+            self.m_textCtrl_image5Idx.Enable( False )
+            self.m_textCtrl_image5Cnt.Enable( False )
+        else:
+            self.m_textCtrl_image5Idx.Enable( True )
+            self.m_textCtrl_image5Cnt.Enable( True )
+        if imageCopies < 7:
+            self.m_textCtrl_image6Idx.Clear()
+            self.m_textCtrl_image6Cnt.Clear()
+            self.m_textCtrl_image6Idx.Enable( False )
+            self.m_textCtrl_image6Cnt.Enable( False )
+        else:
+            self.m_textCtrl_image6Idx.Enable( True )
+            self.m_textCtrl_image6Cnt.Enable( True )
+        if imageCopies < 8:
+            self.m_textCtrl_image7Idx.Clear()
+            self.m_textCtrl_image7Cnt.Clear()
+            self.m_textCtrl_image7Idx.Enable( False )
+            self.m_textCtrl_image7Cnt.Enable( False )
+        else:
+            self.m_textCtrl_image7Idx.Enable( True )
+            self.m_textCtrl_image7Cnt.Enable( True )
 
+    def _recoverLastSettings ( self ):
+        flashSize = (self.flexspiNandOpt0 & 0x000F0000) >> 16
+        self.m_choice_flashSize.SetSelection(flashSize)
+
+        hasMultiplanes = (self.flexspiNandOpt0 & 0x0000F000) >> 12
+        self.m_choice_hasMultiplanes.SetSelection(hasMultiplanes)
+
+        pagesPerBlock = (self.flexspiNandOpt0 & 0x00000F00) >> 8
+        self.m_choice_pagesPerBlock.SetSelection(pagesPerBlock)
+
+        pageSize = (self.flexspiNandOpt0 & 0x000000F0) >> 4
+        pageSize = int(math.log(pageSize, 2))
+        self.m_choice_pageSize.SetSelection(pageSize - 1)
+
+        maxFreq = (self.flexspiNandOpt0 & 0x0000000F) - 1
+        self.m_choice_maxFreq.SetSelection(maxFreq)
+
+        manufacturerId = (self.flexspiNandOpt1 & 0xFF) >> 0
+        self.m_textCtrl_manufacturerId.Clear()
+        self.m_textCtrl_manufacturerId.write(str(hex(int(manufacturerId))))
+
+        searchCount = (self.flexspiNandFcbOpt & 0x0F000000) >> 24
+        self.m_choice_searchCount.SetSelection(searchCount - 1)
+
+        searchStride = (self.flexspiNandFcbOpt & 0x00F00000) >> 20
+        self.m_choice_searchStride.SetSelection(searchStride)
+
+        addressType = (self.flexspiNandFcbOpt & 0x00000F00) >> 8
+        self.m_choice_addressType.SetSelection(addressType)
+
+        imageCopies = 1
+        while (imageCopies <= 8):
+            if self.flexspiNandImageInfoList[imageCopies - 1] == None:
+                imageCopies -= 1
+                break
+            else:
+                imageCopies += 1
+        self.m_choice_imageCopies.SetSelection(imageCopies - 1)
+
+        self._updateImageInfoField(imageCopies)
+
+        if imageCopies > 0:
+            imageIdx = self.flexspiNandImageInfoList[0] >> 16
+            imageCnt = self.flexspiNandImageInfoList[0] & 0x0000FFFF
+            self.m_textCtrl_image0Idx.Clear()
+            self.m_textCtrl_image0Cnt.Clear()
+            self.m_textCtrl_image0Idx.write(str(imageIdx))
+            self.m_textCtrl_image0Cnt.write(str(imageCnt))
+        if imageCopies > 1:
+            imageIdx = self.flexspiNandImageInfoList[1] >> 16
+            imageCnt = self.flexspiNandImageInfoList[1] & 0x0000FFFF
+            self.m_textCtrl_image1Idx.Clear()
+            self.m_textCtrl_image1Cnt.Clear()
+            self.m_textCtrl_image1Idx.write(str(imageIdx))
+            self.m_textCtrl_image1Cnt.write(str(imageCnt))
+        if imageCopies > 2:
+            imageIdx = self.flexspiNandImageInfoList[2] >> 16
+            imageCnt = self.flexspiNandImageInfoList[2] & 0x0000FFFF
+            self.m_textCtrl_image2Idx.Clear()
+            self.m_textCtrl_image2Cnt.Clear()
+            self.m_textCtrl_image2Idx.write(str(imageIdx))
+            self.m_textCtrl_image2Cnt.write(str(imageCnt))
+        if imageCopies > 3:
+            imageIdx = self.flexspiNandImageInfoList[3] >> 16
+            imageCnt = self.flexspiNandImageInfoList[3] & 0x0000FFFF
+            self.m_textCtrl_image3Idx.Clear()
+            self.m_textCtrl_image3Cnt.Clear()
+            self.m_textCtrl_image3Idx.write(str(imageIdx))
+            self.m_textCtrl_image3Cnt.write(str(imageCnt))
+        if imageCopies > 4:
+            imageIdx = self.flexspiNandImageInfoList[4] >> 16
+            imageCnt = self.flexspiNandImageInfoList[4] & 0x0000FFFF
+            self.m_textCtrl_image4Idx.Clear()
+            self.m_textCtrl_image4Cnt.Clear()
+            self.m_textCtrl_image4Idx.write(str(imageIdx))
+            self.m_textCtrl_image4Cnt.write(str(imageCnt))
+        if imageCopies > 5:
+            imageIdx = self.flexspiNandImageInfoList[5] >> 16
+            imageCnt = self.flexspiNandImageInfoList[5] & 0x0000FFFF
+            self.m_textCtrl_image5Idx.Clear()
+            self.m_textCtrl_image5Cnt.Clear()
+            self.m_textCtrl_image5Idx.write(str(imageIdx))
+            self.m_textCtrl_image5Cnt.write(str(imageCnt))
+        if imageCopies > 6:
+            imageIdx = self.flexspiNandImageInfoList[6] >> 16
+            imageCnt = self.flexspiNandImageInfoList[6] & 0x0000FFFF
+            self.m_textCtrl_image6Idx.Clear()
+            self.m_textCtrl_image6Cnt.Clear()
+            self.m_textCtrl_image6Idx.write(str(imageIdx))
+            self.m_textCtrl_image6Cnt.write(str(imageCnt))
+        if imageCopies > 7:
+            imageIdx = self.flexspiNandImageInfoList[7] >> 16
+            imageCnt = self.flexspiNandImageInfoList[7] & 0x0000FFFF
+            self.m_textCtrl_image7Idx.Clear()
+            self.m_textCtrl_image7Cnt.Clear()
+            self.m_textCtrl_image7Idx.write(str(imageIdx))
+            self.m_textCtrl_image7Cnt.write(str(imageCnt))
 
     def _getFlashSize( self ):
-        txt = self.m_choice_Flash_size.GetString(self.m_choice_Flash_size.GetSelection())
-        if txt == '512M':
-            val = 0x0
-        elif txt == '1GB':
-            val = 0x1
-        elif txt == '2GB':
-            val = 0x2
-        elif txt == '4GB':
-            val = 0x4
+        val = self.m_choice_flashSize.GetSelection()
+        self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xFFF0FFFF) | (val << 16)
+
+    def _getHasMultiplanes( self ):
+        val = self.m_choice_hasMultiplanes.GetSelection()
+        self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xFFFF0FFF) | (val << 12)
+
+    def _getPagesPerBlock( self ):
+        val = self.m_choice_pagesPerBlock.GetSelection()
+        self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xFFFFF0FF) | (val << 8)
+
+    def _getPageSize( self ):
+        val = self.m_choice_pageSize.GetSelection()
+        val = int(math.pow(2, val + 1))
+        self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xFFFFFF0F) | (val << 4)
+
+    def _getMaxFreq( self ):
+        val = self.m_choice_maxFreq.GetSelection() + 1
+        self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xFFFFFFF0) | (val << 0)
+
+    def _convertManufacturerIdToVal32( self, idStr ):
+        status = False
+        val32 = None
+        if len(idStr) > 2 and idStr[0:2] == '0x':
+            try:
+                val32 = int(idStr[2:len(idStr)], 16)
+                status = True
+            except:
+                pass
+        if not status:
+            self.popupMsgBox('Illegal input detected! You should input like this format: 0x2c')
+        return status, val32
+
+    def _getManufacturerId( self ):
+        convertStatus, val = self._convertManufacturerIdToVal32(self.m_textCtrl_manufacturerId.GetLineText(0))
+        if not convertStatus:
+            return False
         else:
-            pass
-        self.flexspiNandOpt = (self.flexspiNandOpt & 0xFFF0FFFF) | (val << 16)
-
-
-    def _getMultiplane( self ):
-        txt = self.m_choice_planes.GetString(self.m_choice_planes.GetSelection())
-        if txt == '1 plane':
-            val = 0x0
-        elif txt == '2 planes':
-            val = 0x1
-        else:
-            pass
-        self.flexspiNandOpt = (self.flexspiNandOpt & 0xFFFF0FFF) | (val << 12)
-
-    def _getOptionSize( self ):
-        txt = self.m_choice_Option_size.GetString(self.m_choice_Option_size.GetSelection())
-        if txt == '0':
-            val = 0x0
-        elif txt == '1':
-            val = 0x1
-        elif txt == '2':
-            val = 0x2
-        elif txt == '3':
-            val = 0x3
-        elif txt == '4':
-            val = 0x4
-        elif txt == '5':
-            val = 0x5
-        elif txt == '6':
-            val = 0x6
-        elif txt == '7':
-            val = 0x7
-        elif txt == '8':
-            val = 0x8
-        elif txt == '9':
-            val = 0x9
-        elif txt == '10':
-            val = 0xA
-        elif txt == '11':
-            val = 0xB
-        elif txt == '12':
-            val = 0xC
-        elif txt == '13':
-            val = 0xD
-        elif txt == '14':
-            val = 0xE
-        elif txt == '15':
-            val = 0xF
-        else:
-            pass
-        self.flexspiNandOpt = (self.flexspiNandOpt & 0xF0FFFFFF) | (val << 24)
-
-
-    def _getFCBSize( self ):
-        txt = self.m_choice_Size.GetString(self.m_choice_Size.GetSelection())
-        if txt == '3':
-            val = 0x3
-        elif txt == '4':
-            val = 0x4
-        elif txt == '5':
-            val = 0x5
-        elif txt == '6':
-            val = 0x6
-        elif txt == '7':
-            val = 0x7
-        elif txt == '8':
-            val = 0x8
-        elif txt == '9':
-            val = 0x9
-        elif txt == '10':
-            val = 0x10
-        else:
-            pass
-        self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFFFFFFF0) | (val << 0)
-
-    def _getAddressType( self ):
-        txt = self.m_choice_address_type.GetString(self.m_choice_address_type.GetSelection())
-        if txt == 'byte address':
-            val = 0x0
-        elif txt == 'block address':
-            val = 0x1
-        else:
-            pass
-        self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFFFFF0FF) | (val << 8)
-
-
-    def _getSearchStride( self ):
-        txt = self.m_choice_search_stride.GetString(self.m_choice_search_stride.GetSelection())
-        if txt == '64 pages':
-            val = 0x0
-        elif txt == '128 pages':
-            val = 0x1
-        elif txt == '256 pages':
-            val = 0x2
-        elif txt == '32 pages':
-            val = 0x3
-        else:
-            pass
-        self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFF0FFFFF) | (val << 20)
-
+            self.flexspiNandOpt1 = (self.flexspiNandOpt1 & 0xFFFFFF00) | (val << 0)
+            if val == 0:
+                self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xF0FFFFFF) | (0 << 24)
+            else:
+                self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xF0FFFFFF) | (1 << 24)
+            return True
 
     def _getSearchCount( self ):
-        txt = self.m_choice_search_count.GetString(self.m_choice_search_count.GetSelection())
-        if txt == '1':
-            val = 0x1
-        elif txt == '2':
-            val = 0x2
-        elif txt == '3':
-            val = 0x3
-        elif txt == '4':
-            val = 0x4
-        else:
-            pass
+        val = self.m_choice_searchCount.GetSelection() + 1
         self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xF0FFFFFF) | (val << 24)
 
-    ################################# may be exist problem Need to be confirmed#################################
-    def _getBlockCountandID( self ):
-        val_block_count = int(self.m_textCtrl_block_count.GetLineText(0))
-        val_block_id = int(self.m_textCtrl_block_id.GetLineText(0))
-        if val_block_id > val_block_count:
-            wx.MessageBox('Block ID Error', 'Confirm', wx.OK)
-        if val_block_count > 8:
-            wx.MessageBox('Max Block Number Error', 'Confirm', wx.OK)
-        self.flexspiNandImageInfo = (self.flexspiNandImageInfo & 0xFFFF0000) | (val_block_id << 0)
-        self.flexspiNandImageInfo = (self.flexspiNandImageInfo & 0x0000FFFF) | (val_block_count << 16)
+    def _getSearchStride( self ):
+        val = self.m_choice_searchStride.GetSelection()
+        self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFF0FFFFF) | (val << 20)
 
-    ################################# may be exist problem Need to be confirmed#################################
+    def _getAddressType( self ):
+        val = self.m_choice_addressType.GetSelection()
+        self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFFFFF0FF) | (val << 8)
 
-    def _getImageIndex( self ):
-        txt = self.m_choice_image_index.GetString(self.m_choice_image_index.GetSelection())
-        if txt == '0':
-            val = 0x0
-        elif txt == '1':
-            val = 0x1
-        elif txt == '2':
-            val = 0x2
-        elif txt == '3':
-            val = 0x3
-        elif txt == '4':
-            val = 0x4
-        elif txt == '5':
-            val = 0x5
-        elif txt == '6':
-            val = 0x6
-        elif txt == '7':
-            val = 0x7
-        elif txt == '8':
-            val = 0x8
-        elif txt == '9':
-            val = 0x9
-        elif txt == '10':
-            val = 0xA
-        elif txt == '11':
-            val = 0xB
-        elif txt == '12':
-            val = 0xC
-        elif txt == '13':
-            val = 0xD
-        elif txt == '14':
-            val = 0xE
-        elif txt == '15':
-            val = 0xF
+    def _getImageInfo( self ):
+        imageCopies = int(self.m_choice_imageCopies.GetString(self.m_choice_imageCopies.GetSelection()))
+        if imageCopies > 0:
+            self.flexspiNandImageInfoList[0] = (int(self.m_textCtrl_image0Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image0Cnt.GetLineText(0))
         else:
-            pass
-        if (self.flexspiNandKeyBlob & 0x0F000000) == 0x01000000:
-            self.flexspiNandKeyBlob = (self.flexspiNandKeyBlob & 0xFFFFFFF0) | (val << 0)
-
-    def _getDekSize( self ):
-        txt = self.m_choice_dek_size.GetString(self.m_choice_dek_size.GetSelection())
-        if txt == '128bits':
-            val = 0x0
+            self.flexspiNandImageInfoList[0] = None
+        if imageCopies > 1:
+            self.flexspiNandImageInfoList[1] = (int(self.m_textCtrl_image1Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image1Cnt.GetLineText(0))
         else:
-            pass
-        if (self.flexspiNandKeyBlob & 0x0F000000) == 0x00000000:
-            self.flexspiNandKeyBlob = (self.flexspiNandKeyBlob & 0xFFFFFF0F) | (val << 4)
-
-    def _getKeyBlobInfoSize( self ):
-        txt = self.m_choice_keyblob_infosize.GetString(self.m_choice_keyblob_infosize.GetSelection())
-        if txt == '0':
-            val = 0x0
-        elif txt == '1':
-            val = 0x1
-        elif txt == '2':
-            val = 0x2
-        elif txt == '3':
-            val = 0x3
-        elif txt == '4':
-            val = 0x4
-        elif txt == '5':
-            val = 0x5
-        elif txt == '6':
-            val = 0x6
-        elif txt == '7':
-            val = 0x7
-        elif txt == '8':
-            val = 0x8
-        elif txt == '9':
-            val = 0x9
-        elif txt == '10':
-            val = 0xA
-        elif txt == '11':
-            val = 0xB
-        elif txt == '12':
-            val = 0xC
-        elif txt == '13':
-            val = 0xD
-        elif txt == '14':
-            val = 0xE
-        elif txt == '15':
-            val = 0xF
+            self.flexspiNandImageInfoList[1] = None
+        if imageCopies > 2:
+            self.flexspiNandImageInfoList[2] = (int(self.m_textCtrl_image2Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image2Cnt.GetLineText(0))
         else:
-            pass
-        if (self.flexspiNandKeyBlob & 0x0F000000) == 0x00000000:
-            if txt != '3':
-                wx.MessageBox('keyblob_info size must equal to 3 if Type = Update', 'Confirm', wx.OK )
+            self.flexspiNandImageInfoList[2] = None
+        if imageCopies > 3:
+            self.flexspiNandImageInfoList[3] = (int(self.m_textCtrl_image3Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image3Cnt.GetLineText(0))
         else:
-            self.flexspiNandKeyBlob = (self.flexspiNandKeyBlob & 0xFF0FFFFF) | (val << 20)
-
-    def _getType( self ):
-        txt = self.m_choice_type.GetString(self.m_choice_type.GetSelection())
-        if txt == 'Update':
-            val = 0x0
-        elif txt == 'Program':
-            val = 0x1
+            self.flexspiNandImageInfoList[3] = None
+        if imageCopies > 4:
+            self.flexspiNandImageInfoList[4] = (int(self.m_textCtrl_image4Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image4Cnt.GetLineText(0))
         else:
-            pass
-        self.flexspiNandKeyBlob = (self.flexspiNandKeyBlob & 0xF0FFFFFF) | (val << 24)
+            self.flexspiNandImageInfoList[4] = None
+        if imageCopies > 5:
+            self.flexspiNandImageInfoList[5] = (int(self.m_textCtrl_image5Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image5Cnt.GetLineText(0))
+        else:
+            self.flexspiNandImageInfoList[5] = None
+        if imageCopies > 6:
+            self.flexspiNandImageInfoList[6] = (int(self.m_textCtrl_image6Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image6Cnt.GetLineText(0))
+        else:
+            self.flexspiNandImageInfoList[6] = None
+        if imageCopies > 7:
+            self.flexspiNandImageInfoList[7] = (int(self.m_textCtrl_image7Idx.GetLineText(0)) << 16) + int(self.m_textCtrl_image7Cnt.GetLineText(0))
+        else:
+            self.flexspiNandImageInfoList[7] = None
 
-    def cancel_of_FLEXSPI_NAND(self, event):
-        self.Show(False)
+    def callbackChangeImageCopies( self, event ):
+        imageCopies = int(self.m_choice_imageCopies.GetString(self.m_choice_imageCopies.GetSelection()))
+        self._updateImageInfoField(imageCopies)
 
-    def apply_of_FLEXSPI_NAND(self, event):
-        self._getFrequence()
-        self._getPageSize()
-        self._getPageSize()
-        self._getPagePerBlock()
+    def callbackOk( self, event ):
         self._getFlashSize()
-        self._getMultiplane()
-        self._getOptionSize()
-        self._getFCBSize()
-        self._getAddressType()
-        self._getSearchStride()
+        self._getHasMultiplanes()
+        self._getPagesPerBlock()
+        self._getPageSize()
+        self._getMaxFreq()
+        if not self._getManufacturerId():
+            return
         self._getSearchCount()
-        self._getBlockCountandID()
-        self._getType()
-        self._getImageIndex()
-        self._getDekSize()
-        self._getKeyBlobInfoSize()
-        uivar.setBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand, self.flexspiNandOpt, self.flexspiNandFcbOpt, self.flexspiNandImageInfo, self.flexspiNandKeyBlob)
+        self._getSearchStride()
+        self._getAddressType()
+        self._getImageInfo()
+        uivar.setBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand, self.flexspiNandOpt0, self.flexspiNandOpt1, self.flexspiNandFcbOpt, self.flexspiNandImageInfoList)
+        uivar.setRuntimeSettings(False)
+        self.Show(False)
+        runtimeSettings = uivar.getRuntimeSettings()
+        sound.playSoundEffect(runtimeSettings[1], runtimeSettings[2], uidef.kSoundEffectFilename_Progress)
+
+    def callbackCancel( self, event ):
+        uivar.setRuntimeSettings(False)
         self.Show(False)
 
-    def OnClose_FLEXSPI_NAND(self, event):
-        ret = wx.MessageBox('Do you really want to leave?', 'Confirm', wx.OK | wx.CANCEL)
-        if ret == wx.OK:
-            self.Show(False)
+    def callbackClose( self, event ):
+        uivar.setRuntimeSettings(False)
+        self.Show(False)

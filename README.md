@@ -1,6 +1,6 @@
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v3.3.1.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v3.3.1...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v3.4.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v3.4.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 English | [中文](./README-zh.md)
 
@@ -27,6 +27,7 @@ English | [中文](./README-zh.md)
 > * User image file can be either bare image file or bootable image file 
 > * Support for converting bare image into .sb file for MfgTool and RT-Flash
 > * Support for loading bootable image into FlexSPI NOR boot device  
+> * Support for loading bootable image into FlexSPI NAND boot device  
 > * Support for loading bootable image into SEMC NAND boot device  
 > * Support for loading bootable image into SEMC NOR boot device  
 > * Support for loading bootable image into uSDHC SD/eMMC boot device  

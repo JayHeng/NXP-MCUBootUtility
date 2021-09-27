@@ -70,8 +70,8 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         else:
             pass
 
-    def _showSemcNandFcb( self ):
-        memFilename = 'semcNandFcb.dat'
+    def _showNandFcb( self, ipTypeStr, fingerprintOffset, fingerprintValue, ipTagOffset, ipTagValue, dbbtOffset ):
+        memFilename = ipTypeStr + 'NandFcb.dat'
         memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
         nfcbAddr = self.bootDeviceMemBase
         dbbtAddr = 0
@@ -90,10 +90,10 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
                     self.printMem('------------------------------------NFCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_NFCB)
                     self.needToShowNfcbIntr = False
                 self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_NFCB)
-        fingerprint = self.getVal32FromBinFile(memFilepath, RTyyyy_rundef.kSemcNandFcbOffset_Fingerprint)
-        semcTag = self.getVal32FromBinFile(memFilepath, RTyyyy_rundef.kSemcNandFcbOffset_SemcTag)
-        if fingerprint == RTyyyy_rundef.kSemcNandFcbTag_Fingerprint and semcTag == RTyyyy_rundef.kSemcNandFcbTag_Semc:
-            dbbtStartPage = self.getVal32FromBinFile(memFilepath, RTyyyy_rundef.kSemcNandFcbOffset_DBBTSerachAreaStartPage)
+        fingerprint = self.getVal32FromBinFile(memFilepath, fingerprintOffset)
+        ipTag = self.getVal32FromBinFile(memFilepath, ipTagOffset)
+        if fingerprint == fingerprintValue and ipTag == ipTagValue:
+            dbbtStartPage = self.getVal32FromBinFile(memFilepath, dbbtOffset)
             dbbtAddr = self.bootDeviceMemBase + dbbtStartPage * self.comMemReadUnit
         else:
             return False, 0
@@ -103,8 +103,8 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             pass
         return True, dbbtAddr
 
-    def _showSemcNandDbbt( self, dbbtAddr ):
-        memFilename = 'semcNandDbbt.dat'
+    def _showNandDbbt( self, ipTypeStr, dbbtAddr ):
+        memFilename = ipTypeStr + 'NandDbbt.dat'
         memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
         status, results, cmdStr = self.blhost.readMemory(dbbtAddr, RTyyyy_memdef.kMemBlockSize_DBBT, memFilename, self.bootDeviceMemId)
         self.printLog(cmdStr)
@@ -165,11 +165,18 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         imageFileLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
             semcNandOpt, semcNandFcbOpt, semcNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
-            status, dbbtAddr = self._showSemcNandFcb()
+            status, dbbtAddr = self._showNandFcb('semc', RTyyyy_rundef.kSemcNandFcbOffset_Fingerprint, RTyyyy_rundef.kSemcNandFcbTag_Fingerprint, RTyyyy_rundef.kSemcNandFcbOffset_SemcTag, RTyyyy_rundef.kSemcNandFcbTag_Semc, RTyyyy_rundef.kSemcNandFcbOffset_DBBTSerachAreaStartPage)
             if status:
-                self._showSemcNandDbbt(dbbtAddr)
+                self._showNandDbbt('semc', dbbtAddr)
             # Only Readout first image
             imageMemBase = self.bootDeviceMemBase + (semcNandImageInfoList[0] >> 16) * self.semcNandBlockSize
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
+            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            status, dbbtAddr = self._showNandFcb('flexspi', RTyyyy_rundef.kFlexspiNandFcbOffset_Fingerprint, RTyyyy_rundef.kFlexspiNandFcbTag_Fingerprint, RTyyyy_rundef.kFlexspiNandFcbOffset_FlexspiTag, RTyyyy_rundef.kFlexspiNandFcbTag_Flexspi, RTyyyy_rundef.kFlexspiNandFcbOffset_DBBTSerachStartPage)
+            if status:
+                self._showNandDbbt('flexspi', dbbtAddr)
+            # Only Readout first image
+            imageMemBase = self.bootDeviceMemBase + (flexspiNandImageInfoList[0] >> 16) * self.flexspiNandBlockSize
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:

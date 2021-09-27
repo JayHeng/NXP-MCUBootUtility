@@ -77,8 +77,8 @@ class secBootRTyyyyUi(memcore.secBootMem):
             self.isXipableDevice = False
             self.isNandDevice = True
             self.isSdmmcCard = False
-            self.sbEnableBootDeviceMagic = 'flexspinand'
-            self.sbAccessBootDeviceMagic = 'flexspinand'
+            self.sbEnableBootDeviceMagic = 'spinand'
+            self.sbAccessBootDeviceMagic = 'spinand'
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
             self.isXipableDevice = False
             self.isNandDevice = True
@@ -1278,6 +1278,7 @@ class secBootRTyyyyUi(memcore.secBootMem):
         self.m_staticText_memBinFile.SetLabel(uilang.kMainLanguageContentDict['sText_memBinFile'][langIndex])
         self.m_button_readMem.SetLabel(uilang.kMainLanguageContentDict['button_readMem'][langIndex])
         self.m_button_eraseMem.SetLabel(uilang.kMainLanguageContentDict['button_eraseMem'][langIndex])
+        self.m_button_massEraseMem.SetLabel(uilang.kMainLanguageContentDict['button_massEraseMem'][langIndex])
         self.m_button_writeMem.SetLabel(uilang.kMainLanguageContentDict['button_writeMem'][langIndex])
         self.m_button_executeApp.SetLabel(uilang.kMainLanguageContentDict['button_executeApp'][langIndex])
         self.m_button_viewMem.SetLabel(uilang.kMainLanguageContentDict['button_viewMem'][langIndex])

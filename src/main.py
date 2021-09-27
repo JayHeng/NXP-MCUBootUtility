@@ -136,7 +136,7 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             flexspiNorFrame.Show(True)
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             flexspiNandFrame = ui_cfg_flexspinand.secBootUiFlexspiNand(None)
-            flexspiNandFrame.SetTitle(u"FlexSPI NAND Device Configuration")
+            flexspiNandFrame.SetTitle(uilang.kSubLanguageContentDict['flexspinand_title'][self.languageIndex])
             flexspiNandFrame.Show(True)
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
             semcNorFrame = ui_cfg_semcnor.secBootUiSemcNor(None)
@@ -309,6 +309,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                         pass
                 elif self.accessMemType == 'EraseMem':
                     self.eraseBootDeviceMemory()
+                elif self.accessMemType == 'MassEraseMem':
+                    self.massEraseBootDeviceMemory()
                 elif self.accessMemType == 'WriteMem':
                     if self.connectStage == uidef.kConnectStage_ExternalMemory:
                         self.writeRamMemory()
@@ -399,6 +401,20 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
     def callbackEraseMem( self, event ):
         if self.toolRunMode != uidef.kToolRunMode_Entry:
             self._doEraseMem()
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['operMemError_notAvailUnderEntry'][self.languageIndex])
+
+    def _doMassEraseMem( self ):
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self._startGaugeTimer()
+            self.isAccessMemTaskPending = True
+            self.accessMemType = 'MassEraseMem'
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][self.languageIndex])
+
+    def callbackMassEraseMem( self, event ):
+        if self.toolRunMode != uidef.kToolRunMode_Entry:
+            self._doMassEraseMem()
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['operMemError_notAvailUnderEntry'][self.languageIndex])
 
@@ -660,14 +676,15 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_1_1'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_2_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_0'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_1'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_1'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_4_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v3.3.1")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v3.4.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

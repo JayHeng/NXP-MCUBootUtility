@@ -29,7 +29,7 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 
 		wSizer_win.Add( self.m_staticText_deviceModel, 0, wx.ALL, 5 )
 
-		m_choice_deviceModeChoices = [ u"No", u"Complete_FDCB", u"ISSI_IS25LPxxxA_IS25WPxxxA", u"ISSI_IS26KSxxxS", u"Macronix_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G", u"Macronix_MX25UM51345G", u"Macronix_MX25UM51345G_2nd", u"Micron_MT35XLxxxA_MT35XUxxxA", u"Adesto_AT25SFxxxA", u"Adesto_ATXPxxx", u"Cypress_S26KSxxxS", u"GigaDevice_GD25LBxxxE", u"GigaDevice_GD25LTxxxE", u"GigaDevice_GD25LXxxxE", u"Winbond_W25QxxxJV" ]
+		m_choice_deviceModeChoices = [ u"No", u"Complete_FDCB", u"ISSI_IS25LPxxxA_IS25WPxxxA", u"ISSI_IS26KSxxxS_IS26KLxxxS", u"Macronix_MX25Uxxx32F_MX25Lxxx45G", u"Macronix_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G", u"Macronix_MX25UM51345G", u"Macronix_MX25UM51345G_2nd", u"Micron_MT25QLxxxA", u"Micron_MT35XLxxxA_MT35XUxxxA", u"Adesto_AT25SFxxxA", u"Adesto_ATXPxxx", u"Cypress_S25FSxxxS_S25FLxxxS", u"Cypress_S26KSxxxS_S26KLxxxS", u"GigaDevice_GD25QxxxC", u"GigaDevice_GD25LBxxxE", u"GigaDevice_GD25LTxxxE", u"GigaDevice_GD25LXxxxE", u"Winbond_W25QxxxJV", u"Microchip_SST26VFxxxB", u"FudanMicro_FM25Qxxx", u"BoyaMicro_BY25QxxxBS", u"XMC_XM25QHxxxB_XM25QUxxxB", u"XTXtech_X25FxxxB_X25QxxxD", u"Puya_P25QxxxLE_P25QxxxH_P25QxxxU", u"AMIC_A25LQxxx" ]
 		self.m_choice_deviceMode = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 340,-1 ), m_choice_deviceModeChoices, 0 )
 		self.m_choice_deviceMode.SetSelection( 0 )
 		wSizer_win.Add( self.m_choice_deviceMode, 0, wx.ALL, 5 )

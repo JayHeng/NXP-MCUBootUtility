@@ -292,18 +292,29 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LP064A
         elif txt == uidef.kFlexspiNorDevice_ISSI_IS26KS512S:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25L12845G:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25L12845G
         elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51245G:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51245G
         elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_2nd:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_2nd
+            self.flexspiNorOpt1 = uidef.kFlexspiNorOpt1_MXIC_MX25UM51345G_2nd
+        elif txt == uidef.kFlexspiNorDevice_Micron_MT25QL128A:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT25QL128A
         elif txt == uidef.kFlexspiNorDevice_Micron_MT35X:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X
         elif txt == uidef.kFlexspiNorDevice_Adesto_AT25SF128A:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_AT25SF128A
         elif txt == uidef.kFlexspiNorDevice_Adesto_ATXP032:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_ATXP032
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S25FL128S:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL128S
         elif txt == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S26KS512S
+        elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25Q64C:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25Q64C
         elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25LB256E:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LB256E
         elif txt == uidef.kFlexspiNorDevice_GigaDevice_GD25LT256E:
@@ -312,6 +323,20 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LX256E
         elif txt == uidef.kFlexspiNorDevice_Winbond_W25Q128JV:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Winbond_W25Q128JV
+        elif txt == uidef.kFlexspiNorDevice_Microchip_SST26VF064B:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Microchip_SST26VF064B
+        elif txt == uidef.kFlexspiNorDevice_FudanMicro_FM25Q64:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_FudanMicro_FM25Q64
+        elif txt == uidef.kFlexspiNorDevice_BoyaMicro_BY25Q16BS:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_BoyaMicro_BY25Q16BS
+        elif txt == uidef.kFlexspiNorDevice_XMC_XM25QH64B:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_XMC_XM25QH64B
+        elif txt == uidef.kFlexspiNorDevice_XTXtech_X25Q64D:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_XTXtech_X25Q64D
+        elif txt == uidef.kFlexspiNorDevice_Puya_P25Q64LE:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Puya_P25Q64LE
+        elif txt == uidef.kFlexspiNorDevice_AMIC_A25LQ64:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_AMIC_A25LQ64
         else:
             pass
         if txt != 'No' and  txt != 'Complete_FDCB':

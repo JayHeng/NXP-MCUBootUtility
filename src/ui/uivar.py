@@ -51,10 +51,10 @@ g_flexspiNorOpt1 = None
 g_flexspiNorDeviceModel = None
 g_isFdcbKept = None
 
-g_flexspiNandOpt = None
+g_flexspiNandOpt0 = None
+g_flexspiNandOpt1 = None
 g_flexspiNandFcbOpt = None
-g_flexspiNandImageInfo = None
-g_flexspiNandKeyBlob = None
+g_flexspiNandImageInfoList = [None] * 8
 
 g_semcNorOpt = None
 g_semcNorSetting = None
@@ -149,6 +149,11 @@ def initVar(cfgFilename):
     global g_flexspiNorDeviceModel
     global g_isFdcbKept
 
+    global g_flexspiNandOpt0
+    global g_flexspiNandOpt1
+    global g_flexspiNandFcbOpt
+    global g_flexspiNandImageInfoList
+
     global g_semcNandOpt
     global g_semcNandFcbOpt
     global g_semcNandImageInfoList
@@ -158,11 +163,6 @@ def initVar(cfgFilename):
 
     global g_flexcommSpiNorOpt0
     global g_flexcommSpiNorOpt1
-
-    global g_flexspiNandOpt
-    global g_flexspiNandFcbOpt
-    global g_flexspiNandKeyBlob
-    global g_flexspiNandImageInfo
 
     global g_semcNorOpt
     global g_semcNorSetting
@@ -198,6 +198,11 @@ def initVar(cfgFilename):
         g_flexspiNorOpt1 = cfgDict["cfgFlexspiNor"][1]
         g_flexspiNorDeviceModel = cfgDict["cfgFlexspiNor"][2]
         g_isFdcbKept = cfgDict["cfgFlexspiNor"][3]
+
+        g_flexspiNandOpt0 = cfgDict["cfgFlexspiNand"][0]
+        g_flexspiNandOpt1 = cfgDict["cfgFlexspiNand"][1]
+        g_flexspiNandFcbOpt = cfgDict["cfgFlexspiNand"][2]
+        g_flexspiNandImageInfoList = cfgDict["cfgFlexspiNand"][3]
 
         g_semcNandOpt = cfgDict["cfgSemcNand"][0]
         g_semcNandFcbOpt = cfgDict["cfgSemcNand"][1]
@@ -260,6 +265,12 @@ def initVar(cfgFilename):
         g_flexspiNorDeviceModel = uidef.kFlexspiNorDevice_None
         g_isFdcbKept = False
 
+        g_flexspiNandOpt0 = 0xC0010023
+        g_flexspiNandOpt1 = 0x0000002C
+        g_flexspiNandFcbOpt = 0xc2000104
+        g_flexspiNandImageInfoList = [None] * 8
+        g_flexspiNandImageInfoList[0] = 0x00040004
+
         g_semcNandOpt = 0xD0010101
         g_semcNandFcbOpt = 0x00010101
         g_semcNandImageInfoList = [None] * 8
@@ -270,11 +281,6 @@ def initVar(cfgFilename):
 
         g_flexcommSpiNorOpt0 = 0xc0000000
         g_flexcommSpiNorOpt1 = 0x00000000
-
-        g_flexspiNandOpt = 0xD0010101
-        g_flexspiNandFcbOpt = 0x00010601
-        g_flexspiNandImageInfo = 0x0
-        g_flexspiNandKeyBlob = 0x0
 
         g_semcNorOpt = 0xD0000600
         g_semcNorSetting = 0x00010601
@@ -348,6 +354,10 @@ def deinitVar(cfgFilename=None):
         global g_flexspiNorOpt1
         global g_flexspiNorDeviceModel
         global g_isFdcbKept
+        global g_flexspiNandOpt0
+        global g_flexspiNandOpt1
+        global g_flexspiNandFcbOpt
+        global g_flexspiNandImageInfoList
         global g_semcNandOpt
         global g_semcNandFcbOpt
         global g_semcNandImageInfoList
@@ -368,6 +378,7 @@ def deinitVar(cfgFilename=None):
         cfgDict = {
             "cfgToolCommon": [g_toolCommDict],
             "cfgFlexspiNor": [g_flexspiNorOpt0, g_flexspiNorOpt1, g_flexspiNorDeviceModel, g_isFdcbKept],
+            "cfgFlexspiNand": [g_flexspiNandOpt0, g_flexspiNandOpt1, g_flexspiNandFcbOpt, g_flexspiNandImageInfoList],
             "cfgSemcNor": [g_semcNorOpt, g_semcNorSetting, g_semcNorDeviceModel],
             "cfgSemcNand": [g_semcNandOpt, g_semcNandFcbOpt, g_semcNandImageInfoList],
             "cfgLpspiNor": [g_lpspiNorOpt0, g_lpspiNorOpt1],
@@ -394,11 +405,11 @@ def getBootDeviceConfiguration( group ):
         global g_isFdcbKept
         return g_flexspiNorOpt0, g_flexspiNorOpt1, g_flexspiNorDeviceModel, g_isFdcbKept
     elif group == RTyyyy_uidef.kBootDevice_FlexspiNand:
-        global g_flexspiNandOpt
+        global g_flexspiNandOpt0
+        global g_flexspiNandOpt1
         global g_flexspiNandFcbOpt
-        global g_flexspiNandKeyBlob
-        global g_flexspiNandImageInfo
-        return g_flexspiNandOpt, g_flexspiNandFcbOpt, g_flexspiNandImageInfo, g_flexspiNandKeyBlob
+        global g_flexspiNandImageInfoList
+        return g_flexspiNandOpt0, g_flexspiNandOpt1, g_flexspiNandFcbOpt, g_flexspiNandImageInfoList
     elif group == RTyyyy_uidef.kBootDevice_SemcNor:
         global g_semcNorOpt
         global g_semcNorSetting
@@ -447,14 +458,14 @@ def setBootDeviceConfiguration( group, *args ):
         g_flexspiNorDeviceModel = args[2]
         g_isFdcbKept = args[3]
     elif group == RTyyyy_uidef.kBootDevice_FlexspiNand:
-        global g_flexspiNandOpt
+        global g_flexspiNandOpt0
+        global g_flexspiNandOpt1
         global g_flexspiNandFcbOpt
-        global g_flexspiNandKeyBlob
-        global g_flexspiNandImageInfo
-        g_flexspiNandOpt = args[0]
-        g_flexspiNandFcbOpt = args[1]
-        g_flexspiNandImageInfo = args[2]
-        g_flexspiNandKeyBlob = args[3]
+        global g_flexspiNandImageInfoList
+        g_flexspiNandOpt0 = args[0]
+        g_flexspiNandOpt1 = args[1]
+        g_flexspiNandFcbOpt = args[2]
+        g_flexspiNandImageInfoList = args[3]
     elif group == RTyyyy_uidef.kBootDevice_SemcNor:
         global g_semcNorOpt
         global g_semcNorSetting

@@ -18,6 +18,7 @@ from run import rundef
 from run import RTyyyy_rundef
 from mem import RTyyyy_memdef
 from utils import elf
+from utils import misc
 
 class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
 
@@ -362,6 +363,22 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
     def _extractImageDataFromSrcApp(self, wholeSrcAppBytes, fdcbOffset, appName ):
         destAppIvtOffset = self.destAppIvtOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
         ivtEntry, ivtDcd, ivtBd, ivtSelf = self._getIvtInfoFromIvtBlockBytes(wholeSrcAppBytes[destAppIvtOffset:destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT])
+        # Check to see it is vector table address or reset handler address
+        if (ivtEntry % 2):
+            maxVectorOffset = misc.align_down(ivtEntry - ivtSelf, RTyyyy_gendef.kCortexmVectorTableAlignment)
+            vectorOffset = destAppIvtOffset + RTyyyy_gendef.kCortexmVectorTableAlignment
+            isVectorFound = False
+            while (vectorOffset <= maxVectorOffset):
+                if (ivtEntry == self.getVal32FromByteArray(wholeSrcAppBytes[vectorOffset + 0x4:vectorOffset + 0x8])):
+                    isVectorFound = True
+                    break
+                vectorOffset += RTyyyy_gendef.kCortexmVectorTableAlignment
+            if isVectorFound:
+                ivtEntry = ivtSelf + vectorOffset - destAppIvtOffset
+                self.printLog('ivtEntry =' + str(hex(ivtEntry)))
+            else:
+                self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_vectorNotFound'][self.languageIndex] + srcAppFilename.encode('utf-8'))
+                return None, None, 0
         imageDataOffset = destAppIvtOffset + ivtEntry - ivtSelf
         imageDataBytes = wholeSrcAppBytes[imageDataOffset:len(wholeSrcAppBytes)]
         imageEntryPoint = self.getVal32FromByteArray(wholeSrcAppBytes[imageDataOffset + 0x4:imageDataOffset + 0x8])
@@ -448,12 +465,14 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                         self.extractFdcbDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         self._extractDcdDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         startAddress, entryPointAddress, lengthInByte = self._extractImageDataFromSrcApp(srecObj.as_binary(), fdcbOffsetInApp, appName)
+                        if startAddress != None:
+                            isConvSuccessed = True
                     else:
                         self.destAppDcdLength = 0
                         #entryPointAddress = srecObj.execution_start_address
                         entryPointAddress = self.getVal32FromByteArray(srecObj.as_binary(startAddress + 0x4, startAddress  + 0x8))
                         lengthInByte = len(srecObj.as_binary())
-                    isConvSuccessed = True
+                        isConvSuccessed = True
                 except:
                     pass
             else:
@@ -1409,7 +1428,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
                 pass
             elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
-                pass
+                flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+                destSbAppName += '_' + self.convertLongIntHexText(str(hex(flexspiNandOpt0))) + '_' + self.convertLongIntHexText(str(hex(flexspiNandFcbOpt)))
             elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd:
                 usdhcSdOpt = uivar.getBootDeviceConfiguration(self.bootDevice)
                 destSbAppName += '_' + self.convertLongIntHexText(str(hex(usdhcSdOpt)))
@@ -1462,7 +1482,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 else:
                     destAppFilename = self.destAppNoPaddingFilename
             elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand or \
-                 self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
+                 self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor or \
+                 self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
                 destAppFilename = self.destAppFilename
             elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
                  self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:

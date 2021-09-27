@@ -94,4 +94,14 @@ kSemcNandFcbOffset_PagesInBlock            = 0x1a8
 kSemcNandFcbOffset_BlocksInPlane           = 0x1ac
 kSemcNandFcbOffset_PlanesInDevice          = 0x1b0
 
+#----------------FlexSPI NAND----------------------
+kFlexspiNandFcbTag_Fingerprint = 0x4E464342  # 'NFCB'
+kFlexspiNandFcbTag_Flexspi     = 0x42464346  # 'FCFB'
 
+kFlexspiNandFcbInfo_StartAddr = 0x0
+kFlexspiNandFcbInfo_Length    = 0x400
+
+kFlexspiNandFcbOffset_Fingerprint             = 0x004
+kFlexspiNandFcbOffset_DBBTSerachStartPage     = 0x00c
+kFlexspiNandFcbOffset_NandCfgBlock            = 0x100
+kFlexspiNandFcbOffset_FlexspiTag              = 0x100

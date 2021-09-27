@@ -1720,7 +1720,7 @@ class secBootWin ( wx.Frame ):
 
 		wSizer_memView.Add( self.m_staticText_null0MemView, 0, wx.ALL, 5 )
 
-		self.m_staticText_null1MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 40,-1 ), 0 )
+		self.m_staticText_null1MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
 		self.m_staticText_null1MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null1MemView, 0, wx.ALL, 5 )
@@ -1728,7 +1728,7 @@ class secBootWin ( wx.Frame ):
 		self.m_button_readMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Read", wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_readMem, 0, wx.ALL, 5 )
 
-		self.m_staticText_null2MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 20,-1 ), 0 )
+		self.m_staticText_null2MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
 		self.m_staticText_null2MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null2MemView, 0, wx.ALL, 5 )
@@ -1736,20 +1736,28 @@ class secBootWin ( wx.Frame ):
 		self.m_button_eraseMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Erase", wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_eraseMem, 0, wx.ALL, 5 )
 
-		self.m_staticText_null3MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 20,-1 ), 0 )
+		self.m_staticText_null3MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
 		self.m_staticText_null3MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null3MemView, 0, wx.ALL, 5 )
 
-		self.m_button_writeMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Write (Auto Erase)", wx.DefaultPosition, wx.Size( 150,-1 ), 0 )
-		wSizer_memView.Add( self.m_button_writeMem, 0, wx.ALL, 5 )
+		self.m_button_massEraseMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Mass Erase", wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
+		wSizer_memView.Add( self.m_button_massEraseMem, 0, wx.ALL, 5 )
 
-		self.m_staticText_null4MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 20,-1 ), 0 )
+		self.m_staticText_null4MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
 		self.m_staticText_null4MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null4MemView, 0, wx.ALL, 5 )
 
-		self.m_button_executeApp = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Execute From Start", wx.DefaultPosition, wx.Size( 150,-1 ), 0 )
+		self.m_button_writeMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Write (Auto Erase)", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		wSizer_memView.Add( self.m_button_writeMem, 0, wx.ALL, 5 )
+
+		self.m_staticText_null5MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
+		self.m_staticText_null5MemView.Wrap( -1 )
+
+		wSizer_memView.Add( self.m_staticText_null5MemView, 0, wx.ALL, 5 )
+
+		self.m_button_executeApp = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Execute From Start", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_executeApp, 0, wx.ALL, 5 )
 
 		self.m_textCtrl_bootDeviceMem = wx.TextCtrl( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 740,290 ), wx.TE_MULTILINE|wx.TE_RICH2 )
@@ -1758,31 +1766,31 @@ class secBootWin ( wx.Frame ):
 
 		wSizer_memView.Add( self.m_textCtrl_bootDeviceMem, 0, wx.ALL, 5 )
 
-		self.m_staticText_null5MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 25,-1 ), 0 )
-		self.m_staticText_null5MemView.Wrap( -1 )
-
-		wSizer_memView.Add( self.m_staticText_null5MemView, 0, wx.ALL, 5 )
-
 		self.m_staticText_null6MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 25,-1 ), 0 )
 		self.m_staticText_null6MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null6MemView, 0, wx.ALL, 5 )
 
-		self.m_button_viewMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"View Bootable Image", wx.DefaultPosition, wx.Size( 150,-1 ), 0 )
-		wSizer_memView.Add( self.m_button_viewMem, 0, wx.ALL, 5 )
-
-		self.m_staticText_null7MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
+		self.m_staticText_null7MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 25,-1 ), 0 )
 		self.m_staticText_null7MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null7MemView, 0, wx.ALL, 5 )
 
-		self.m_button_clearMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Clear The Screen", wx.DefaultPosition, wx.Size( 115,-1 ), 0 )
-		wSizer_memView.Add( self.m_button_clearMem, 0, wx.ALL, 5 )
+		self.m_button_viewMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"View Bootable Image", wx.DefaultPosition, wx.Size( 150,-1 ), 0 )
+		wSizer_memView.Add( self.m_button_viewMem, 0, wx.ALL, 5 )
 
 		self.m_staticText_null8MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
 		self.m_staticText_null8MemView.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_null8MemView, 0, wx.ALL, 5 )
+
+		self.m_button_clearMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Clear The Screen", wx.DefaultPosition, wx.Size( 115,-1 ), 0 )
+		wSizer_memView.Add( self.m_button_clearMem, 0, wx.ALL, 5 )
+
+		self.m_staticText_null9MemView = wx.StaticText( self.m_panel_memView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
+		self.m_staticText_null9MemView.Wrap( -1 )
+
+		wSizer_memView.Add( self.m_staticText_null9MemView, 0, wx.ALL, 5 )
 
 		self.m_checkBox_saveImageData = wx.CheckBox( self.m_panel_memView, wx.ID_ANY, u"Save image/data file to", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
 		wSizer_memView.Add( self.m_checkBox_saveImageData, 0, wx.ALL, 5 )
@@ -1949,6 +1957,7 @@ class secBootWin ( wx.Frame ):
 		self.m_button_load.Bind( wx.EVT_BUTTON, self.callbackLoadFuse )
 		self.m_button_readMem.Bind( wx.EVT_BUTTON, self.callbackReadMem )
 		self.m_button_eraseMem.Bind( wx.EVT_BUTTON, self.callbackEraseMem )
+		self.m_button_massEraseMem.Bind( wx.EVT_BUTTON, self.callbackMassEraseMem )
 		self.m_button_writeMem.Bind( wx.EVT_BUTTON, self.callbackWriteMem )
 		self.m_button_executeApp.Bind( wx.EVT_BUTTON, self.callbackExecuteApp )
 		self.m_button_viewMem.Bind( wx.EVT_BUTTON, self.callbackViewMem )
@@ -2202,6 +2211,9 @@ class secBootWin ( wx.Frame ):
 		event.Skip()
 
 	def callbackEraseMem( self, event ):
+		event.Skip()
+
+	def callbackMassEraseMem( self, event ):
 		event.Skip()
 
 	def callbackWriteMem( self, event ):
