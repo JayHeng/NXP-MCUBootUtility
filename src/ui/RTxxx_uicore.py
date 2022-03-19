@@ -20,6 +20,9 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
             self.RTxxx_initUi()
 
     def RTxxx_initUi( self ):
+        self.isXipableDevice = False
+        self.isNandDevice = False
+        self.isSdmmcCard = False
         self._RTxxx_initTargetSetupValue()
         self.RTxxx_setTargetSetupValue()
 
@@ -43,15 +46,24 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
         self.bootDevice = self.m_choice_bootDevice.GetString(self.m_choice_bootDevice.GetSelection())
         self.toolCommDict['bootDevice'] = self.m_choice_bootDevice.GetSelection()
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+            self.isXipableDevice = True
+            self.isNandDevice = False
+            self.isSdmmcCard = False
             self.sbEnableBootDeviceMagic = '@0x9'
             self.sbAccessBootDeviceMagic = ''
             self.setFlexspiNorDeviceForEvkBoard()
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
-            pass
+            self.isXipableDevice = False
+            self.isNandDevice = False
+            self.isSdmmcCard = False
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd:
-            pass
+            self.isXipableDevice = False
+            self.isNandDevice = True
+            self.isSdmmcCard = True
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
-            pass
+            self.isXipableDevice = False
+            self.isNandDevice = True
+            self.isSdmmcCard = True
         else:
             pass
 
@@ -104,7 +116,11 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
 
     def _RTxxx_getImgName( self ):
         memType = ''
-        memType = 'nor_'
+        if self.isNandDevice:
+            if self.isSdmmcCard:
+                memType = 'sdmmc_'
+        else:
+            memType = 'nor_'
         return memType
 
     def RTxxx_setSecureBootSeqColor( self , needToPlaySound=True ):

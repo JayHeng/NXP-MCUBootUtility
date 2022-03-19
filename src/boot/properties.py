@@ -42,6 +42,7 @@ kPropertyTag_VerifyWrites           = 0x0a
 kPropertyTag_MaxPacketSize          = 0x0b
 kPropertyTag_ReservedRegions        = 0x0c
 kPropertyTag_ValidateRegions        = 0x0d
+kPropertyTag_FlashXeccWriteState    = 0x0d
 kPropertyTag_RAMStartAddress        = 0x0e
 kPropertyTag_RAMSizeInBytes         = 0x0f
 kPropertyTag_SystemDeviceIdent      = 0x10

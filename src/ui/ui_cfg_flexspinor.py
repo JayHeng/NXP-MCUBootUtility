@@ -21,7 +21,8 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.mcuSeries = None
         self.flexspiFreqs = None
         self.cfgFdcbBinFilename = None
-        flexspiNorOpt0, flexspiNorOpt1, flexspiDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
+        self.hasFlexspiNorDualImageBoot = None
+        flexspiNorOpt0, flexspiNorOpt1, flexspiDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
         #1. Prepare Flash option
         # 0xc0000006 is the tag for Serial NOR parameter selection
         # bit [31:28] Tag fixed to 0x0C
@@ -49,6 +50,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.flexspiNorOpt1 = flexspiNorOpt1
         self.flexspiDeviceModel = flexspiDeviceModel
         self.isFdcbKept = isFdcbKept
+        self.flexspiNorDualImageInfoList = flexspiNorDualImageInfoList
 
     def _setLanguage( self ):
         runtimeSettings = uivar.getRuntimeSettings()
@@ -70,11 +72,16 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.m_staticText_enableSecondPinmux.SetLabel(uilang.kSubLanguageContentDict['sText_enableSecondPinmux'][langIndex])
         self.m_staticText_statusOverride.SetLabel(uilang.kSubLanguageContentDict['sText_statusOverride'][langIndex])
         self.m_staticText_dummyCycles.SetLabel(uilang.kSubLanguageContentDict['sText_dummyCycles'][langIndex])
+        self.m_notebook_dualImageOpt.SetPageText(0, uilang.kSubLanguageContentDict['panel_dualImageOpt'][langIndex])
+        self.m_staticText_image0Version.SetLabel(uilang.kSubLanguageContentDict['sText_dualImage0Version'][langIndex])
+        self.m_staticText_image1Version.SetLabel(uilang.kSubLanguageContentDict['sText_dualImage1Version'][langIndex])
+        self.m_staticText_image1Offset.SetLabel(uilang.kSubLanguageContentDict['sText_dualImage1Offset'][langIndex])
+        self.m_staticText_image1Size.SetLabel(uilang.kSubLanguageContentDict['sText_dualImage1Size'][langIndex])
         self.m_button_completeFdcb.SetLabel(uilang.kSubLanguageContentDict['button_completeFdcb'][langIndex])
         self.m_button_ok.SetLabel(uilang.kSubLanguageContentDict['button_flexspinor_ok'][langIndex])
         self.m_button_cancel.SetLabel(uilang.kSubLanguageContentDict['button_flexspinor_cancel'][langIndex])
 
-    def setNecessaryInfo( self, mcuSeries, flexspiFreqs, cfgFdcbBinFilename ):
+    def setNecessaryInfo( self, mcuSeries, flexspiFreqs, cfgFdcbBinFilename, hasFlexspiNorDualImageBoot ):
         if flexspiFreqs != None:
             self.m_choice_maxFrequency.Clear()
             self.m_choice_maxFrequency.SetItems(flexspiFreqs)
@@ -82,6 +89,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.flexspiFreqs = flexspiFreqs
         self.mcuSeries = mcuSeries
         self.cfgFdcbBinFilename = cfgFdcbBinFilename
+        self.hasFlexspiNorDualImageBoot = hasFlexspiNorDualImageBoot
         self._recoverLastSettings()
 
     def _updateOpt1Field ( self, isEnabled ):
@@ -160,6 +168,26 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             dummyCycles = (self.flexspiNorOpt1 & 0x000000FF) >> 0
             self.m_textCtrl_dummyCycles.Clear()
             self.m_textCtrl_dummyCycles.write(str(dummyCycles))
+
+        if not self.hasFlexspiNorDualImageBoot:
+            self.m_textCtrl_image0Version.Enable( False )
+            self.m_textCtrl_image1Version.Enable( False )
+            self.m_textCtrl_image1Offset.Enable( False )
+            self.m_choice_image1Size.Enable( False )
+        else:
+            self.m_textCtrl_image0Version.Clear()
+            if self.flexspiNorDualImageInfoList[0] == 0xffffffff:
+                self.m_textCtrl_image0Version.write('none')
+            else:
+                self.m_textCtrl_image0Version.write(str(self.flexspiNorDualImageInfoList[0]))
+            self.m_textCtrl_image1Version.Clear()
+            if self.flexspiNorDualImageInfoList[1] == 0xffffffff:
+                self.m_textCtrl_image1Version.write('none')
+            else:
+                self.m_textCtrl_image1Version.write(str(self.flexspiNorDualImageInfoList[1]))
+            self.m_textCtrl_image1Offset.Clear()
+            self.m_textCtrl_image1Offset.write(str(hex((self.flexspiNorDualImageInfoList[2] & 0xffff) * (256 * 1024))))
+            self.m_choice_image1Size.SetSelection(self.flexspiNorDualImageInfoList[2] >> 16)
 
     def _getDeviceType( self ):
         txt = self.m_choice_deviceType.GetString(self.m_choice_deviceType.GetSelection())
@@ -285,6 +313,78 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         val = int(self.m_textCtrl_dummyCycles.GetLineText(0))
         self.flexspiNorOpt1 = (self.flexspiNorOpt1 & 0xFFFFFF00) | (val << 0)
 
+    def _getImage0Version( self ):
+        status = True
+        content = self.m_textCtrl_image0Version.GetLineText(0)
+        if content == 'none':
+            val = 0xFFFFFFFF
+        else:
+            val = int(content)
+            if val > 65535:
+                status = False
+                self.popupMsgBox('Illegal input detected! max image 0 version is 65536')
+        if status:
+            self.flexspiNorDualImageInfoList[0] = val
+        return status
+
+    def _getImage1Version( self ):
+        status = True
+        content = self.m_textCtrl_image1Version.GetLineText(0)
+        if content == 'none':
+            val = 0xFFFFFFFF
+        else:
+            val = int(content)
+            if val > 65535:
+                status = False
+                self.popupMsgBox('Illegal input detected! max image 1 version is 65536')
+        if status:
+            self.flexspiNorDualImageInfoList[1] = val
+        return status
+
+    def _getImage1Offset( self ):
+        content = self.m_textCtrl_image1Offset.GetLineText(0)
+        status = False
+        val32 = None
+        if len(content) > 2 and content[0:2] == '0x':
+            try:
+                val32 = int(content[2:len(content)], 16)
+                if val32 % (256 * 1024) != 0:
+                    self.popupMsgBox('Invalid setting found! Offset should be aligned with 256KB (0x40000)')
+                elif val32 > (1023 * 256 * 1024):
+                    self.popupMsgBox('Invalid setting found! Offset should not exceed 255.75MB (0xFFC0000)')
+                else:
+                    status = True
+            except:
+                pass
+        if not status:
+            self.popupMsgBox('Illegal input detected! You should set offset like this format: 0x40000')
+        else:
+            self.flexspiNorDualImageInfoList[2] = val32 / (256 * 1024)
+        return status
+
+    def _getImage1Size( self ):
+        val = self.m_choice_image1Size.GetSelection()
+        status = True
+        size = 0
+        if val == 0:
+            size = self.flexspiNorDualImageInfoList[2] * (256 * 1024)
+        elif (val >= 1 and val <= 12):
+            size = val * (1024 * 1024)
+        elif val == 13:
+            size = 256 * 1024
+        elif val == 14:
+            size = 512 * 1024
+        elif val == 15:
+            size = 768 * 1024
+        else:
+            pass
+        if size > self.flexspiNorDualImageInfoList[2] * (256 * 1024):
+            status = False
+            self.popupMsgBox('Invalid setting found! Size should not exceed offset')
+        else:
+            self.flexspiNorDualImageInfoList[2] = self.flexspiNorDualImageInfoList[2] + (val << 16)
+        return status
+
     def callbackUseTypicalDeviceModel( self, event ):
         txt = self.m_choice_deviceMode.GetString(self.m_choice_deviceMode.GetSelection())
         self.flexspiDeviceModel = txt
@@ -387,7 +487,16 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
                 self._getEnableSecondPinmux()
                 self._getStatusOverride()
                 self._getDummyCycles()
-        uivar.setBootDeviceConfiguration(uidef.kBootDevice_XspiNor, self.flexspiNorOpt0, self.flexspiNorOpt1, self.flexspiDeviceModel, self.isFdcbKept)
+        if self.hasFlexspiNorDualImageBoot:
+            if not self._getImage0Version():
+                return
+            if not self._getImage1Version():
+                return
+            if not self._getImage1Offset():
+                return
+            if not self._getImage1Size():
+                return
+        uivar.setBootDeviceConfiguration(uidef.kBootDevice_XspiNor, self.flexspiNorOpt0, self.flexspiNorOpt1, self.flexspiDeviceModel, self.isFdcbKept, self.flexspiNorDualImageInfoList)
         uivar.setRuntimeSettings(False)
         self.Show(False)
         runtimeSettings = uivar.getRuntimeSettings()

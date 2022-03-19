@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import array
 import rundef
 import boot
 sys.path.append(os.path.abspath(".."))
@@ -9,6 +10,7 @@ from gen import gencore
 from ui import uidef
 from ui import uivar
 from ui import uilang
+from mem import memdef
 
 ##
 # @brief
@@ -61,4 +63,79 @@ class secBootRun(gencore.secBootGen):
             self.printDeviceStatus('Target Version   = ' + self._formatBootloaderVersion(results[0]))
         else:
             pass
+
+    def getUsdhcSdMmcDeviceInfo ( self ):
+        status, results, cmdStr = self.blhost.getProperty(boot.properties.kPropertyTag_ExternalMemoryAttribles, self.bootDeviceMemId)
+        self.printLog(cmdStr)
+        if (status == boot.status.kStatus_Success):
+            #typedef struct
+            #{
+            #    uint32_t availableAttributesFlag; //!< Available Atrributes, bit map
+            #    uint32_t startAddress;            //!< start Address of external memory
+            #    uint32_t flashSizeInKB;           //!< flash size of external memory
+            #    uint32_t pageSize;                //!< page size of external memory
+            #    uint32_t sectorSize;              //!< sector size of external memory
+            #    uint32_t blockSize;               //!< block size of external memory
+            #} external_memory_property_store_t;
+            blockByteSize = results[5]
+            totalSizeKB = results[2]
+            self.printDeviceStatus("Block Size  = " + self.showAsOptimalMemoryUnit(blockByteSize))
+            strTotalSizeGB = ("%.2f" % (totalSizeKB / 1024.0 / 1024))
+            self.printDeviceStatus("Total Size  = " + self.convertLongIntHexText(strTotalSizeGB) + ' GB')
+            self.comMemWriteUnit = blockByteSize
+            self.comMemEraseUnit = blockByteSize
+            self.comMemReadUnit = blockByteSize
+        else:
+            self.printDeviceStatus("Block Size  = --------")
+            self.printDeviceStatus("Total Size  = --------")
+            return False
+        return True
+
+    def flash2ndBootableImageIntoFlexspiNor( self, image1Start, image1Size, image1Version, image0Version ):
+        status, results, cmdStr = self.blhost.flashEraseRegion(image1Start, image1Size, rundef.kBootDeviceMemId_FlexspiNor)
+        self.printLog(cmdStr)
+        if status != boot.status.kStatus_Success:
+            return False
+        image0Filename = 'bootableImage0.bin'
+        image0Filepath = os.path.join(self.blhostVectorsDir, image0Filename)
+        image1Filename = 'bootableImage1.bin'
+        image1Filepath = os.path.join(self.blhostVectorsDir, image1Filename)
+        status, results, cmdStr = self.blhost.readMemory(self.bootDeviceMemBase, image1Size, image0Filename, self.bootDeviceMemId)
+        self.printLog(cmdStr)
+        if status != boot.status.kStatus_Success:
+            return False
+        if image0Version != image1Version:
+            readoutBin = None
+            image0FileObj = open(image0Filepath, 'rb')
+            image1FileObj = open(image1Filepath, 'wb')
+            readoutBin = image0FileObj.read(memdef.kMemBlockOffset_ImageVersion)
+            image1FileObj.write(readoutBin)
+            thisBin = image0FileObj.read(4)
+            thisBin = chr(image1Version & 0xFF)
+            thisBin += chr((image1Version >> 8) & 0xFF)
+            thisBin += chr((image1Version >> 16) & 0xFF)
+            thisBin += chr((image1Version >> 24) & 0xFF)
+            image1FileObj.write(thisBin)
+            image1Size = image1Size - memdef.kMemBlockOffset_ImageVersion - 4
+            while image1Size > 0:
+                if image1Size > memdef.kMemBlockOffset_ImageVersion:
+                    readoutBin = image0FileObj.read(memdef.kMemBlockOffset_ImageVersion)
+                else:
+                    readoutBin = image0FileObj.read(image1Size)
+                image1Size -= len(readoutBin)
+                image1FileObj.write(readoutBin)
+            image0FileObj.close()
+            image1FileObj.close()
+        else:
+            image1Filepath = image0Filepath
+        status, results, cmdStr = self.blhost.writeMemory(image1Start, image1Filepath, rundef.kBootDeviceMemId_FlexspiNor)
+        try:
+            os.remove(image0Filepath)
+            os.remove(image1Filepath)
+        except:
+            pass
+        self.printLog(cmdStr)
+        if status != boot.status.kStatus_Success:
+            return False
+        return True
 

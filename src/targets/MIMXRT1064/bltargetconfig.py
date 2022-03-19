@@ -69,9 +69,12 @@ xspiNorCfgInfoOffset = 0x0
 flexspiNorEfuseBootCfg0Bits = 12
 isNonXipImageAppliableForXipableDeviceUnderClosedHab = True
 isSipFlexspiNorDevice = True
+hasFlexspiNorDualImageBoot = True
+hasFlexspiNorEcc = False
 isEccTypeSetInFuseMiscConf = True
 isSwEccSetAsDefaultInNandOpt = None
-hasMultiUsdhcBootInstance = False
+hasMultiUsdhcBootInstance = True
+hwAuthHashEngine = "DCP"
 
 quadspiNorDevice = None
 quadspiNorMemBase = None

@@ -69,7 +69,7 @@ class secBootUiUsdhcMmc(bootDeviceWin_UsdhcMmc.bootDeviceWin_UsdhcMmc):
             self.m_choice_resetBootBusConditions.Enable( False )
 
     def _recoverLastSettings ( self ):
-        busWidth = (self.usdhcMmcOpt0 & 0x00000100) >> 8
+        busWidth = (self.usdhcMmcOpt0 & 0x00000F00) >> 8
         if busWidth <= 2:
             self.m_choice_busWidth.SetSelection(busWidth)
         elif busWidth >= 5:
@@ -85,30 +85,30 @@ class secBootUiUsdhcMmc(bootDeviceWin_UsdhcMmc.bootDeviceWin_UsdhcMmc):
 
         enableBootConfig = self.usdhcMmcOpt0 & 0x00000001
         self.m_choice_enableBootConfig.SetSelection(enableBootConfig)
-        if enableBootConfig == 0:
-            self._updateBootCfgField(False)
+        # if enableBootConfig == 0:
+        #     self._updateBootCfgField(False)
+        # else:
+        #     self._updateBootCfgField(True)
+
+        bootBusWidth = (self.usdhcMmcOpt0 & 0x00030000) >> 16
+        self.m_choice_bootBusWidth.SetSelection(bootBusWidth)
+
+        bootMode = (self.usdhcMmcOpt0 & 0x00000030) >> 4
+        self.m_choice_bootMode.SetSelection(bootMode)
+
+        enableBootPartition = (self.usdhcMmcOpt0 & 0x00700000) >> 20
+        if enableBootPartition <= 2:
+            self.m_choice_enableBootPartition.SetSelection(enableBootPartition)
+        elif enableBootPartition >= 7:
+            self.m_choice_enableBootPartition.SetSelection(enableBootPartition - 4)
         else:
-            self._updateBootCfgField(True)
+            pass
 
-            bootBusWidth = (self.usdhcMmcOpt0 & 0x00030000) >> 16
-            self.m_choice_bootBusWidth.SetSelection(bootBusWidth)
+        enableBootAck = (self.usdhcMmcOpt0 & 0x00000004) >> 2
+        self.m_choice_enableBootAck.SetSelection(enableBootAck)
 
-            bootMode = (self.usdhcMmcOpt0 & 0x00000030) >> 4
-            self.m_choice_bootMode.SetSelection(bootMode)
-
-            enableBootPartition = (self.usdhcMmcOpt0 & 0x00700000) >> 20
-            if enableBootPartition <= 2:
-                self.m_choice_enableBootPartition.SetSelection(enableBootPartition)
-            elif enableBootPartition >= 7:
-                self.m_choice_enableBootPartition.SetSelection(enableBootPartition - 4)
-            else:
-                pass
-
-            enableBootAck = (self.usdhcMmcOpt0 & 0x00000004) >> 2
-            self.m_choice_enableBootAck.SetSelection(enableBootAck)
-
-            resetBootBusConditions = (self.usdhcMmcOpt0 & 0x00000008) >> 3
-            self.m_choice_resetBootBusConditions.SetSelection(resetBootBusConditions)
+        resetBootBusConditions = (self.usdhcMmcOpt0 & 0x00000008) >> 3
+        self.m_choice_resetBootBusConditions.SetSelection(resetBootBusConditions)
 
         self._updateInstanceField(self.hasMultiUsdhcBootInstance)
         if self.hasMultiUsdhcBootInstance:
@@ -342,26 +342,27 @@ class secBootUiUsdhcMmc(bootDeviceWin_UsdhcMmc.bootDeviceWin_UsdhcMmc):
         self.usdhcMmcOpt1 = (self.usdhcMmcOpt1 & 0x0FFFFFFF) | (val << 28)
 
     def callbackEnableBootConfig( self, event ):
-        txt = self.m_choice_enableBootConfig.GetString(self.m_choice_enableBootConfig.GetSelection())
-        if txt == 'No':
-            self._updateBootCfgField(False)
-        elif txt == 'Yes':
-            self._updateBootCfgField(True)
-        else:
-            pass
+        # txt = self.m_choice_enableBootConfig.GetString(self.m_choice_enableBootConfig.GetSelection())
+        # if txt == 'No':
+        #     self._updateBootCfgField(False)
+        # elif txt == 'Yes':
+        #     self._updateBootCfgField(True)
+        # else:
+        #     pass
+        pass
 
     def callbackOk( self, event ):
         self._getBusWidth()
         self._getTimingInterface()
         self._getPartitionAccess()
         self._getEnableBootConfig()
-        enableBootConfig = self.usdhcMmcOpt0 & 0x00000001
-        if enableBootConfig:
-            self._getBootBusWidth()
-            self._getBootMode()
-            self._getEnableBootPartition()
-            self._getEnableBootAck()
-            self._getResetBootBusConditions()
+        # enableBootConfig = self.usdhcMmcOpt0 & 0x00000001
+        # if enableBootConfig:
+        self._getBootBusWidth()
+        self._getBootMode()
+        self._getEnableBootPartition()
+        self._getEnableBootAck()
+        self._getResetBootBusConditions()
         if self.hasMultiUsdhcBootInstance:
             self._getInstance()
         self._getEnable1V8()

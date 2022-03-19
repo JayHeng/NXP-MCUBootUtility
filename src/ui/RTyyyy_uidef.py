@@ -87,6 +87,7 @@ kMemBlockColor_MBRDPT          = wx.Colour( 0xc1, 0x9f, 0x32 ) #
 kMemBlockColor_FDCB            = wx.Colour( 0x9f, 0x9f, 0x5f ) #wx.KHAKI
 kMemBlockColor_EKIB            = wx.Colour( 0xb0, 0x00, 0xff ) #wx.PURPLE
 kMemBlockColor_EPRDB           = wx.Colour( 0xa5, 0x2a, 0x2a ) #wx.BROWN
+kMemBlockColor_ImageVersion    = wx.CYAN
 kMemBlockColor_IVT             = wx.RED
 kMemBlockColor_BootData        = wx.GREEN
 kMemBlockColor_DCD             = wx.Colour( 0xc9, 0xd2, 0x00 ) #wx.DARK_YELLOW

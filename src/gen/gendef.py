@@ -16,3 +16,4 @@ kSbLoaderVersion_v1_0 = 0
 kSbLoaderVersion_v2_0 = 1
 kSbLoaderVersion_v2_1 = 2
 
+kImgVerOffset_NOR = 0x600

@@ -4,6 +4,7 @@ import sys
 import os
 import shutil
 import boot
+import memdef
 import RTyyyy_memdef
 sys.path.append(os.path.abspath(".."))
 from fuse import RTyyyy_fusecore
@@ -29,6 +30,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowEprdb0Intr = None
         self.needToShowEkib1Intr = None
         self.needToShowEprdb1Intr = None
+        self.needToShowImgVerIntr = None
         self.needToShowIvtIntr = None
         self.needToShowBootDataIntr = None
         self.needToShowDcdIntr = None
@@ -47,6 +49,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowEprdb0Intr = True
         self.needToShowEkib1Intr = True
         self.needToShowEprdb1Intr = True
+        self.needToShowImgVerIntr = True
         self.needToShowIvtIntr = True
         self.needToShowBootDataIntr = True
         self.needToShowDcdIntr = True
@@ -127,7 +130,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             pass
         return True
 
-    def _showUsdhcSdMmcMbrdpt( self ):
+    def _RTyyyy_showUsdhcSdMmcMbrdpt( self ):
         memFilename = 'usdhcSdMmcMbrdpt.dat'
         memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
         mbrdptAddr = self.bootDeviceMemBase
@@ -183,7 +186,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             imageMemBase = self.bootDeviceMemBase
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
-            self._showUsdhcSdMmcMbrdpt()
+            self._RTyyyy_showUsdhcSdMmcMbrdpt()
             imageMemBase = self.bootDeviceMemBase
         else:
             pass
@@ -228,6 +231,16 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
                     else:
                         if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
                             self.printMem(contentToShow)
+                elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion:
+                    self.printMem(contentToShow)
+                elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion + len(memContent):
+                    if self.flexspiNorImage0Version != None:
+                        self.printMem('-------------------------------Image Version------------------------------------------', RTyyyy_uidef.kMemBlockColor_ImageVersion)
+                        self.needToShowCfgIntr = False
+                        self.printMem(contentToShow[0:(14 + memdef.kMemBlockSize_ImageVersion * 3)], RTyyyy_uidef.kMemBlockColor_ImageVersion, False)
+                        self.printMem(contentToShow[(14 + memdef.kMemBlockSize_ImageVersion * 3):len(contentToShow)])
+                    else:
+                        self.printMem(contentToShow)
                 elif addr <= imageMemBase + self.destAppIvtOffset:
                     if self.secureBootType == RTyyyy_uidef.kSecureBootType_BeeCrypto:
                         ekib0Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EKIB0

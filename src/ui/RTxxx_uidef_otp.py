@@ -9,7 +9,9 @@ otpmapIndexDict_RTxxx    = {'kOtpIndex_START' :0x0,
                             'kOtpLocation_FlexcommSpiCfg'    :0x60,
                             'kOtpIndex_BOOT_CFG1' :0x61,
                             'kOtpIndex_BOOT_CFG2' :0x62,
+                            'kOtpLocation_FlexspiNorDualImageBootCfg2' :0x62,
                             'kOtpIndex_BOOT_CFG3' :0x63,
+                            'kOtpLocation_FlexspiNorDualImageBootCfg3' :0x63,
 
                             'kOtpEntryModeRegion0IndexStart' :0x04,
                             'kOtpEntryModeRegion0IndexEnd'   :0x04,
@@ -26,5 +28,10 @@ otpmapIndexDict_RTxxx    = {'kOtpIndex_START' :0x0,
 otpmapDefnDict_RTxxx    = {
                             'kOtpMask_RedundantSpiPort'            :0x000e0000,
                             'kOtpShift_RedundantSpiPort'           :17,
+
+                            'kOtpMask_FlexspiNorImage1Size'     :0xF0000000,
+                            'kOtpShift_FlexspiNorImage1Size'    :28,
+                            'kOtpMask_FlexspiNorImage1Offset'   :0xFFC00000,
+                            'kOtpShift_FlexspiNorImage1Offset'  :22,
                             }
 

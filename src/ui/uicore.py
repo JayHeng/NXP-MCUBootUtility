@@ -1259,9 +1259,12 @@ class secBootUi(secBootWin.secBootWin):
     def setImageDataFilePath( self, filePath ):
         self.m_filePicker_savedBinFile.SetPath(filePath)
 
-    def printMem( self , memStr, strColor=uidef.kMemBlockColor_Padding ):
+    def printMem( self , memStr, strColor=uidef.kMemBlockColor_Padding, feedEol = True ):
         self.m_textCtrl_bootDeviceMem.SetDefaultStyle(wx.TextAttr(strColor, uidef.kMemBlockColor_Background))
-        self.m_textCtrl_bootDeviceMem.AppendText(memStr + "\n")
+        if feedEol:
+            self.m_textCtrl_bootDeviceMem.AppendText(memStr + "\n")
+        else:
+            self.m_textCtrl_bootDeviceMem.AppendText(memStr)
 
     def clearMem( self ):
         self.m_textCtrl_bootDeviceMem.Clear()

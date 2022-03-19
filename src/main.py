@@ -132,7 +132,7 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                 flexspiNorFrame.SetTitle(uilang.kSubLanguageContentDict['quadspinor_title'][self.languageIndex])
             else:
                 flexspiNorFrame.SetTitle(uilang.kSubLanguageContentDict['flexspinor_title'][self.languageIndex])
-            flexspiNorFrame.setNecessaryInfo(self.mcuSeries, self.tgt.flexspiFreqs, self.cfgFdcbBinFilename)
+            flexspiNorFrame.setNecessaryInfo(self.mcuSeries, self.tgt.flexspiFreqs, self.cfgFdcbBinFilename, self.tgt.hasFlexspiNorDualImageBoot)
             flexspiNorFrame.Show(True)
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             flexspiNandFrame = ui_cfg_flexspinand.secBootUiFlexspiNand(None)
@@ -147,12 +147,14 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             semcNandFrame.SetTitle(uilang.kSubLanguageContentDict['semcnand_title'][self.languageIndex])
             semcNandFrame.setNecessaryInfo(self.tgt.isSwEccSetAsDefaultInNandOpt)
             semcNandFrame.Show(True)
-        elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd:
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
+             self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd:
             usdhcSdFrame = ui_cfg_usdhcsd.secBootUiUsdhcSd(None)
             usdhcSdFrame.SetTitle(uilang.kSubLanguageContentDict['usdhcsd_title'][self.languageIndex])
             usdhcSdFrame.setNecessaryInfo(self.tgt.hasMultiUsdhcBootInstance)
             usdhcSdFrame.Show(True)
-        elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc or \
+             self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
             usdhcMmcFrame = ui_cfg_usdhcmmc.secBootUiUsdhcMmc(None)
             usdhcMmcFrame.SetTitle(uilang.kSubLanguageContentDict['usdhcmmc_title'][self.languageIndex])
             usdhcMmcFrame.setNecessaryInfo(self.tgt.hasMultiUsdhcBootInstance)
@@ -318,6 +320,11 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                         self.writeBootDeviceMemory()
                     else:
                         pass
+                elif self.accessMemType == 'EccWriteMem':
+                    if self.connectStage == uidef.kConnectStage_Reset:
+                        self.eccWriteBootDeviceMemory()
+                    else:
+                        pass
                 else:
                     pass
                 self.isAccessMemTaskPending = False
@@ -430,6 +437,20 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
     def callbackWriteMem( self, event ):
         if self.toolRunMode != uidef.kToolRunMode_Entry:
             self._doWriteMem()
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['operMemError_notAvailUnderEntry'][self.languageIndex])
+
+    def _doEccWriteMem( self ):
+        if self.connectStage == uidef.kConnectStage_Reset:
+            self._startGaugeTimer()
+            self.isAccessMemTaskPending = True
+            self.accessMemType = 'EccWriteMem'
+        else:
+            self.popupMsgBox(uilang.kMsgLanguageContentDict['connectError_hasnotCfgBootDevice'][self.languageIndex])
+
+    def callbackEccWriteMem( self, event ):
+        if self.toolRunMode != uidef.kToolRunMode_Entry:
+            self._doEccWriteMem()
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['operMemError_notAvailUnderEntry'][self.languageIndex])
 
@@ -677,14 +698,15 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_2_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_1'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_4_0'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_4_0'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_5_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v3.4.0")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v3.5.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

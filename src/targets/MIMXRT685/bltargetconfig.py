@@ -62,9 +62,12 @@ xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = None
 isSipFlexspiNorDevice = False
 isNonXipImageAppliableForXipableDeviceUnderClosedHab = None
+hasFlexspiNorDualImageBoot = True
+hasFlexspiNorEcc = False
 isEccTypeSetInFuseMiscConf = None
 isSwEccSetAsDefaultInNandOpt = None
-hasMultiUsdhcBootInstance = False
+hasMultiUsdhcBootInstance = True
+hwAuthHashEngine = None
 
 quadspiNorDevice = None
 quadspiNorMemBase = None

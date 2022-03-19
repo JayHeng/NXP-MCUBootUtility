@@ -118,6 +118,9 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.destAppCsfAddress = None
         self.isXipApp = False
 
+        self.flexspiNorImage0Version = None
+        self.flexspiNorImage1Version = None
+
     def _copyCstBinToElftosbFolder( self ):
         shutil.copy(self.cstBinFolder + '\\cst.exe', os.path.split(self.elftosbPath)[0])
 
@@ -375,7 +378,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 vectorOffset += RTyyyy_gendef.kCortexmVectorTableAlignment
             if isVectorFound:
                 ivtEntry = ivtSelf + vectorOffset - destAppIvtOffset
-                self.printLog('ivtEntry =' + str(hex(ivtEntry)))
+                #self.printLog('ivtEntry =' + str(hex(ivtEntry)))
             else:
                 self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_vectorNotFound'][self.languageIndex] + srcAppFilename.encode('utf-8'))
                 return None, None, 0
@@ -463,6 +466,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     isSrcAppBootableImage, fdcbOffsetInApp = self._RTyyyy_isSrcAppBootableImage(initialLoadAppBytes)
                     if isSrcAppBootableImage:
                         self.extractFdcbDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
+                        if self.tgt.hasFlexspiNorDualImageBoot:
+                            self.flexspiNorImage0Version = self.getImageVersionValueFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         self._extractDcdDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         startAddress, entryPointAddress, lengthInByte = self._extractImageDataFromSrcApp(srecObj.as_binary(), fdcbOffsetInApp, appName)
                         if startAddress != None:
@@ -473,6 +478,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                         entryPointAddress = self.getVal32FromByteArray(srecObj.as_binary(startAddress + 0x4, startAddress  + 0x8))
                         lengthInByte = len(srecObj.as_binary())
                         isConvSuccessed = True
+                        if self.tgt.hasFlexspiNorDualImageBoot:
+                            self.flexspiNorImage0Version = rundef.kFlexspiNorContent_Blank32
                 except:
                     pass
             else:
@@ -702,7 +709,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 pass
             bdContent += "    Header_Version=\"" + headerVersion + "\",\n"
             bdContent += "    Header_HashAlgorithm=\"sha256\",\n"
-            bdContent += "    Header_Engine=\"DCP\",\n"
+            bdContent += "    Header_Engine=\"" + self.tgt.hwAuthHashEngine + "\",\n"
             bdContent += "    Header_EngineConfiguration=0,\n"
             bdContent += "    Header_CertificateFormat=\"x509\",\n"
             bdContent += "    Header_SignatureFormat=\"CMS\"\n"
@@ -755,7 +762,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 bdContent += "}\n"
             bdContent += "\nsection (SEC_CSF_AUTHENTICATE_DATA;\n"
             bdContent += "    AuthenticateData_VerificationIndex=2,\n"
-            bdContent += "    AuthenticateData_Engine=\"DCP\",\n"
+            bdContent += "    AuthenticateData_Engine=\"" + self.tgt.hwAuthHashEngine + "\",\n"
             bdContent += "    AuthenticateData_EngineConfiguration=0)\n"
             bdContent += "{\n"
             bdContent += "}\n"
@@ -764,7 +771,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                ((secureBootType in RTyyyy_uidef.kSecureBootType_HwCrypto) and self.isCertEnabledForHwCrypto):
                 bdContent += "\nsection (SEC_SET_ENGINE;\n"
                 bdContent += "    SetEngine_HashAlgorithm = \"sha256\",\n"
-                bdContent += "    SetEngine_Engine = \"DCP\",\n"
+                bdContent += "    SetEngine_Engine = \"" + self.tgt.hwAuthHashEngine + "\",\n"
                 bdContent += "    SetEngine_EngineConfiguration = \"0\")\n"
                 bdContent += "{\n"
                 bdContent += "}\n"
@@ -783,7 +790,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 bdContent += "{\n"
                 bdContent += "}\n"
                 bdContent += "section (SEC_CSF_DECRYPT_DATA;\n"
-                bdContent += "    Decrypt_Engine=\"DCP\",\n"
+                bdContent += "    Decrypt_Engine=\"" + self.tgt.hwAuthHashEngine + "\",\n"
                 bdContent += "    Decrypt_EngineConfiguration=\"0\",\n"
                 bdContent += "    Decrypt_VerifyIndex=0,\n"
                 bdContent += "    Decrypt_MacBytes=16)\n"
@@ -1414,7 +1421,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 pass
             destSbAppName += '_' + self.sbEnableBootDeviceMagic
             if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-                flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(self.bootDevice)
+                flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
                 if flexspiNorDeviceModel == 'No':
                     destSbAppName += '_' + self.convertLongIntHexText(str(hex(flexspiNorOpt0))) + '_' + self.convertLongIntHexText(str(hex(flexspiNorOpt1)))
                 else:
@@ -1497,7 +1504,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         sbBatContent += " -f kinetis -V -c " + "\"" + sbAppBdFilename + "\"" + ' -o ' + "\"" + destSbAppFilename + "\"" + destAppFilename
         if sbType == RTyyyy_gendef.kSbFileType_All or sbType == RTyyyy_gendef.kSbFileType_Flash:
             if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-                flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
+                flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
                 if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_FDCB:
                     sbBatContent += ' ' + "\"" + self.cfgFdcbBinFilename + "\""
             if self.secureBootType == RTyyyy_uidef.kSecureBootType_HabCrypto:

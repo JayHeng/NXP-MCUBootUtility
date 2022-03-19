@@ -7,6 +7,7 @@ import RTxxx_rundef
 import rundef
 import boot
 sys.path.append(os.path.abspath(".."))
+from gen import gendef
 from gen import RTxxx_gencore
 from gen import RTxxx_gendef
 from ui import RTxxx_uidef
@@ -244,10 +245,10 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
             self._getFlexcommSpiNorDeviceInfo()
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd:
             self.printDeviceStatus("--------uSDHC SD Card info--------")
-            pass
+            self.getUsdhcSdMmcDeviceInfo()
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
             self.printDeviceStatus("--------uSDHC MMC Card info-------")
-            pass
+            self.getUsdhcSdMmcDeviceInfo()
         else:
             pass
 
@@ -336,11 +337,17 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         configOptList = []
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
-            flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
+            flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
             configOptList.extend([flexspiNorOpt0, flexspiNorOpt1])
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
             flexcommSpiNorOpt0, flexcommSpiNorOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([flexcommSpiNorOpt0, flexcommSpiNorOpt1])
+        elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd:
+            usdhcSdOpt = uivar.getBootDeviceConfiguration(self.bootDevice)
+            configOptList.extend([usdhcSdOpt])
+        elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
+            usdhcMmcOpt0, usdhcMmcOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)
+            configOptList.extend([usdhcMmcOpt0, usdhcMmcOpt1])
         else:
             pass
         status = boot.status.kStatus_Success
@@ -412,6 +419,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         imageLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+            image0Size = 0
             if not self.isXspiNorErasedForImage:
                 if not self._eraseXspiNorForImageLoading():
                     return False
@@ -421,6 +429,20 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                         self.isXspiNorErasedForImage = False
                         self.isFdcbFromSrcApp = False
                         return False
+            flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            if self.tgt.hasFlexspiNorDualImageBoot and ((flexspiNorDualImageInfoList[2] & 0xFFFF) != 0):
+                if flexspiNorDualImageInfoList[0] == 0xffffffff:
+                    self.flexspiNorImage0Version = flexspiNorDualImageInfoList[0]
+                else:
+                    self.flexspiNorImage0Version = flexspiNorDualImageInfoList[0] + ((flexspiNorDualImageInfoList[0] ^ 0xFFFF) << 16)
+            if self.flexspiNorImage0Version != None and self.flexspiNorImage0Version != rundef.kFlexspiNorContent_Blank32:
+                versionLoadAddr = self.bootDeviceMemBase + gendef.kImgVerOffset_NOR
+                if self.isSbFileEnabledToGen:
+                    self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(self.flexspiNorImage0Version))) + " > " + self.convertLongIntHexText(str(hex(versionLoadAddr))) + ";\n")
+                    status = boot.status.kStatus_Success
+                else:
+                    status, results, cmdStr = self.blhost.fillMemory(versionLoadAddr, 0x4, self.flexspiNorImage0Version)
+                    self.printLog(cmdStr)
             imageLoadAddr = self.bootDeviceMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
             if self.isSbFileEnabledToGen:
                 self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
@@ -428,11 +450,39 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
             else:
                 status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, self.destAppFilename, self.bootDeviceMemId)
                 self.printLog(cmdStr)
+            image0Size = imageLoadAddr - self.bootDeviceMemBase + os.path.getsize(self.destAppFilename)
             self.isXspiNorErasedForImage = False
             self.isFdcbFromSrcApp = False
             if status != boot.status.kStatus_Success:
                 return False
+            else:
+                # Check if dual image boot is enabled
+                if self.tgt.hasFlexspiNorDualImageBoot and ((flexspiNorDualImageInfoList[2] & 0xFFFF) != 0):
+                    image1Start = self.bootDeviceMemBase + (flexspiNorDualImageInfoList[2] & 0xFFFF) * 256 * 1024
+                    image1Size = image0Size
+                    if flexspiNorDualImageInfoList[1] == 0xffffffff:
+                        self.flexspiNorImage1Version = flexspiNorDualImageInfoList[1]
+                    else:
+                        self.flexspiNorImage1Version = flexspiNorDualImageInfoList[1] + ((flexspiNorDualImageInfoList[1] ^ 0xFFFF) << 16)
+                    if not self.flash2ndBootableImageIntoFlexspiNor(image1Start, image1Size, self.flexspiNorImage1Version, self.flexspiNorImage0Version):
+                        return False
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
+            memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
+            imageLoadAddr = self.bootDeviceMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+            if self.isSbFileEnabledToGen:
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ".." + self.convertLongIntHexText(str(hex(imageLoadAddr + memEraseLen))) + ";\n")
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
+            else:
+                status, results, cmdStr = self.blhost.flashEraseRegion(imageLoadAddr, memEraseLen, self.bootDeviceMemId)
+                self.printLog(cmdStr)
+                if status != boot.status.kStatus_Success:
+                    return False
+                status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, self.destAppFilename, self.bootDeviceMemId)
+                self.printLog(cmdStr)
+                if status != boot.status.kStatus_Success:
+                    return False
+        elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd or \
+             self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
             imageLoadAddr = self.bootDeviceMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
             if self.isSbFileEnabledToGen:
@@ -461,9 +511,31 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         flexcommSpi = self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpLocation_FlexcommSpiCfg'], '', False)
         return flexcommSpi
 
+    def _burnCommonMcuOtpBits( self, otpIndexStr, otpMaskStr, otpShiftStr, setOtpBits ):
+            getOtpWord = self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict[otpIndexStr], '', False)
+            getOtpBits = (getOtpWord & self.tgt.otpmapDefnDict[otpMaskStr]) >> self.tgt.otpmapDefnDict[otpShiftStr]
+            if setOtpBits != getOtpBits:
+                if getOtpBits != 0:
+                    return False
+                setOtpWord = (getOtpWord & (~self.tgt.otpmapDefnDict[otpMaskStr]) | (setOtpBits << self.tgt.otpmapDefnDict[otpShiftStr]))
+                burnResult = self.RTxxx_burnMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict[otpIndexStr], setOtpWord)
+                return burnResult 
+            else:
+                return True
+
     def RTxxx_burnBootDeviceOtps( self ):
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
-            pass
+            if self.tgt.hasFlexspiNorDualImageBoot:
+                flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+                flexspiNorImage1Offset = (flexspiNorDualImageInfoList[2] & 0xFFFF)
+                flexspiNorImage1Size = ((flexspiNorDualImageInfoList[2] >> 16) & 0xFFFF)
+                if flexspiNorImage1Offset != 0:
+                    if not self._burnCommonMcuOtpBits('kOtpLocation_FlexspiNorDualImageBootCfg3', 'kOtpMask_FlexspiNorImage1Offset', 'kOtpShift_FlexspiNorImage1Offset', flexspiNorImage1Offset):
+                        self.popupMsgBox(uilang.kMsgLanguageContentDict['burnOtpError_failToBurnDualImageBootCfg3'][self.languageIndex])
+                        return False
+                    if not self._burnCommonMcuOtpBits('kOtpLocation_FlexspiNorDualImageBootCfg2', 'kOtpMask_FlexspiNorImage1Size', 'kOtpShift_FlexspiNorImage1Size', flexspiNorImage1Size):
+                        self.popupMsgBox(uilang.kMsgLanguageContentDict['burnOtpError_failToBurnDualImageBootCfg2'][self.languageIndex])
+                        return False
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
             setFlexcommSpiCfg = 0
             flexcommSpiNorOpt0, flexcommSpiNorOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)

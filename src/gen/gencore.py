@@ -11,6 +11,7 @@ from ui import uidef
 from ui import uivar
 from ui import uilang
 from mem import memdef
+from run import rundef
 
 class secBootGen(uicore.secBootUi):
 
@@ -29,6 +30,8 @@ class secBootGen(uicore.secBootUi):
         self.fdcbBinFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'bt_fdcb.bin')
         self.cfgFdcbBinFilename = os.path.join(self.exeTopRoot, 'gen', 'fdcb_file', 'cfg_fdcb.bin')
         self.isFdcbFromSrcApp = False
+        self.flexspiNorImage0Version = None
+        self.flexspiNorImage1Version = None
 
     def isInTheRangeOfFlexram( self, start, length ):
         if ((start >= self.tgt.memoryRange['itcm'].start) and (start + length <= self.tgt.memoryRange['itcm'].start + self.tgt.memoryRange['itcm'].length)) or \
@@ -215,10 +218,22 @@ class secBootGen(uicore.secBootUi):
             fileObj.close()
 
     def extractFdcbDataFromSrcApp(self, initialLoadAppBytes, fdcbOffset ):
-        flexspiNorOpt0, flexspiNorOpt1, flexspiDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
+        flexspiNorOpt0, flexspiNorOpt1, flexspiDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
         self.isFdcbFromSrcApp = isFdcbKept
         if self.isFdcbFromSrcApp:
             with open(self.fdcbBinFilename, 'wb') as fileObj:
                 fileObj.write(initialLoadAppBytes[fdcbOffset:fdcbOffset+memdef.kMemBlockSize_FDCB])
                 fileObj.close()
+
+    def getImageVersionValueFromSrcApp(self, initialLoadAppBytes, fdcbOffset ):
+        var32Vaule = 0
+        idxStart = fdcbOffset + gendef.kImgVerOffset_NOR - self.tgt.xspiNorCfgInfoOffset
+        #for i in range(memdef.kMemBlockSize_ImageVersion):
+        #    var32Vaule = var32Vaule + initialLoadAppBytes[idxStart + i] << (8 * i)
+        #    self.printLog('----------------' + str(initialLoadAppBytes[idxStart + i]))
+        #    self.printLog('----------------' + str(hex(var32Vaule)))
+        var32Vaule = (initialLoadAppBytes[idxStart + 3] << 24) + (initialLoadAppBytes[idxStart + 2] << 16) + (initialLoadAppBytes[idxStart + 1] << 8) + initialLoadAppBytes[idxStart]
+        if var32Vaule == 0:
+            var32Vaule = rundef.kFlexspiNorContent_Blank32
+        return var32Vaule
 

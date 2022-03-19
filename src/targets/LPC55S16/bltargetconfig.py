@@ -42,7 +42,7 @@ build = 'Release'
 
 availablePeripherals = 0x17
 romUsbVid = '0x1FC9'
-romUsbPid = '0x0021'
+romUsbPid = '0x0022'
 hasSdpReadRegisterCmd = None
 flashloaderUsbVid = '0x15A2'
 flashloaderUsbPid = '0x0073'
@@ -61,9 +61,12 @@ xspiNorCfgInfoOffset = None
 flexspiNorEfuseBootCfg0Bits = None
 isSipFlexspiNorDevice = None
 isNonXipImageAppliableForXipableDeviceUnderClosedHab = None
+hasFlexspiNorDualImageBoot = None
+hasFlexspiNorEcc = None
 isEccTypeSetInFuseMiscConf = None
 isSwEccSetAsDefaultInNandOpt = None
 hasMultiUsdhcBootInstance = None
+hwAuthHashEngine = None
 
 quadspiNorDevice = None
 quadspiNorMemBase = None

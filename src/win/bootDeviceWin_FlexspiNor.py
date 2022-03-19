@@ -17,7 +17,7 @@ import wx.xrc
 class bootDeviceWin_FlexspiNor ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 656,398 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 987,398 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
@@ -30,7 +30,7 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 		wSizer_win.Add( self.m_staticText_deviceModel, 0, wx.ALL, 5 )
 
 		m_choice_deviceModeChoices = [ u"No", u"Complete_FDCB", u"ISSI_IS25LPxxxA_IS25WPxxxA", u"ISSI_IS26KSxxxS_IS26KLxxxS", u"Macronix_MX25Uxxx32F_MX25Lxxx45G", u"Macronix_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G", u"Macronix_MX25UM51345G", u"Macronix_MX25UM51345G_2nd", u"Micron_MT25QLxxxA", u"Micron_MT35XLxxxA_MT35XUxxxA", u"Adesto_AT25SFxxxA", u"Adesto_ATXPxxx", u"Cypress_S25FSxxxS_S25FLxxxS", u"Cypress_S26KSxxxS_S26KLxxxS", u"GigaDevice_GD25QxxxC", u"GigaDevice_GD25LBxxxE", u"GigaDevice_GD25LTxxxE", u"GigaDevice_GD25LXxxxE", u"Winbond_W25QxxxJV", u"Microchip_SST26VFxxxB", u"FudanMicro_FM25Qxxx", u"BoyaMicro_BY25QxxxBS", u"XMC_XM25QHxxxB_XM25QUxxxB", u"XTXtech_X25FxxxB_X25QxxxD", u"Puya_P25QxxxLE_P25QxxxH_P25QxxxU", u"AMIC_A25LQxxx" ]
-		self.m_choice_deviceMode = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 340,-1 ), m_choice_deviceModeChoices, 0 )
+		self.m_choice_deviceMode = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 593,-1 ), m_choice_deviceModeChoices, 0 )
 		self.m_choice_deviceMode.SetSelection( 0 )
 		wSizer_win.Add( self.m_choice_deviceMode, 0, wx.ALL, 5 )
 
@@ -183,6 +183,52 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 
 		wSizer_win.Add( self.m_notebook_norOpt1, 1, wx.EXPAND |wx.ALL, 5 )
 
+		self.m_notebook_dualImageOpt = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_panel_dualImageOpt = wx.Panel( self.m_notebook_dualImageOpt, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		gSizer_dualImageOpt = wx.GridSizer( 0, 2, 0, 0 )
+
+		self.m_staticText_image0Version = wx.StaticText( self.m_panel_dualImageOpt, wx.ID_ANY, u"Image 0 Version(0-65535):", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		self.m_staticText_image0Version.Wrap( -1 )
+
+		gSizer_dualImageOpt.Add( self.m_staticText_image0Version, 0, wx.ALL, 5 )
+
+		self.m_textCtrl_image0Version = wx.TextCtrl( self.m_panel_dualImageOpt, wx.ID_ANY, u"none", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		gSizer_dualImageOpt.Add( self.m_textCtrl_image0Version, 0, wx.ALL, 5 )
+
+		self.m_staticText_image1Version = wx.StaticText( self.m_panel_dualImageOpt, wx.ID_ANY, u"Image 1 Version(0-65535):", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		self.m_staticText_image1Version.Wrap( -1 )
+
+		gSizer_dualImageOpt.Add( self.m_staticText_image1Version, 0, wx.ALL, 5 )
+
+		self.m_textCtrl_image1Version = wx.TextCtrl( self.m_panel_dualImageOpt, wx.ID_ANY, u"none", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		gSizer_dualImageOpt.Add( self.m_textCtrl_image1Version, 0, wx.ALL, 5 )
+
+		self.m_staticText_image1Offset = wx.StaticText( self.m_panel_dualImageOpt, wx.ID_ANY, u"Image 1 Offset:", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		self.m_staticText_image1Offset.Wrap( -1 )
+
+		gSizer_dualImageOpt.Add( self.m_staticText_image1Offset, 0, wx.ALL, 5 )
+
+		self.m_textCtrl_image1Offset = wx.TextCtrl( self.m_panel_dualImageOpt, wx.ID_ANY, u"0x0", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		gSizer_dualImageOpt.Add( self.m_textCtrl_image1Offset, 0, wx.ALL, 5 )
+
+		self.m_staticText_image1Size = wx.StaticText( self.m_panel_dualImageOpt, wx.ID_ANY, u"Image 1 Size:", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		self.m_staticText_image1Size.Wrap( -1 )
+
+		gSizer_dualImageOpt.Add( self.m_staticText_image1Size, 0, wx.ALL, 5 )
+
+		m_choice_image1SizeChoices = [ u"Same as Offset", u"1MB", u"2MB", u"3MB", u"4MB", u"5MB", u"6MB", u"7MB", u"8MB", u"9MB", u"10MB", u"11MB", u"12MB", u"256KB", u"512KB", u"768KB" ]
+		self.m_choice_image1Size = wx.Choice( self.m_panel_dualImageOpt, wx.ID_ANY, wx.DefaultPosition, wx.Size( 140,-1 ), m_choice_image1SizeChoices, 0 )
+		self.m_choice_image1Size.SetSelection( 0 )
+		gSizer_dualImageOpt.Add( self.m_choice_image1Size, 0, wx.ALL, 5 )
+
+
+		self.m_panel_dualImageOpt.SetSizer( gSizer_dualImageOpt )
+		self.m_panel_dualImageOpt.Layout()
+		gSizer_dualImageOpt.Fit( self.m_panel_dualImageOpt )
+		self.m_notebook_dualImageOpt.AddPage( self.m_panel_dualImageOpt, u"Dual Image Option", False )
+
+		wSizer_win.Add( self.m_notebook_dualImageOpt, 1, wx.EXPAND |wx.ALL, 5 )
+
 		self.m_staticText_winNull0 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 20,-1 ), 0 )
 		self.m_staticText_winNull0.Wrap( -1 )
 
@@ -191,7 +237,7 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 		self.m_button_completeFdcb = wx.Button( self, wx.ID_ANY, u"Complete FDCB Configuration (512bytes)", wx.DefaultPosition, wx.Size( 238,-1 ), 0 )
 		wSizer_win.Add( self.m_button_completeFdcb, 0, wx.ALL, 5 )
 
-		self.m_staticText_winNull1 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 78,-1 ), 0 )
+		self.m_staticText_winNull1 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 395,-1 ), 0 )
 		self.m_staticText_winNull1.Wrap( -1 )
 
 		wSizer_win.Add( self.m_staticText_winNull1, 0, wx.ALL, 5 )

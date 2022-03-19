@@ -73,9 +73,12 @@ xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = 12
 isNonXipImageAppliableForXipableDeviceUnderClosedHab = True
 isSipFlexspiNorDevice = False
+hasFlexspiNorDualImageBoot = True
+hasFlexspiNorEcc = True
 isEccTypeSetInFuseMiscConf = True
 isSwEccSetAsDefaultInNandOpt = False
 hasMultiUsdhcBootInstance = True
+hwAuthHashEngine = "CAAM"
 
 quadspiNorDevice = None
 quadspiNorMemBase = None

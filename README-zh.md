@@ -1,6 +1,6 @@
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v3.4.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v3.4.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v3.5.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v3.5.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 [English](./README.md) | 中文
 
@@ -42,6 +42,7 @@
 -------------------------------------------------------
 > * 支持i.MXRTxxx全系列MCU，包含i.MXRT5xx、i.MXRT6xx   
 > * 支持下载Bootable image进主动启动设备 - FlexSPI/QuadSPI接口NOR Flash  
+> * 支持下载Bootable image进主动启动设备 - uSDHC接口SD/eMMC卡  
 > * 支持下载Bootable image进备份启动设备 - Flexcomm SPI接口NOR Flash  
 > * 支持用于开发阶段的非安全加密启动（未签名，CRC校验）  
 > * 支持MCU芯片内部OTP的回读和烧写操作（即专用OTP烧写器）  

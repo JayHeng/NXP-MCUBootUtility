@@ -25,12 +25,41 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
     def RTxxx_initMem( self ):
 
         self.needToShowCfgIntr = None
+        self.needToShowImgVerIntr = None
         self.needToShowImageIntr = None
+        self.needToShowMbrdptIntr = None
         self._RTxxx_initShowIntr()
 
     def _RTxxx_initShowIntr( self ):
         self.needToShowCfgIntr = True
+        self.needToShowImgVerIntr = True
         self.needToShowImageIntr = True
+        self.needToShowMbrdptIntr = True
+
+    def _RTxxx_showUsdhcSdMmcMbrdpt( self ):
+        memFilename = 'usdhcSdMmcMbrdpt.dat'
+        memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
+        mbrdptAddr = self.bootDeviceMemBase
+        status, results, cmdStr = self.blhost.readMemory(mbrdptAddr, RTxxx_memdef.kMemBlockSize_MBRDPT, memFilename, self.bootDeviceMemId)
+        self.printLog(cmdStr)
+        if status != boot.status.kStatus_Success:
+            return False
+        readoutMemLen = os.path.getsize(memFilepath)
+        memLeft = readoutMemLen
+        with open(memFilepath, 'rb') as fileObj:
+            while memLeft > 0:
+                contentToShow, memContent = self.getOneLineContentToShow(mbrdptAddr, memLeft, fileObj)
+                memLeft -= len(memContent)
+                mbrdptAddr += len(memContent)
+                if self.needToShowMbrdptIntr:
+                    self.printMem('----------------------------------MBR&DPT---------------------------------------------', RTxxx_uidef.kMemBlockColor_MBRDPT)
+                    self.needToShowMbrdptIntr = False
+                self.printMem(contentToShow, RTxxx_uidef.kMemBlockColor_MBRDPT)
+        try:
+            os.remove(memFilepath)
+        except:
+            pass
+        return True
 
     def RTxxx_readProgrammedMemoryAndShow( self ):
         if not os.path.isfile(self.destAppFilename):
@@ -42,7 +71,12 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
         readoutMemLen = 0
         imageFileLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
+            imageMemBase = self.bootDeviceMemBase
+        elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd or \
+             self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
+            self._RTxxx_showUsdhcSdMmcMbrdpt()
             imageMemBase = self.bootDeviceMemBase
         else:
             pass
@@ -72,6 +106,16 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
                             self.printMem('------------------------------------FDCB----------------------------------------------', RTxxx_uidef.kMemBlockColor_FDCB)
                             self.needToShowCfgIntr = False
                         self.printMem(contentToShow, RTxxx_uidef.kMemBlockColor_FDCB)
+                    else:
+                        self.printMem(contentToShow)
+                elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion:
+                    self.printMem(contentToShow)
+                elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion + len(memContent):
+                    if self.flexspiNorImage0Version != None:
+                        self.printMem('-------------------------------Image Version------------------------------------------', RTxxx_uidef.kMemBlockColor_ImageVersion)
+                        self.needToShowCfgIntr = False
+                        self.printMem(contentToShow[0:(14 + memdef.kMemBlockSize_ImageVersion * 3)], RTxxx_uidef.kMemBlockColor_ImageVersion, False)
+                        self.printMem(contentToShow[(14 + memdef.kMemBlockSize_ImageVersion * 3):len(contentToShow)])
                     else:
                         self.printMem(contentToShow)
                 elif addr <= imageMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM:

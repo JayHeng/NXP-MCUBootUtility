@@ -69,9 +69,12 @@ class Target(object):
         self.flexspiNorEfuseBootCfg0Bits = misc.get_dict_default(kwargs, 'flexspiNorEfuseBootCfg0Bits', None)
         self.isNonXipImageAppliableForXipableDeviceUnderClosedHab = misc.get_dict_default(kwargs, 'isNonXipImageAppliableForXipableDeviceUnderClosedHab', None)
         self.isSipFlexspiNorDevice = misc.get_dict_default(kwargs, 'isSipFlexspiNorDevice', None)
+        self.hasFlexspiNorDualImageBoot = misc.get_dict_default(kwargs, 'hasFlexspiNorDualImageBoot', None)
+        self.hasFlexspiNorEcc = misc.get_dict_default(kwargs, 'hasFlexspiNorEcc', None)
         self.isEccTypeSetInFuseMiscConf = misc.get_dict_default(kwargs, 'isEccTypeSetInFuseMiscConf', None)
         self.isSwEccSetAsDefaultInNandOpt = misc.get_dict_default(kwargs, 'isSwEccSetAsDefaultInNandOpt', None)
         self.hasMultiUsdhcBootInstance = misc.get_dict_default(kwargs, 'hasMultiUsdhcBootInstance', None)
+        self.hwAuthHashEngine = misc.get_dict_default(kwargs, 'hwAuthHashEngine', None)
 
         self.quadspiNorDevice = misc.get_dict_default(kwargs, 'quadspiNorDevice', None)
         self.quadspiNorMemBase = misc.get_dict_default(kwargs, 'quadspiNorMemBase', None)

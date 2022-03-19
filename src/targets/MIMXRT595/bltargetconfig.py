@@ -53,7 +53,9 @@ availableCommands = 0x5EFDF
 supportedPeripheralSpeed_uart = [4800, 9600, 19200, 57600, 115200] # @todo Verify
 availableSecureBootTypes = RTxxx_uidef.kSecureBootType_Latest
 hasRemappedFuse = None
-availableBootDevices = RTxxx_uidef.kBootDevice_Latest
+availableBootDevices = [RTxxx_uidef.kBootDevice_FlexspiNor,
+                        RTxxx_uidef.kBootDevice_UsdhcMmc,
+                        RTxxx_uidef.kBootDevice_FlexcommSpiNor]
 flexspiNorDevice = uidef.kFlexspiNorDevice_MXIC_MX25UM51345G
 flexspiNorMemBase0 = 0x08000000
 flexspiNorMemBase1 = None
@@ -62,9 +64,12 @@ xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = None
 isSipFlexspiNorDevice = False
 isNonXipImageAppliableForXipableDeviceUnderClosedHab = None
+hasFlexspiNorDualImageBoot = True
+hasFlexspiNorEcc = False
 isEccTypeSetInFuseMiscConf = None
 isSwEccSetAsDefaultInNandOpt = None
-hasMultiUsdhcBootInstance = False
+hasMultiUsdhcBootInstance = True
+hwAuthHashEngine = None
 
 quadspiNorDevice = None
 quadspiNorMemBase = None

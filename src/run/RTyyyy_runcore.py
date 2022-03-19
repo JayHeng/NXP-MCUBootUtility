@@ -7,6 +7,7 @@ import RTyyyy_rundef
 import rundef
 import boot
 sys.path.append(os.path.abspath(".."))
+from gen import gendef
 from gen import RTyyyy_gencore
 from gen import RTyyyy_gendef
 from fuse import RTyyyy_fusedef
@@ -737,32 +738,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.comMemReadUnit = pageByteSize
         return True
 
-    def _getUsdhcSdMmcDeviceInfo ( self ):
-        status, results, cmdStr = self.blhost.getProperty(boot.properties.kPropertyTag_ExternalMemoryAttribles, self.bootDeviceMemId)
-        self.printLog(cmdStr)
-        if (status == boot.status.kStatus_Success):
-            #typedef struct
-            #{
-            #    uint32_t availableAttributesFlag; //!< Available Atrributes, bit map
-            #    uint32_t startAddress;            //!< start Address of external memory
-            #    uint32_t flashSizeInKB;           //!< flash size of external memory
-            #    uint32_t pageSize;                //!< page size of external memory
-            #    uint32_t sectorSize;              //!< sector size of external memory
-            #    uint32_t blockSize;               //!< block size of external memory
-            #} external_memory_property_store_t;
-            blockByteSize = results[5]
-            totalSizeKB = results[2]
-            self.printDeviceStatus("Block Size  = " + self.showAsOptimalMemoryUnit(blockByteSize))
-            strTotalSizeGB = ("%.2f" % (totalSizeKB / 1024.0 / 1024))
-            self.printDeviceStatus("Total Size  = " + self.convertLongIntHexText(strTotalSizeGB) + ' GB')
-            self.comMemWriteUnit = blockByteSize
-            self.comMemEraseUnit = blockByteSize
-            self.comMemReadUnit = blockByteSize
-        else:
-            self.printDeviceStatus("Block Size  = --------")
-            self.printDeviceStatus("Total Size  = --------")
-            return False
-        return True
+
 
     def getBootDeviceInfoViaFlashloader ( self ):
         if self.toolRunMode == uidef.kToolRunMode_SblOta:
@@ -789,10 +765,10 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             self._getLpspiNorDeviceInfo()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd:
             self.printDeviceStatus("--------uSDHC SD Card info--------")
-            self._getUsdhcSdMmcDeviceInfo()
+            self.getUsdhcSdMmcDeviceInfo()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
             self.printDeviceStatus("--------uSDHC (e)MMC Card info----")
-            self._getUsdhcSdMmcDeviceInfo()
+            self.getUsdhcSdMmcDeviceInfo()
         else:
             pass
 
@@ -900,7 +876,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             semcNorOpt, semcNorSetting, semcNorDeviceModel= uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([semcNorOpt])
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-            flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
+            flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
             configOptList.extend([flexspiNorOpt0, flexspiNorOpt1])
             self.RTyyyy_setFlexspiNorInstance()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
@@ -1375,6 +1351,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 if status != boot.status.kStatus_Success:
                     return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
+            image0Size = 0
             if not self.isFlexspiNorErasedForImage:
                 if not self._eraseFlexspiNorForImageLoading():
                     return False
@@ -1385,6 +1362,21 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                         self.isFlexspiNorErasedForImage = False
                         self.isFdcbFromSrcApp = False
                         return False
+            flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            # Check if dual image boot is enabled
+            if self.tgt.hasFlexspiNorDualImageBoot and ((flexspiNorDualImageInfoList[2] & 0xFFFF) != 0):
+                if flexspiNorDualImageInfoList[0] == 0xffffffff:
+                    self.flexspiNorImage0Version = flexspiNorDualImageInfoList[0]
+                else:
+                    self.flexspiNorImage0Version = flexspiNorDualImageInfoList[0] + ((flexspiNorDualImageInfoList[0] ^ 0xFFFF) << 16)
+            if self.flexspiNorImage0Version != None and self.flexspiNorImage0Version != rundef.kFlexspiNorContent_Blank32:
+                versionLoadAddr = self.bootDeviceMemBase + gendef.kImgVerOffset_NOR
+                if self.isSbFileEnabledToGen:
+                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(self.flexspiNorImage0Version))) + " > " + self.convertLongIntHexText(str(hex(versionLoadAddr))) + ";\n")
+                    status = boot.status.kStatus_Success
+                else:
+                    status, results, cmdStr = self.blhost.fillMemory(versionLoadAddr, 0x4, self.flexspiNorImage0Version)
+                    self.printLog(cmdStr)
             if self.secureBootType in RTyyyy_uidef.kSecureBootType_HwCrypto and self.keyStorageRegion == RTyyyy_uidef.kKeyStorageRegion_FlexibleUserKeys:
                 destEncAppFilename = None
                 if self.secureBootType == RTyyyy_uidef.kSecureBootType_BeeCrypto:
@@ -1410,6 +1402,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                         return False
                 else:
                     pass
+                image0Size = imageLoadAddr - self.bootDeviceMemBase + os.path.getsize(destEncAppFilename)
             else:
                 imageLoadAddr = self.bootDeviceMemBase + RTyyyy_gendef.kIvtOffset_NOR
                 if self.isSbFileEnabledToGen:
@@ -1418,10 +1411,22 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 else:
                     status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, self.destAppNoPaddingFilename, self.bootDeviceMemId)
                     self.printLog(cmdStr)
+                image0Size = imageLoadAddr - self.bootDeviceMemBase + os.path.getsize(self.destAppNoPaddingFilename)
             self.isFlexspiNorErasedForImage = False
             self.isFdcbFromSrcApp = False
             if status != boot.status.kStatus_Success:
                 return False
+            else:
+                # Check if dual image boot is enabled
+                if self.tgt.hasFlexspiNorDualImageBoot and ((flexspiNorDualImageInfoList[2] & 0xFFFF) != 0):
+                    image1Start = self.bootDeviceMemBase + (flexspiNorDualImageInfoList[2] & 0xFFFF) * 256 * 1024
+                    image1Size = image0Size
+                    if flexspiNorDualImageInfoList[1] == 0xffffffff:
+                        self.flexspiNorImage1Version = flexspiNorDualImageInfoList[1]
+                    else:
+                        self.flexspiNorImage1Version = flexspiNorDualImageInfoList[1] + ((flexspiNorDualImageInfoList[1] ^ 0xFFFF) << 16)
+                    if not self.flash2ndBootableImageIntoFlexspiNor(image1Start, image1Size, self.flexspiNorImage1Version, self.flexspiNorImage0Version):
+                        return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             self._calcFlexspiNandDeviceInfo()
             flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
@@ -1496,6 +1501,18 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         lpspiCfg = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseLocation_LpspiCfg'], '', False)
         return lpspiCfg
 
+    def _burnCommonMcuFuseBits( self, fuseIndexStr, fuseMaskStr, fuseShiftStr, setFuseBits ):
+            getFuseWord = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict[fuseIndexStr], '', False)
+            getFuseBits = (getFuseWord & self.tgt.efusemapDefnDict[fuseMaskStr]) >> self.tgt.efusemapDefnDict[fuseShiftStr]
+            if setFuseBits != getFuseBits:
+                if getFuseBits != 0:
+                    return False
+                setFuseWord = (getFuseWord & (~self.tgt.efusemapDefnDict[fuseMaskStr]) | (setFuseBits << self.tgt.efusemapDefnDict[fuseShiftStr]))
+                burnResult = self.RTyyyy_burnMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict[fuseIndexStr], setFuseWord)
+                return burnResult 
+            else:
+                return True
+
     def RTyyyy_burnBootDeviceFuses( self ):
         if self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
             setSemcNandCfg = 0
@@ -1533,7 +1550,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                         self.popupMsgBox(uilang.kMsgLanguageContentDict['burnFuseError_failToBurnMiscConf1'][self.languageIndex])
                         return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-            pass
+            if self.tgt.hasFlexspiNorDualImageBoot:
+                flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+                flexspiNorImage1Offset = (flexspiNorDualImageInfoList[2] & 0xFFFF)
+                flexspiNorImage1Size = ((flexspiNorDualImageInfoList[2] >> 16) & 0xFFFF)
+                if flexspiNorImage1Offset != 0:
+                    if not self._burnCommonMcuFuseBits('kEfuseLocation_FlexspiNorDualImageBootCfg', 'kEfuseMask_FlexspiNorImage1Info', 'kEfuseShift_FlexspiNorImage1Info', (flexspiNorImage1Offset << 4) + flexspiNorImage1Size):
+                        self.popupMsgBox(uilang.kMsgLanguageContentDict['burnFuseError_failToBurnDualImageMiscConf'][self.languageIndex])
+                        return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             pass
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:

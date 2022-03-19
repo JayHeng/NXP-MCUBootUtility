@@ -210,6 +210,11 @@ kSubLanguageContentDict = {
         'sText_enableSecondPinmux':           ['Enable Second Pinmux:',                 u"使能第二组Pinmux："],
         'sText_statusOverride':               ['Status Override:',                      u"状态位覆盖："],
         'sText_dummyCycles':                  ['Dummy Cycles:',                         u"冗余周期数："],
+        'panel_dualImageOpt':                 ['Dual Image Option',                     u"双程序启动选项"],
+        'sText_dualImage0Version':            ['Image 0 Version(0-65535):',             u"程序0版本(0-65535)："],
+        'sText_dualImage1Version':            ['Image 1 Version(0-65535):',             u"程序1版本(0-65535)："],
+        'sText_dualImage1Offset':             ['Image 1 Offset:',                       u"程序1偏移地址："],
+        'sText_dualImage1Size':               ['Image 1 Size:',                         u"程序1大小："],
         'button_completeFdcb':                ['Complete FDCB Configuration (512bytes)', u"完整FDCB配置(512字节)"],
         'button_flexspinor_ok':               ['Ok',                                    u"确定"],
         'button_flexspinor_cancel':           ['Cancel',                                u"取消"],
@@ -712,6 +717,32 @@ kRevision_3_4_0_zh = u"【v3.4.0】 \n" + \
                      u"     2. 支持对启动设备进行全擦操作 \n" + \
                      u"  改进: \n" + \
                      u"     1. [RTyyyy] 支持SDK 2.10及其之后生成的可启动文件作为源文件 \n\n"
+kRevision_3_5_0_en =  "【v3.5.0】 \n" + \
+                      "  Feature: \n" + \
+                      "     1. [RT] Provide dual image download option for FlexSPI NOR device \n" + \
+                      "     2. [RTxxx] Add support for uSDHC SD/eMMC boot device \n" + \
+                      "     3. [RTyyyy] Support XECC write for RT1160/1170 \n" + \
+                      "     4. [RTyyyy] Enable SD/eMMC 2nd instance support for RT10xx \n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RT] Can keep image version header from source bootable image file \n" + \
+                      "  Bugfix: \n" + \
+                      "     1. [RT] Fix bit width recover issue in eMMC settings \n" + \
+                      "     2. [RTxxx] Fix Plain CRC image boot support issue \n" + \
+                      "     3. [RTyyyy] Correct M7SRK efuse idx for RT1170 \n" + \
+                      "     4. [RTyyyy] Correct Auth HW engine type for RT1170 \n\n"
+kRevision_3_5_0_zh = u"【v3.5.0】 \n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RT] 提供FlexSPI NOR设备的双程序启动设置选项 \n" + \
+                     u"     2. [RTxxx] 新增SD/eMMC启动设备支持 \n" + \
+                     u"     3. [RTyyyy] 为RT1160/1170 FlexSPI NOR设备增加ECC方式写入支持 \n" + \
+                     u"     4. [RTyyyy] 使能RT10xx系列上SD/eMMC设备第二组接口支持 \n" + \
+                     u"  改进: \n" + \
+                     u"     1. [RT] 能保留含启动头源image文件中的程序版本信息 \n" + \
+                     u"  修复: \n" + \
+                     u"     1. [RT] 修复eMMC设备配置时位宽度参数无法保存问题 \n" + \
+                     u"     2. [RTxxx] 修复Plain CRC启动模式下不可用的问题 \n" + \
+                     u"     3. [RTyyyy] 修复RT1170下M7SRK efuse位置定义错误问题 \n" + \
+                     u"     4. [RTyyyy] 修复RT1170下HAB验签硬件引擎类型选择错误问题 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -744,6 +775,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v3_3_0':             [kRevision_3_3_0_en,                      kRevision_3_3_0_zh],
         'revisionHistory_v3_3_1':             [kRevision_3_3_1_en,                      kRevision_3_3_1_zh],
         'revisionHistory_v3_4_0':             [kRevision_3_4_0_en,                      kRevision_3_4_0_zh],
+        'revisionHistory_v3_5_0':             [kRevision_3_5_0_en,                      kRevision_3_5_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
@@ -891,6 +923,9 @@ kMsgLanguageContentDict = {
         'burnFuseError_cannotBurnSrkLock':    ['Fuse 0x400[14] - SRK_LOCK is not allowed to be set, because SRK will be OP+RP+WP if SRK_LOCK is set and then ROM cannot get SRK!',
                                               u"Fuse 0x400[14] - SRK_LOCK位不允许被烧写成1，如果SRK_LOCK被置1，SRK区域将会被保护(覆盖&读&写)，导致ROM不能得到SRK数据!"],
 
+        'burnFuseError_failToBurnDualImageMiscConf':  ['Fuse 0x6E0/0xC80[24:12] region was not burned successfully!',
+                                                      u"Fuse 0x6E0/0xC80[24:12]区域未成功烧录！"],
+
         'operImgError_hasnotProgImage':       ['You should program your image first!',
                                               u"请首先下载image文件！"],
         'operImgError_notInRam':              ['Your specified area is not in the range of RAM, Please double check!',
@@ -923,4 +958,8 @@ kMsgLanguageContentDict = {
         'signImgError_failToGen':             ['Part signed image is not generated successfully!',
                                               u"部分区域签名的程序文件未成功生成!"],
 
+        'burnOtpError_failToBurnDualImageBootCfg3':   ['Otp BOOT_CFG3[31:22] Second image offset region was not burned successfully!',
+                                                      u"Otp BOOT_CFG3[31:22]区域未成功烧录！"],
+        'burnOtpError_failToBurnDualImageBootCfg2':   ['Otp BOOT_CFG2[31:28] FlexSPI remap size region was not burned successfully!',
+                                                      u"Otp BOOT_CFG2[31:28]区域未成功烧录！"],
 }

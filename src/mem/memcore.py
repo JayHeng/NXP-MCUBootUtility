@@ -3,9 +3,11 @@
 import sys
 import os
 import shutil
+import memdef
 import boot
 sys.path.append(os.path.abspath(".."))
 from run import runcore
+from run import rundef
 from ui import uidef
 from ui import uivar
 from ui import uilang
@@ -215,6 +217,76 @@ class secBootMem(runcore.secBootRun):
                         self.popupMsgBox(u"写入启动设备失败，错误的代码是 %d ，请确认是否先擦除了启动设备！" %(status))
                     else:
                         pass
+
+    def eccWriteBootDeviceMemory( self ):
+        if self.bootDeviceMemId != rundef.kBootDeviceMemId_FlexspiNor:
+            if self.languageIndex == uilang.kLanguageIndex_English:
+                self.popupMsgBox('ECC-write is only for FlexSPI NOR device!')
+            elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                self.popupMsgBox(u"ECC方式写入仅支持 FlexSPI NOR 设备！")
+            else:
+                pass
+            return 
+
+        if self.tgt.hasFlexspiNorEcc == None or self.tgt.hasFlexspiNorEcc != True:
+            if self.languageIndex == uilang.kLanguageIndex_English:
+                self.popupMsgBox('ECC-write is not supported by this MCU device!')
+            elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                self.popupMsgBox(u"ECC方式写入在当前 MCU 型号上不被支持！")
+            else:
+                pass
+            return
+
+        status, memStart, memBinFile, useFlashImageCmd = self._getUserComMemParameters(True)
+        if status:
+            if useFlashImageCmd:
+                if self.languageIndex == uilang.kLanguageIndex_English:
+                    self.popupMsgBox('Image file format can only be binary(.bin) for ECC write!')
+                elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                    self.popupMsgBox(u"ECC方式写入时，程序镜像文件格式仅支持 .bin 格式！")
+                else:
+                    pass
+            else:
+                memStart = self._convertComMemStart(memStart)
+                if memStart % memdef.kXeccRegionAlignmentUnit:
+                    if self.languageIndex == uilang.kLanguageIndex_English:
+                        self.popupMsgBox('ECC Start Address should be aligned with 0x%x !' %(memdef.kXeccRegionAlignmentUnit))
+                    elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                        self.popupMsgBox(u"ECC写入起始地址应该以 0x%x 对齐！" %(memdef.kXeccRegionAlignmentUnit))
+                    else:
+                        pass
+                    return
+                eraseMemStart = misc.align_down(memStart, memdef.kXeccRegionAlignmentUnit)
+                eraseMemEnd = misc.align_up(memStart + os.path.getsize(memBinFile), memdef.kXeccRegionAlignmentUnit)
+                status, results, cmdStr = self.blhost.flashEraseRegion(eraseMemStart, (eraseMemEnd - eraseMemStart) * 2, self.bootDeviceMemId)
+                self.printLog(cmdStr)
+                if status != boot.status.kStatus_Success:
+                    if self.languageIndex == uilang.kLanguageIndex_English:
+                        self.popupMsgBox('Failed to erase boot device, error code is %d !' %(status))
+                    elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                        self.popupMsgBox(u"擦除启动设备失败，错误的代码是 %d ！" %(status))
+                    else:
+                        pass
+                    return
+                status, results, cmdStr = self.blhost.setProperty(boot.properties.kPropertyTag_FlashXeccWriteState, 1)
+                self.printLog(cmdStr)
+                if (status == boot.status.kStatus_Success):
+                    shutil.copy(memBinFile, self.userFilename)
+                    status, results, cmdStr = self.blhost.writeMemory(memStart, self.userFilename, self.bootDeviceMemId)
+                    try:
+                        os.remove(self.userFilename)
+                    except:
+                        pass
+                    self.printLog(cmdStr)
+                    if status != boot.status.kStatus_Success:
+                        if self.languageIndex == uilang.kLanguageIndex_English:
+                            self.popupMsgBox('Failed to write boot device, error code is %d, You may forget to erase boot device first!' %(status))
+                        elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                            self.popupMsgBox(u"ECC方式写入启动设备失败，错误的代码是 %d ，请确认是否先擦除了启动设备！" %(status))
+                        else:
+                            pass
+                status, results, cmdStr = self.blhost.setProperty(boot.properties.kPropertyTag_FlashXeccWriteState, 0)
+                self.printLog(cmdStr)
 
     def readRamMemory( self ):
         status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
