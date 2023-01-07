@@ -71,6 +71,14 @@ hwAuthHashEngine = None
 quadspiNorDevice = None
 quadspiNorMemBase = None
 
+ramFreeSpaceStart_LoadCommOpt        = None
+ramFreeSpaceStart_LoadDekData        = None
+ramFreeSpaceStart_LoadKeyBlobContext = None
+ramFreeSpaceStart_LoadKeyBlobData    = None
+ramFreeSpaceStart_LoadCfgBlock       = None
+ramFreeSpaceStart_LoadPrdbOpt        = None
+ramFreeSpaceStart_Rom                = None
+
 registerAddrDict = None
 registerDefnDict  = None
 

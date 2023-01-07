@@ -79,6 +79,14 @@ class Target(object):
         self.quadspiNorDevice = misc.get_dict_default(kwargs, 'quadspiNorDevice', None)
         self.quadspiNorMemBase = misc.get_dict_default(kwargs, 'quadspiNorMemBase', None)
 
+        self.ramFreeSpaceStart_LoadCommOpt = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadCommOpt', None)
+        self.ramFreeSpaceStart_LoadDekData = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadDekData', None)
+        self.ramFreeSpaceStart_LoadKeyBlobContext = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadKeyBlobContext', None)
+        self.ramFreeSpaceStart_LoadKeyBlobData = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadKeyBlobData', None)
+        self.ramFreeSpaceStart_LoadCfgBlock = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadCfgBlock', None)
+        self.ramFreeSpaceStart_LoadPrdbOpt = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_LoadPrdbOpt', None)
+        self.ramFreeSpaceStart_Rom = misc.get_dict_default(kwargs, 'ramFreeSpaceStart_Rom', None)
+
         self.registerAddrDict = misc.get_dict_default(kwargs, 'registerAddrDict', None)
         self.registerDefnDict = misc.get_dict_default(kwargs, 'registerDefnDict', None)
         self.efusemapIndexDict = misc.get_dict_default(kwargs, 'efusemapIndexDict', None)

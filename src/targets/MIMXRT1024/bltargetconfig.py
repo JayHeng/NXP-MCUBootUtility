@@ -63,7 +63,7 @@ availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
                         RTyyyy_uidef.kBootDevice_UsdhcMmc,
                         RTyyyy_uidef.kBootDevice_LpspiNor,
                         RTyyyy_uidef.kBootDevice_SemcNor]
-flexspiNorDevice = uidef.kFlexspiNorDevice_None
+flexspiNorDevice = uidef.kFlexspiNorDevice_SipWinbond_W25Q32  # or 0xC0000007
 flexspiNorMemBase0 = 0x60000000
 flexspiNorMemBase1 = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '75MHz', '80MHz', '100MHz', '133MHz', '166MHz', '200MHz']
@@ -80,6 +80,14 @@ hwAuthHashEngine = "DCP"
 
 quadspiNorDevice = None
 quadspiNorMemBase = None
+
+ramFreeSpaceStart_LoadCommOpt        = 0x20202000
+ramFreeSpaceStart_LoadDekData        = 0x20202100
+ramFreeSpaceStart_LoadKeyBlobContext = 0x20202200
+ramFreeSpaceStart_LoadKeyBlobData    = 0x20202300
+ramFreeSpaceStart_LoadCfgBlock       = 0x20203000
+ramFreeSpaceStart_LoadPrdbOpt        = 0x20204000
+ramFreeSpaceStart_Rom                = 0x20208000
 
 registerAddrDict = RTyyyy_rundef.registerAddrDict_RT10yy
 registerDefnDict  = RTyyyy_rundef.registerDefnDict_RT10yy

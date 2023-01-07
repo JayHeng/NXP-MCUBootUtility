@@ -9,6 +9,7 @@ import time
 import threading
 import inspect
 import ctypes
+from _main import MCX_main
 from _main import Kinetis_main
 from _main import LPC_main
 from _main import RTxxx_main
@@ -17,6 +18,7 @@ from ui import RTyyyy_uidef
 from ui import RTxxx_uidef
 from ui import LPC_uidef
 from ui import Kinetis_uidef
+from ui import MCX_uidef
 from ui import uidef
 from ui import uivar
 from ui import uilang
@@ -37,6 +39,7 @@ g_RTyyyy_task_allInOneAction = None
 g_RTxxx_task_allInOneAction = None
 g_LPC_task_allInOneAction = None
 g_Kinetis_task_allInOneAction = None
+g_MCX_task_allInOneAction = None
 g_RTyyyy_task_showSettedEfuse = None
 
 def _async_raise(tid, exctype):
@@ -50,10 +53,10 @@ def _async_raise(tid, exctype):
         ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
         raise SystemError("PyThreadState_SetAsyncExc failed")
 
-class secBootMain(Kinetis_main.secBootKinetisMain):
+class secBootMain(MCX_main.secBootMcxMain):
 
     def __init__(self, parent):
-        Kinetis_main.secBootKinetisMain.__init__(self, parent)
+        MCX_main.secBootMcxMain.__init__(self, parent)
 
         self.isAccessMemTaskPending = False
         self.accessMemType = ''
@@ -83,6 +86,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                 self.LPC_callbackSetMcuSeries()
             elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
                 self.Kinetis_callbackSetMcuSeries()
+            elif self.mcuSeries == uidef.kMcuSeries_MCX:
+                self.MCX_callbackSetMcuSeries()
             else:
                 pass
             self.isMcuSeriesChanged = False
@@ -94,6 +99,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackSetMcuDevice()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackSetMcuDevice()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackSetMcuDevice()
         else:
             pass
 
@@ -112,6 +119,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackSetBootDevice()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackSetBootDevice()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackSetBootDevice()
         else:
             pass
 
@@ -181,6 +190,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             usbIdList = self.LPC_getUsbid()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             usbIdList = self.Kinetis_getUsbid()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            usbIdList = self.MCX_getUsbid()
         else:
             pass
         retryToDetectUsb = False
@@ -209,6 +220,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackConnectToDevice()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackConnectToDevice()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackConnectToDevice()
         else:
             pass
 
@@ -221,6 +234,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackSetSecureBootType()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackSetSecureBootType()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackSetSecureBootType()
         else:
             pass
 
@@ -233,6 +248,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackAllInOneAction()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackAllInOneAction()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackAllInOneAction()
         else:
             pass
 
@@ -247,6 +264,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_setSecureBootButtonColor()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_setSecureBootButtonColor()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_setSecureBootButtonColor()
         else:
             pass
 
@@ -262,6 +281,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackGenImage()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackGenImage()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackGenImage()
         else:
             pass
 
@@ -274,6 +295,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackFlashImage()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackFlashImage()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackFlashImage()
         else:
             pass
 
@@ -376,6 +399,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_callbackViewMem()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_callbackViewMem()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_callbackViewMem()
         else:
             pass
 
@@ -488,6 +513,7 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
         self._stopTask(g_RTxxx_task_allInOneAction)
         self._stopTask(g_LPC_task_allInOneAction)
         self._stopTask(g_Kinetis_task_allInOneAction)
+        self._stopTask(g_MCX_task_allInOneAction)
         self._stopTask(g_RTyyyy_task_showSettedEfuse)
         global g_main_win
         g_main_win.Show(False)
@@ -517,6 +543,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_switchToolRunMode()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_switchToolRunMode()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_switchToolRunMode()
         else:
             pass
         self.enableOneStepForEntryMode()
@@ -587,6 +615,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             pass
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             pass
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            pass
         else:
             pass
 
@@ -627,6 +657,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             pass
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             pass
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            pass
         else:
             pass
 
@@ -652,6 +684,8 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
             self.LPC_setLanguage()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             self.Kinetis_setLanguage()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            self.MCX_setLanguage()
         else:
             pass
 
@@ -699,14 +733,15 @@ class secBootMain(Kinetis_main.secBootKinetisMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_3_1'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v3_4_0'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_5_0'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v3_5_0'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v4_0_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v3.5.0")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v4.0.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)
@@ -734,6 +769,9 @@ if __name__ == '__main__':
     g_Kinetis_task_allInOneAction = threading.Thread(target=g_main_win.Kinetis_task_doAllInOneAction)
     g_Kinetis_task_allInOneAction.setDaemon(True)
     g_Kinetis_task_allInOneAction.start()
+    g_MCX_task_allInOneAction = threading.Thread(target=g_main_win.MCX_task_doAllInOneAction)
+    g_MCX_task_allInOneAction.setDaemon(True)
+    g_MCX_task_allInOneAction.start()
 
     g_RTyyyy_task_showSettedEfuse = threading.Thread(target=g_main_win.RTyyyy_task_doShowSettedEfuse)
     g_RTyyyy_task_showSettedEfuse.setDaemon(True)

@@ -22,29 +22,33 @@ kMcuSeries_iMXRT11yy = 'RT11yy'
 kMcuSeries_iMXRTyyyy = [kMcuSeries_iMXRT10yy, kMcuSeries_iMXRT11yy]
 kMcuSeries_LPC       = 'LPC'
 kMcuSeries_Kinetis   = 'Kinetis'
+kMcuSeries_MCX       = 'MCX'
 
 kMcuSeries_v1_0_0 = [kMcuSeries_iMXRT]
 kMcuSeries_v2_0_0 = [kMcuSeries_iMXRT]
 kMcuSeries_v3_0_0 = [kMcuSeries_iMXRT, kMcuSeries_LPC, kMcuSeries_Kinetis]
-kMcuSeries_Latest = kMcuSeries_v3_0_0
+kMcuSeries_v4_0_0 = [kMcuSeries_iMXRT, kMcuSeries_LPC, kMcuSeries_Kinetis, kMcuSeries_MCX]
+kMcuSeries_Latest = kMcuSeries_v4_0_0
 
-kMcuDevice_iMXRT500  = 'i.MXRT5xx'
+kMcuDevice_iMXRT500  = 'i.MXRT5xx   - FOWLP249'
 kMcuDevice_iMXRT500S = 'i.MXRT5xxS'
-kMcuDevice_iMXRT600  = 'i.MXRT6xx'
+kMcuDevice_iMXRT600  = 'i.MXRT685   - FOWLP249/VFBGA176/WLCSP114'
 kMcuDevice_iMXRT600S = 'i.MXRT6xxS'
 kMcuDevice_iMXRTxxx = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600]
 
-kMcuDevice_iMXRT1011 = 'i.MXRT1011'
-kMcuDevice_iMXRT1015 = 'i.MXRT1015'
-kMcuDevice_iMXRT102x = 'i.MXRT1021'
-kMcuDevice_iMXRT1024 = 'i.MXRT1024 SIP'
-kMcuDevice_iMXRT105x = 'i.MXRT105x'
-kMcuDevice_iMXRT106x = 'i.MXRT106x'
-kMcuDevice_iMXRT1064 = 'i.MXRT1064 SIP'
-kMcuDevice_iMXRT10yy = [kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064]
+kMcuDevice_iMXRT1011  = 'i.MXRT1011 - LQFP80'
+kMcuDevice_iMXRT1015  = 'i.MXRT1015 - LQFP100'
+kMcuDevice_iMXRT102x  = 'i.MXRT1021 - LQFP100/144'
+kMcuDevice_iMXRT1024  = 'i.MXRT1024 - LQFP144'
+kMcuDevice_iMXRT104x  = 'i.MXRT1042 - LFBGA169'
+kMcuDevice_iMXRT105x  = 'i.MXRT105x - LFBGA196'
+kMcuDevice_iMXRT106x  = 'i.MXRT106x - LFBGA196'
+kMcuDevice_iMXRT1064  = 'i.MXRT1064 - LFBGA196'
+kMcuDevice_iMXRT1060X = 'i.MXRT106x - LFBGA225'
+kMcuDevice_iMXRT10yy  = [kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT104x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT1060X]
 
-kMcuDevice_iMXRT116x = 'i.MXRT116x'
-kMcuDevice_iMXRT117x = 'i.MXRT117x'
+kMcuDevice_iMXRT116x = 'i.MXRT116x - LFBGA289'
+kMcuDevice_iMXRT117x = 'i.MXRT117x - LFBGA289'
 kMcuDevice_iMXRT11yy = [kMcuDevice_iMXRT116x, kMcuDevice_iMXRT117x]
 
 kMcuDevice_L0PB      = 'MKL03Z'
@@ -66,29 +70,39 @@ kMcuDevice_L3KSs     = [kMcuDevice_L3KS_0, kMcuDevice_L3KS_1]
 kMcuDevice_MK28Fs    = [kMcuDevice_MK28F_0, kMcuDevice_MK28F_1]
 kMcuDevice_Kinetis   = [kMcuDevice_L0PB, kMcuDevice_L3KS_0, kMcuDevice_L3KS_1, kMcuDevice_L2KS_0, kMcuDevice_L5K, kMcuDevice_L4KS_0, kMcuDevice_MKL80, kMcuDevice_MT256P, kMcuDevice_MT512P, kMcuDevice_MK28F_0, kMcuDevice_MK28F_1, kMcuDevice_MK80, kMcuDevice_L2KS_1, kMcuDevice_L4KS_1]
 
-kMcuDevice_Niobe4mini_0 = 'LPC55(S)0x'
-kMcuDevice_Niobe4mini_1 = 'LPC55(S)1x'
-kMcuDevice_Niobe4_0     = 'LPC55(S)2x'
+kMcuDevice_Niobe4mini_0 = 'LPC550x/S0x'
+kMcuDevice_Niobe4mini_1 = 'LPC551x/S1x'
+kMcuDevice_Niobe4_0     = 'LPC552x/S2x'
 kMcuDevice_Niobe4_1     = 'LPC55S6x'
+kMcuDevice_Niobe4analog = 'LPC553x/S3x'
 
 kMcuDevice_Niobe4minis = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1]
 kMcuDevice_Niobe4s     = [kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1]
-kMcuDevice_LPC         = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1, kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1]
+kMcuDevice_LPC         = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1, kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1, kMcuDevice_Niobe4analog]
+
+kMcuDevice_NirvanaN10_0 = 'MCXN94x'
+kMcuDevice_NirvanaN10_1 = 'MCXN54x'
+kMcuDevice_MCX          = [kMcuDevice_NirvanaN10_1, kMcuDevice_NirvanaN10_0]
 
 kMcuDevice_iMXRT_v1_0_0 = [kMcuDevice_iMXRT102x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064]
 kMcuDevice_iMXRT_v1_1_0 = [kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064]
 kMcuDevice_iMXRT_v2_0_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT117x]
 kMcuDevice_iMXRT_v3_1_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT117x]
 kMcuDevice_iMXRT_v3_2_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT116x, kMcuDevice_iMXRT117x]
+kMcuDevice_iMXRT_v4_0_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT104x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT1060X, kMcuDevice_iMXRT116x, kMcuDevice_iMXRT117x]
 kMcuDevice_Kinetis_v3_0_0 = [kMcuDevice_L0PB, kMcuDevice_L3KS_0, kMcuDevice_L2KS_0, kMcuDevice_L5K, kMcuDevice_L3KS_1, kMcuDevice_L4KS_0, kMcuDevice_MKL80, kMcuDevice_MT256P, kMcuDevice_MT512P, kMcuDevice_MK28F_0, kMcuDevice_MK28F_1, kMcuDevice_MK80]
 kMcuDevice_Kinetis_v3_1_0 = [kMcuDevice_L0PB, kMcuDevice_L3KS_0, kMcuDevice_L2KS_0, kMcuDevice_L5K, kMcuDevice_L3KS_1, kMcuDevice_L4KS_0, kMcuDevice_MKL80, kMcuDevice_MT256P, kMcuDevice_MT512P, kMcuDevice_MK28F_0, kMcuDevice_MK28F_1, kMcuDevice_MK80, kMcuDevice_L2KS_1, kMcuDevice_L4KS_1]
 kMcuDevice_LPC_v3_0_0     = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1, kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1]
-kMcuDevice_iMXRT_Latest   = kMcuDevice_iMXRT_v3_2_0
+kMcuDevice_LPC_v4_0_0     = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1, kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1, kMcuDevice_Niobe4analog]
+kMcuDevice_MCX_v4_0_0     = [kMcuDevice_NirvanaN10_1, kMcuDevice_NirvanaN10_0]
+kMcuDevice_iMXRT_Latest   = kMcuDevice_iMXRT_v4_0_0
 kMcuDevice_Kinetis_Latest = kMcuDevice_Kinetis_v3_1_0
-kMcuDevice_LPC_Latest     = kMcuDevice_LPC_v3_0_0
+kMcuDevice_LPC_Latest     = kMcuDevice_LPC_v4_0_0
+kMcuDevice_MCX_Latest     = kMcuDevice_MCX_v4_0_0
 
 kBootDevice_XspiNor        = 'XSPI NOR'
 
+kFlexspiNorDevice_SipWinbond_W25Q32     = 'SipWinbond_W25Q32'
 kFlexspiNorDevice_None                  = 'No'
 kFlexspiNorDevice_FDCB                  = 'Complete_FDCB'
 kFlexspiNorDevice_ISSI_IS25LP064A       = 'ISSI_IS25LPxxxA_IS25WPxxxA'
@@ -141,6 +155,8 @@ kFlexspiNorOpt0_XMC_XM25QH64B         = 0xc0000007
 kFlexspiNorOpt0_XTXtech_X25Q64D       = 0xc0000407
 kFlexspiNorOpt0_Puya_P25Q64LE         = 0xc0000405
 kFlexspiNorOpt0_AMIC_A25LQ64          = 0xc0000105
+
+kFlexspiNorInstance_Max = 3
 
 kSemcNorDevice_None                  = 'No'
 kSemcNorDevice_Micron_MT28EW128ABA   = 'Micron_MT28EW128ABA'

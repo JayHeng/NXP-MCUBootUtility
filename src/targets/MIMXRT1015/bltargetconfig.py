@@ -78,6 +78,14 @@ hwAuthHashEngine = "DCP"
 quadspiNorDevice = None
 quadspiNorMemBase = None
 
+ramFreeSpaceStart_LoadCommOpt        = 0x20202000
+ramFreeSpaceStart_LoadDekData        = 0x20202100
+ramFreeSpaceStart_LoadKeyBlobContext = 0x20202200
+ramFreeSpaceStart_LoadKeyBlobData    = 0x20202300
+ramFreeSpaceStart_LoadCfgBlock       = 0x20203000
+ramFreeSpaceStart_LoadPrdbOpt        = 0x20204000
+ramFreeSpaceStart_Rom                = 0x20208000
+
 registerAddrDict = RTyyyy_rundef.registerAddrDict_RT10yy
 registerDefnDict  = RTyyyy_rundef.registerDefnDict_RT10yy
 

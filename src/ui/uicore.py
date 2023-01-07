@@ -100,6 +100,7 @@ class secBootUi(secBootWin.secBootWin):
         self.setEfuseLocker()
 
         self.flexspiXipRegionSel = 0
+        self.flexspiXipRegionSelFromFuse = uidef.kFlexspiNorInstance_Max
         self._initFlexspiXipRegion()
         self.setFlexspiXipRegion()
 
@@ -354,13 +355,23 @@ class secBootUi(secBootWin.secBootWin):
             pass
 
     def setFlexspiXipRegion( self ):
-        if self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
-            if self.m_menuItem_flexspiXipRegion0.IsChecked():
-                self.flexspiXipRegionSel = 0
-            elif self.m_menuItem_flexspiXipRegion1.IsChecked():
-                self.flexspiXipRegionSel = 1
+        if self.mcuSeries == uidef.kMcuSeries_iMXRT11yy or \
+           self.mcuDevice == uidef.kMcuDevice_iMXRT1060X:
+            if self.flexspiXipRegionSelFromFuse == uidef.kFlexspiNorInstance_Max:
+                if self.m_menuItem_flexspiXipRegion0.IsChecked():
+                    self.flexspiXipRegionSel = 0
+                elif self.m_menuItem_flexspiXipRegion1.IsChecked():
+                    self.flexspiXipRegionSel = 1
+                else:
+                    pass
             else:
-                pass
+                self.flexspiXipRegionSel = self.flexspiXipRegionSelFromFuse
+                if self.flexspiXipRegionSel == 0:
+                    self.m_menuItem_flexspiXipRegion0.Check(True)
+                    self.m_menuItem_flexspiXipRegion1.Check(False)
+                else:
+                    self.m_menuItem_flexspiXipRegion0.Check(False)
+                    self.m_menuItem_flexspiXipRegion1.Check(True)
         else:
             self.flexspiXipRegionSel = 0
             self.m_menuItem_flexspiXipRegion0.Check(True)
@@ -399,7 +410,9 @@ class secBootUi(secBootWin.secBootWin):
 
     def _refreshMcuDeviceList( self, mcuSeries ):
         self.m_choice_mcuDevice.Clear()
-        if mcuSeries == uidef.kMcuSeries_Kinetis:
+        if mcuSeries == uidef.kMcuSeries_MCX:
+            self.m_choice_mcuDevice.SetItems(uidef.kMcuDevice_MCX_Latest)
+        elif mcuSeries == uidef.kMcuSeries_Kinetis:
             self.m_choice_mcuDevice.SetItems(uidef.kMcuDevice_Kinetis_Latest)
         elif mcuSeries == uidef.kMcuSeries_LPC:
             self.m_choice_mcuDevice.SetItems(uidef.kMcuDevice_LPC_Latest)
@@ -441,7 +454,11 @@ class secBootUi(secBootWin.secBootWin):
             flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LP064A
             flexspiNorOpt1 = 0x0
             flexspiDeviceModel = self.tgt.flexspiNorDevice
-            if flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS25LP064A:
+            if  type(flexspiDeviceModel) == long:
+                flexspiNorOpt0 = self.tgt.flexspiNorDevice
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_SipWinbond_W25Q32:
+                flexspiNorOpt0 = 0xC0000007
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS25LP064A:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LP064A
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS26KS512S:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
@@ -508,25 +525,21 @@ class secBootUi(secBootWin.secBootWin):
 
     def setTargetSetupValue( self ):
         mcuSeries = self.m_choice_mcuSeries.GetString(self.m_choice_mcuSeries.GetSelection())
-        # Case1: i.MXRT  -> i.MXRT
-        # Case2: Kinetis -> i.MXRT
-        # Case3: i.MXRT  -> Kinetis
-        # Case4: LPC     -> i.MXRT
-        # Case5: i.MXRT  -> LPC
-        # Case6: Kinetis -> LPC
-        # Case7: LPC     -> Kinetis
         if mcuSeries != self.mcuSeries:
             self.toolCommDict['mcuSeries'] = self.m_choice_mcuSeries.GetSelection()
-            # from i.MXRT/LPC to Kinetis
-            # from i.MXRT/Kinetis to LPC
-            if mcuSeries == uidef.kMcuSeries_Kinetis or \
+            # from i.MXRT/LPC/MCX     to Kinetis
+            # from i.MXRT/Kinetis/MCX to LPC
+            # from i.MXRT/LPC/Kinetis to MCX
+            if mcuSeries == uidef.kMcuSeries_MCX or \
+               mcuSeries == uidef.kMcuSeries_Kinetis or \
                mcuSeries == uidef.kMcuSeries_LPC:
                 self.mcuSeries = mcuSeries
                 self.isMcuSeriesChanged = True
                 self._refreshMcuDeviceList(mcuSeries)
                 self.m_choice_mcuDevice.SetSelection(0)
-            # from Kinetis/LPC to i.MXRT
-            elif self.mcuSeries == uidef.kMcuSeries_Kinetis or \
+            # from MCX/Kinetis/LPC to i.MXRT
+            elif self.mcuSeries == uidef.kMcuSeries_MCX or \
+                 self.mcuSeries == uidef.kMcuSeries_Kinetis or \
                  self.mcuSeries == uidef.kMcuSeries_LPC:
                 self._refreshMcuDeviceList(mcuSeries)
                 self.m_choice_mcuDevice.SetSelection(0)
@@ -534,8 +547,9 @@ class secBootUi(secBootWin.secBootWin):
             # from i.MXRT to i.MXRT
             else:
                 self._detectImxrtSeries()
-        # Case8: Kinetis -> Kinetis
-        # Case9: LPC     -> LPC
+        # Case: MCX     -> MCX
+        # Case: Kinetis -> Kinetis
+        # Case: LPC     -> LPC
         else:
             pass
 
@@ -565,6 +579,8 @@ class secBootUi(secBootWin.secBootWin):
             usbIdList = self.LPC_getUsbid()
         elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
             usbIdList = self.Kinetis_getUsbid()
+        elif self.mcuSeries == uidef.kMcuSeries_MCX:
+            usbIdList = self.MCX_getUsbid()
         else:
             pass
         self.setPortSetupValue(uidef.kConnectStage_Rom, usbIdList)

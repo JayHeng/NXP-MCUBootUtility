@@ -1,6 +1,6 @@
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v3.5.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v3.5.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v4.0.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v4.0.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 English | [中文](./README-zh.md)
 
@@ -23,7 +23,7 @@ English | [中文](./README-zh.md)
 > * Support for loading bootable image into external boot devices  
 > * Support common boot device memory operation (Flash Programmer)  
 -------------------------------------------------------
-> * Support i.MXRT1011, i.MXRT1015, i.MXRT1021, i.MXRT1024 SIP, i.MXRT105x, i.MXRT106x, i.MXRT1064 SIP, i.MXRT116x, i.MXRT117x  
+> * Support i.MXRT1011, i.MXRT1015, i.MXRT1021, i.MXRT1024 SIP, i.MXRT1042, i.MXRT105x, i.MXRT106x, i.MXRT1064 SIP, i.MXRT116x, i.MXRT117x  
 > * User image file can be either bare image file or bootable image file 
 > * Support for converting bare image into .sb file for MfgTool and RT-Flash
 > * Support for loading bootable image into FlexSPI NOR boot device  
@@ -51,12 +51,16 @@ English | [中文](./README-zh.md)
 > * Support common SRAM memory operation (ISP Boot)  
 > * Support for reading back and marking bootable image(OTFAD KeyBlob/FDCB/KeyStore/Image) from boot device  
 -------------------------------------------------------
-> * Support LPC550x/S0x, LPC551x/S1x, LPC552x/S2x, LPC55S69  
+> * Support LPC550x/S0x, LPC551x/S1x, LPC552x/S2x, LPC55S6x, LPC553x/S3x
 > * Support for loading bootable image into C040HD Flash  
 > * Support development boot case (Unsigned)  
 -------------------------------------------------------
 > * Support 2nd gen Kinetis Series (With BootROM, eg: MKL03Z, MK8xF)  
 > * Support for loading bootable image into FTFx Flash  
+> * Support development boot case (Unsigned)  
+-------------------------------------------------------
+> * Support MCXN54x, MCXN94x
+> * Support for loading bootable image into C040HD Flash  
 > * Support development boot case (Unsigned)  
 
 #### 1.2 Download

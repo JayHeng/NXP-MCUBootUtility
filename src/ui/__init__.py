@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import MCX_uicore
+import MCX_uidef
 import Kinetis_uicore
 import Kinetis_uidef
 import LPC_uicore
@@ -38,7 +40,9 @@ import RT10yy_ui_efuse_bootcfg2
 import RT10yy_ui_efuse_miscconf0
 import RT10yy_ui_efuse_miscconf1_flexspinor
 
-__all__ = ["Kinetis_uicore",
+__all__ = ["MCX_uicore",
+           "MCX_uidef",
+		   "Kinetis_uicore",
            "Kinetis_uidef",
            "LPC_uicore",
            "LPC_uidef",

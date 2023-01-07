@@ -31,10 +31,14 @@ def RTyyyy_createTarget(device, exeBinRoot, flexspiXipRegionSel ):
         cpu = "MIMXRT1021"
     elif device == uidef.kMcuDevice_iMXRT1024:
         cpu = "MIMXRT1024"
+    elif device == uidef.kMcuDevice_iMXRT104x:
+        cpu = "MIMXRT1042"
     elif device == uidef.kMcuDevice_iMXRT105x:
         cpu = "MIMXRT1052"
     elif device == uidef.kMcuDevice_iMXRT106x:
         cpu = "MIMXRT1062"
+    elif device == uidef.kMcuDevice_iMXRT1060X:
+        cpu = "MIMXRT1062X"
     elif device == uidef.kMcuDevice_iMXRT1064:
         cpu = "MIMXRT1064"
     elif device == uidef.kMcuDevice_iMXRT116x:
@@ -415,6 +419,12 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG0'], '(0x450) BOOT_CFG0')
         self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG1'], '(0x460) BOOT_CFG1')
         self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG2'], '(0x470) BOOT_CFG2')
+        if self.mcuDevice == uidef.kMcuDevice_iMXRT1060X:
+            # It is ROM patch implementation (Move SPI_EN to fuse 0x6D0[20]
+            sipBit = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_MISC_CONF0'], '', False)
+            if sipBit != None:
+                self.flexspiXipRegionSelFromFuse = (sipBit & 0x100000) >> 20
+                self.setFlexspiXipRegion()
 
     def _genOtpmkDekFile( self, otpmk4, otpmk5, otpmk6, otpmk7 ):
         try:
@@ -814,17 +824,17 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             else:
                 # 0xf000000f is the tag to notify Flashloader to program FlexSPI NOR config block to the start of device
                 if self.RTyyyy_isDeviceEnabledToOperate:
-                    status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadCfgBlock, 0x4, rundef.kFlexspiNorCfgInfo_Notify)
+                    status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCfgBlock, 0x4, rundef.kFlexspiNorCfgInfo_Notify)
                     self.printLog(cmdStr)
                 if self.isSbFileEnabledToGen:
-                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(rundef.kFlexspiNorCfgInfo_Notify))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCfgBlock))) + ";\n")
+                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(rundef.kFlexspiNorCfgInfo_Notify))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCfgBlock))) + ";\n")
                 if status != boot.status.kStatus_Success:
                     return False
                 if self.RTyyyy_isDeviceEnabledToOperate:
-                    status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTyyyy_rundef.kRamFreeSpaceStart_LoadCfgBlock)
+                    status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadCfgBlock)
                     self.printLog(cmdStr)
                 if self.isSbFileEnabledToGen:
-                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCfgBlock))) + ";\n")
+                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCfgBlock))) + ";\n")
             if self.isSbFileEnabledToGen:
                 return True
             else:
@@ -844,17 +854,17 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             configOpt = rundef.kFlexspiNorCfgInfo_Instance + self.flexspiXipRegionSel
             status = boot.status.kStatus_Success
             if self.RTyyyy_isDeviceEnabledToOperate:
-                status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt, 0x4, configOpt)
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt, 0x4, configOpt)
                 self.printLog(cmdStr)
             if self.isSbFileEnabledToGen:
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOpt))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOpt))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
             if status != boot.status.kStatus_Success:
                 return False
             if self.RTyyyy_isDeviceEnabledToOperate:
-                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt)
+                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadCommOpt)
                 self.printLog(cmdStr)
             if self.isSbFileEnabledToGen:
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
             if status != boot.status.kStatus_Success:
                 return False
         else:
@@ -881,7 +891,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             self.RTyyyy_setFlexspiNorInstance()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
-            configOptList.extend([flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt])
+            configOptList.extend([flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, self.tgt.ramFreeSpaceStart_LoadCommOpt])
             for i in range(len(flexspiNandImageInfoList)):
                 if flexspiNandImageInfoList[i] != None:
                     configOptList.extend([flexspiNandImageInfoList[i]])
@@ -901,26 +911,26 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         status = boot.status.kStatus_Success
         if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_FDCB:
             if self.RTyyyy_isDeviceEnabledToOperate:
-                status, results, cmdStr = self.blhost.writeMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt, self.cfgFdcbBinFilename, self.bootDeviceMemId)
+                status, results, cmdStr = self.blhost.writeMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt, self.cfgFdcbBinFilename, self.bootDeviceMemId)
                 self.printLog(cmdStr)
             if self.isSbFileEnabledToGen:
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " cfgFdcbBinFile > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " cfgFdcbBinFile > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
             if status != boot.status.kStatus_Success:
                 return False
         else:
             for i in range(len(configOptList)):
                 if self.RTyyyy_isDeviceEnabledToOperate:
-                    status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt + 4 * i, 0x4, configOptList[i])
+                    status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt + 4 * i, 0x4, configOptList[i])
                     self.printLog(cmdStr)
                 if self.isSbFileEnabledToGen:
-                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOptList[i]))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt + 4 * i))) + ";\n")
+                    self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOptList[i]))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt + 4 * i))) + ";\n")
                 if status != boot.status.kStatus_Success:
                     return False
         if self.RTyyyy_isDeviceEnabledToOperate:
-            status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt)
+            status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadCommOpt)
             self.printLog(cmdStr)
         if self.isSbFileEnabledToGen:
-            self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadCommOpt))) + ";\n")
+            self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
         if status != boot.status.kStatus_Success:
             return False
         return True
@@ -995,29 +1005,29 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         else:
             pass
         if self.isSbFileEnabledToGen:
-            self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(otpmkKeyOpt))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt))) + ";\n")
+            self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(otpmkKeyOpt))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadPrdbOpt))) + ";\n")
         else:
-            status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt, 0x4, otpmkKeyOpt)
+            status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadPrdbOpt, 0x4, otpmkKeyOpt)
             self.printLog(cmdStr)
             if status != boot.status.kStatus_Success:
                 return False
         for i in range(encryptedRegionCnt):
             if self.isSbFileEnabledToGen:
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(otpmkEncryptedRegionStartList[i]))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt + i * 8 + 4))) + ";\n")
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(otpmkEncryptedRegionLengthOrEndList[i]))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt + i * 8 + 8))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(otpmkEncryptedRegionStartList[i]))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadPrdbOpt + i * 8 + 4))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(otpmkEncryptedRegionLengthOrEndList[i]))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadPrdbOpt + i * 8 + 8))) + ";\n")
             else:
-                status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt + i * 8 + 4, 0x4, otpmkEncryptedRegionStartList[i])
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadPrdbOpt + i * 8 + 4, 0x4, otpmkEncryptedRegionStartList[i])
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
-                status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt + i * 8 + 8, 0x4, otpmkEncryptedRegionLengthOrEndList[i])
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadPrdbOpt + i * 8 + 8, 0x4, otpmkEncryptedRegionLengthOrEndList[i])
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
         if self.isSbFileEnabledToGen:
-            self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt))) + ";\n")
+            self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadPrdbOpt))) + ";\n")
         else:
-            status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTyyyy_rundef.kRamFreeSpaceStart_LoadPrdbOpt)
+            status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadPrdbOpt)
             self.printLog(cmdStr)
             if status != boot.status.kStatus_Success:
                 return False
@@ -1796,34 +1806,34 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             keyBlobContextOpt = 0xb0300000
             keyBlobDataOpt = 0xb1000000
             if self.isSbFileEnabledToGen:
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load dekFile > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadDekData))) + ";\n")
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(keyBlobContextOpt))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext))) + ";\n")
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadDekData))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext + 4))) + ";\n")
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(self.habDekDataOffset))) + " > " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext + 8))) + ";\n")
-                self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load dekFile > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadDekData))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(keyBlobContextOpt))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadDekData))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext + 4))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(self.habDekDataOffset))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext + 8))) + ";\n")
+                self._RTyyyy_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext))) + ";\n")
             else:
-                status, results, cmdStr = self.blhost.writeMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadDekData, self.habDekFilename)
+                status, results, cmdStr = self.blhost.writeMemory(self.tgt.ramFreeSpaceStart_LoadDekData, self.habDekFilename)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
-                status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext, 0x4, keyBlobContextOpt)
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext, 0x4, keyBlobContextOpt)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
-                status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext + 4, 0x4, RTyyyy_rundef.kRamFreeSpaceStart_LoadDekData)
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext + 4, 0x4, self.tgt.ramFreeSpaceStart_LoadDekData)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
-                status, results, cmdStr = self.blhost.fillMemory(RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext + 8, 0x4, self.habDekDataOffset)
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadKeyBlobContext + 8, 0x4, self.habDekDataOffset)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
-                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobContext)
+                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadKeyBlobContext)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
             for i in range(imageCopies):
-                ramFreeSpace = RTyyyy_rundef.kRamFreeSpaceStart_LoadKeyBlobData + (RTyyyy_rundef.kRamFreeSpaceStep_LoadKeyBlobData * i)
+                ramFreeSpace = self.tgt.ramFreeSpaceStart_LoadKeyBlobData + (RTyyyy_rundef.kRamFreeSpaceStep_LoadKeyBlobData * i)
                 if self.isSbFileEnabledToGen:
                     self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(keyBlobDataOpt + i))) + " > " + self.convertLongIntHexText(str(hex(ramFreeSpace))) + ";\n")
                 else:

@@ -315,17 +315,17 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                 self.printLog(cmdStr)
         else:
             if self.RTxxx_isDeviceEnabledToOperate:
-                status, results, cmdStr = self.blhost.fillMemory(RTxxx_rundef.kRamFreeSpaceStart_LoadCfgBlock, 0x4, rundef.kFlexspiNorCfgInfo_Notify)
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCfgBlock, 0x4, rundef.kFlexspiNorCfgInfo_Notify)
                 self.printLog(cmdStr)
             if self.isSbFileEnabledToGen:
-                self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(rundef.kFlexspiNorCfgInfo_Notify))) + " > " + self.convertLongIntHexText(str(hex(RTxxx_rundef.kRamFreeSpaceStart_LoadCfgBlock))) + ";\n")
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(rundef.kFlexspiNorCfgInfo_Notify))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCfgBlock))) + ";\n")
             if status != boot.status.kStatus_Success:
                 return False
             if self.RTxxx_isDeviceEnabledToOperate:
-                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTxxx_rundef.kRamFreeSpaceStart_LoadCfgBlock)
+                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadCfgBlock)
                 self.printLog(cmdStr)
             if self.isSbFileEnabledToGen:
-                self._RTxxx_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTxxx_rundef.kRamFreeSpaceStart_LoadCfgBlock))) + ";\n")
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCfgBlock))) + ";\n")
         if self.isSbFileEnabledToGen:
             return True
         else:
@@ -353,26 +353,26 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         status = boot.status.kStatus_Success
         if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_FDCB:
             if self.RTxxx_isDeviceEnabledToOperate:
-                status, results, cmdStr = self.blhost.writeMemory(RTxxx_rundef.kRamFreeSpaceStart_LoadCommOpt, self.cfgFdcbBinFilename, self.bootDeviceMemId)
+                status, results, cmdStr = self.blhost.writeMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt, self.cfgFdcbBinFilename, self.bootDeviceMemId)
                 self.printLog(cmdStr)
             if self.isSbFileEnabledToGen:
-                self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " cfgFdcbBinFile > " + self.convertLongIntHexText(str(hex(RTxxx_rundef.kRamFreeSpaceStart_LoadCommOpt))) + ";\n")
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " cfgFdcbBinFile > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
             if status != boot.status.kStatus_Success:
                 return False
         else:
             for i in range(len(configOptList)):
                 if self.RTxxx_isDeviceEnabledToOperate:
-                    status, results, cmdStr = self.blhost.fillMemory(RTxxx_rundef.kRamFreeSpaceStart_LoadCommOpt + 4 * i, 0x4, configOptList[i])
+                    status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt + 4 * i, 0x4, configOptList[i])
                     self.printLog(cmdStr)
                 if self.isSbFileEnabledToGen:
-                    self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOptList[i]))) + " > " + self.convertLongIntHexText(str(hex(RTxxx_rundef.kRamFreeSpaceStart_LoadCommOpt + 4 * i))) + ";\n")
+                    self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOptList[i]))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt + 4 * i))) + ";\n")
                 if status != boot.status.kStatus_Success:
                     return False
         if self.RTxxx_isDeviceEnabledToOperate:
-            status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, RTxxx_rundef.kRamFreeSpaceStart_LoadCommOpt)
+            status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadCommOpt)
             self.printLog(cmdStr)
         if self.isSbFileEnabledToGen:
-            self._RTxxx_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(RTxxx_rundef.kRamFreeSpaceStart_LoadCommOpt))) + ";\n")
+            self._RTxxx_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
         if status != boot.status.kStatus_Success:
             return False
         return True

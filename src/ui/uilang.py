@@ -639,7 +639,7 @@ kRevision_3_0_0_en =  "【v3.0.0】 \n" + \
                       "     2. [Kinetis] Support both UART and USB-HID download modes \n" + \
                       "     3. [Kinetis] Support for loading bootable image into FTFx NOR Flash \n" + \
                       "     4. [Kinetis] Support development boot case (Unsigned) \n" + \
-                      "     5. Support LPC5500 Series \n" + \
+                      "     5. Support LPC5500 Series(550x/551x/552x/55S6x) \n" + \
                       "     6. [LPC] Support both UART and USB-HID download modes \n" + \
                       "     7. [LPC] Support for loading bootable image into C040HD NOR Flash \n" + \
                       "     8. [LPC] Support development boot case (Unsigned) \n" + \
@@ -651,7 +651,7 @@ kRevision_3_0_0_zh = u"【v3.0.0】 \n" + \
                      u"     2. [Kinetis] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
                      u"     3. [Kinetis] 支持下载Bootable image进内部Flash \n" + \
                      u"     4. [Kinetis] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
-                     u"     5. 支持LPC5500系列 \n" + \
+                     u"     5. 支持LPC5500系列(550x/551x/552x/55S6x) \n" + \
                      u"     6. [LPC] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
                      u"     7. [LPC] 支持下载Bootable image进内部Flash \n" + \
                      u"     8. [LPC] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
@@ -743,6 +743,34 @@ kRevision_3_5_0_zh = u"【v3.5.0】 \n" + \
                      u"     2. [RTxxx] 修复Plain CRC启动模式下不可用的问题 \n" + \
                      u"     3. [RTyyyy] 修复RT1170下M7SRK efuse位置定义错误问题 \n" + \
                      u"     4. [RTyyyy] 修复RT1170下HAB验签硬件引擎类型选择错误问题 \n\n"
+kRevision_4_0_0_en =  "【v4.0.0】 \n" + \
+                      "  Feature: \n" + \
+                      "     1. Support i.MXRT1061X/1062X \n" + \
+                      "     2. Support i.MXRT1042 \n" + \
+                      "     3. Support LPC5500 Series(553x/S3x) \n" + \
+                      "     4. Support MCXN94x/N54x \n" + \
+                      "     5. [MCX] Support both UART and USB-HID download modes \n" + \
+                      "     6. [MCX] Support for loading bootable image into C040HD NOR Flash \n" + \
+                      "     7. [MCX] Support development boot case (Unsigned) \n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RT] Can set free RAM addresses for loading temporary data \n" + \
+                      "     2. [RTyyyy] Can set Serial NOR flash option for SiP device(RT1024/RT1064) \n" + \
+                      "  Bugfix: \n" + \
+                      "     1. [RTyyyy] Use SECv5 version flashloader of RT116x/RT117x to fix FlexSPI NAND issue \n\n"
+kRevision_4_0_0_zh = u"【v4.0.0】 \n" + \
+                     u"  特性: \n" + \
+                     u"     1. 支持i.MXRT1061X/1062X \n" + \
+                     u"     2. 支持i.MXRT1042 \n" + \
+                     u"     3. 支持LPC5500系列(553x/S3x) \n" + \
+                     u"     4. 支持MCXN94x/N54x \n" + \
+                     u"     5. [MCX] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
+                     u"     6. [MCX] 支持下载Bootable image进内部Flash \n" + \
+                     u"     7. [MCX] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
+                     u"  改进: \n" + \
+                     u"     1. [RT] 支持用户配置空闲RAM地址用于加载临时数据 \n" + \
+                     u"     2. [RTyyyy] 对于SiP芯片（(RT1024/RT1064)）支持设置串行 NOR flash 选项 \n" + \
+                     u"  修复: \n" + \
+                     u"     1. [RTyyyy] 对于RT116x/RT117x，切换使用SECv5里的Flashloader以修复串行NAND烧写问题 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -776,6 +804,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v3_3_1':             [kRevision_3_3_1_en,                      kRevision_3_3_1_zh],
         'revisionHistory_v3_4_0':             [kRevision_3_4_0_en,                      kRevision_3_4_0_zh],
         'revisionHistory_v3_5_0':             [kRevision_3_5_0_en,                      kRevision_3_5_0_zh],
+        'revisionHistory_v4_0_0':             [kRevision_4_0_0_en,                      kRevision_4_0_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
@@ -941,6 +970,9 @@ kMsgLanguageContentDict = {
 
         'connectError_doubleCheckFopt':       ['Make sure that you have put MCU in ROM boot mode (FOPT(FCF - 0x40d) = 0x3D, BOOTCFG0(NMI) pin is asserted)!',
                                               u"请检查FOPT(FCF区域0x40d)是否为0x3D以及上电时BOOTCFG0有没有按住以确认微控制器处于ROM启动模式！"],
+
+        'connectError_doubleCheckIspMode':    ['Make sure that you have put MCU in ISP boot mode (ISPMODE_EN pin = LOW)!',
+                                              u"请检查ISPMODE_EN引脚状态是否为低以确认微控制器处于ROM ISP模式！"],
 
         'connectError_doubleCheckIspBoot':    ['Make sure that you have put MCU in ISP boot mode (ISP0 pin = LOW)!',
                                               u"请检查ISP0引脚状态是否为低以确认微控制器处于ROM ISP模式！"],

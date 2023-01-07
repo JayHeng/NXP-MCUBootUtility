@@ -25,6 +25,8 @@ def LPC_createTarget(device, exeBinRoot):
         cpu = "LPC55S16"
     elif device in uidef.kMcuDevice_Niobe4s:
         cpu = "LPC55S69"
+    elif device == uidef.kMcuDevice_Niobe4analog:
+        cpu = "LPC55S36"
     else:
         pass
     targetBaseDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'targets', cpu)
