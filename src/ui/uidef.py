@@ -58,19 +58,49 @@ kMcuDevice_L5K       = 'MKL28Z'
 kMcuDevice_L3KS_1    = 'MKL33Z'
 kMcuDevice_L4KS_0    = 'MKL43Z'
 kMcuDevice_MKL80     = 'MKL8xZ'
+kMcuDevice_MT256X_0  = 'MKE13Z'
+kMcuDevice_MT64P_0   = 'MKE14Z'
+kMcuDevice_MT64P_1   = 'MKE15Z'
 kMcuDevice_MT256P    = 'MKE16Z'
+kMcuDevice_MT256X_1  = 'MKE17Z'
 kMcuDevice_MT512P    = 'MKE18F'
 kMcuDevice_MK28F_0   = 'MK27F'
 kMcuDevice_MK28F_1   = 'MK28F'
 kMcuDevice_MK80      = 'MK8xF'
 kMcuDevice_L2KS_1    = 'K32L2'
 kMcuDevice_L4KS_1    = 'K32L3'
+kMcuDevice_K4W1_0    = 'MKW45'
+kMcuDevice_K4W1_1    = 'K32W148'
 
 kMcuDevice_L3KSs     = [kMcuDevice_L3KS_0, kMcuDevice_L3KS_1]
+kMcuDevice_L2KSs     = [kMcuDevice_L2KS_0, kMcuDevice_L2KS_1]
+kMcuDevice_L4KSs     = [kMcuDevice_L4KS_0, kMcuDevice_L4KS_1]
 kMcuDevice_MK28Fs    = [kMcuDevice_MK28F_0, kMcuDevice_MK28F_1]
-kMcuDevice_Kinetis   = [kMcuDevice_L0PB, kMcuDevice_L3KS_0, kMcuDevice_L3KS_1, kMcuDevice_L2KS_0, kMcuDevice_L5K, kMcuDevice_L4KS_0, kMcuDevice_MKL80, kMcuDevice_MT256P, kMcuDevice_MT512P, kMcuDevice_MK28F_0, kMcuDevice_MK28F_1, kMcuDevice_MK80, kMcuDevice_L2KS_1, kMcuDevice_L4KS_1]
+kMcuDevice_MT64Ps    = [kMcuDevice_MT64P_0, kMcuDevice_MT64P_1]
+kMcuDevice_MT256Xs   = [kMcuDevice_MT256X_0, kMcuDevice_MT256X_1]
+kMcuDevice_K4W1s     = [kMcuDevice_K4W1_0, kMcuDevice_K4W1_1]
+kMcuDevice_Kinetis   = [kMcuDevice_L0PB, 
+                        kMcuDevice_L3KS_0, 
+                        kMcuDevice_L2KS_0, 
+                        kMcuDevice_L5K, 
+                        kMcuDevice_L3KS_1, 
+                        kMcuDevice_L4KS_0, 
+                        kMcuDevice_MKL80, 
+                        kMcuDevice_MT256X_0, 
+                        kMcuDevice_MT64P_0, 
+                        kMcuDevice_MT64P_1, 
+                        kMcuDevice_MT256P, 
+                        kMcuDevice_MT256X_1, 
+                        kMcuDevice_MT512P, 
+                        kMcuDevice_MK28F_0, 
+                        kMcuDevice_MK28F_1, 
+                        kMcuDevice_MK80, 
+                        kMcuDevice_L2KS_1, 
+                        kMcuDevice_L4KS_1, 
+                        kMcuDevice_K4W1_0, 
+                        kMcuDevice_K4W1_1]
 
-kMcuDevice_Niobe4mini_0 = 'LPC550x/S0x'
+kMcuDevice_Niobe4mini_0 = 'LPC550x/S0x'  # Niobe4Nano
 kMcuDevice_Niobe4mini_1 = 'LPC551x/S1x'
 kMcuDevice_Niobe4_0     = 'LPC552x/S2x'
 kMcuDevice_Niobe4_1     = 'LPC55S6x'
@@ -89,14 +119,46 @@ kMcuDevice_iMXRT_v1_1_0 = [kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevic
 kMcuDevice_iMXRT_v2_0_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT117x]
 kMcuDevice_iMXRT_v3_1_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT117x]
 kMcuDevice_iMXRT_v3_2_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT116x, kMcuDevice_iMXRT117x]
-kMcuDevice_iMXRT_v4_0_0 = [kMcuDevice_iMXRT500, kMcuDevice_iMXRT600, kMcuDevice_iMXRT1011, kMcuDevice_iMXRT1015, kMcuDevice_iMXRT102x, kMcuDevice_iMXRT1024, kMcuDevice_iMXRT104x, kMcuDevice_iMXRT105x, kMcuDevice_iMXRT106x, kMcuDevice_iMXRT1064, kMcuDevice_iMXRT1060X, kMcuDevice_iMXRT116x, kMcuDevice_iMXRT117x]
+kMcuDevice_iMXRT_v4_0_0 = [kMcuDevice_iMXRT500, 
+                           kMcuDevice_iMXRT600, 
+                           kMcuDevice_iMXRT1011, 
+                           kMcuDevice_iMXRT1015, 
+                           kMcuDevice_iMXRT102x, 
+                           kMcuDevice_iMXRT1024, 
+                           kMcuDevice_iMXRT104x, 
+                           kMcuDevice_iMXRT105x, 
+                           kMcuDevice_iMXRT106x, 
+                           kMcuDevice_iMXRT1064, 
+                           kMcuDevice_iMXRT1060X, 
+                           kMcuDevice_iMXRT116x, 
+                           kMcuDevice_iMXRT117x]
 kMcuDevice_Kinetis_v3_0_0 = [kMcuDevice_L0PB, kMcuDevice_L3KS_0, kMcuDevice_L2KS_0, kMcuDevice_L5K, kMcuDevice_L3KS_1, kMcuDevice_L4KS_0, kMcuDevice_MKL80, kMcuDevice_MT256P, kMcuDevice_MT512P, kMcuDevice_MK28F_0, kMcuDevice_MK28F_1, kMcuDevice_MK80]
 kMcuDevice_Kinetis_v3_1_0 = [kMcuDevice_L0PB, kMcuDevice_L3KS_0, kMcuDevice_L2KS_0, kMcuDevice_L5K, kMcuDevice_L3KS_1, kMcuDevice_L4KS_0, kMcuDevice_MKL80, kMcuDevice_MT256P, kMcuDevice_MT512P, kMcuDevice_MK28F_0, kMcuDevice_MK28F_1, kMcuDevice_MK80, kMcuDevice_L2KS_1, kMcuDevice_L4KS_1]
+kMcuDevice_Kinetis_v4_1_0 = [kMcuDevice_L0PB, 
+                             kMcuDevice_L3KS_0, 
+                             kMcuDevice_L2KS_0, 
+                             kMcuDevice_L5K, 
+                             kMcuDevice_L3KS_1, 
+                             kMcuDevice_L4KS_0, 
+                             kMcuDevice_MKL80, 
+                             kMcuDevice_MT256X_0, 
+                             kMcuDevice_MT64P_0, 
+                             kMcuDevice_MT64P_1, 
+                             kMcuDevice_MT256P, 
+                             kMcuDevice_MT256X_1, 
+                             kMcuDevice_MT512P, 
+                             kMcuDevice_MK28F_0, 
+                             kMcuDevice_MK28F_1, 
+                             kMcuDevice_MK80, 
+                             kMcuDevice_L2KS_1, 
+                             kMcuDevice_L4KS_1, 
+                             kMcuDevice_K4W1_0, 
+                             kMcuDevice_K4W1_1]
 kMcuDevice_LPC_v3_0_0     = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1, kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1]
 kMcuDevice_LPC_v4_0_0     = [kMcuDevice_Niobe4mini_0, kMcuDevice_Niobe4mini_1, kMcuDevice_Niobe4_0, kMcuDevice_Niobe4_1, kMcuDevice_Niobe4analog]
 kMcuDevice_MCX_v4_0_0     = [kMcuDevice_NirvanaN10_1, kMcuDevice_NirvanaN10_0]
 kMcuDevice_iMXRT_Latest   = kMcuDevice_iMXRT_v4_0_0
-kMcuDevice_Kinetis_Latest = kMcuDevice_Kinetis_v3_1_0
+kMcuDevice_Kinetis_Latest = kMcuDevice_Kinetis_v4_1_0
 kMcuDevice_LPC_Latest     = kMcuDevice_LPC_v4_0_0
 kMcuDevice_MCX_Latest     = kMcuDevice_MCX_v4_0_0
 
@@ -105,49 +167,53 @@ kBootDevice_XspiNor        = 'XSPI NOR'
 kFlexspiNorDevice_SipWinbond_W25Q32     = 'SipWinbond_W25Q32'
 kFlexspiNorDevice_None                  = 'No'
 kFlexspiNorDevice_FDCB                  = 'Complete_FDCB'
-kFlexspiNorDevice_ISSI_IS25LP064A       = 'ISSI_IS25LPxxxA_IS25WPxxxA'
-kFlexspiNorDevice_ISSI_IS26KS512S       = 'ISSI_IS26KSxxxS_IS26KLxxxS'
-kFlexspiNorDevice_MXIC_MX25L12845G      = 'Macronix_MX25Uxxx32F_MX25Lxxx45G'
-kFlexspiNorDevice_MXIC_MX25UM51245G     = 'Macronix_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G'
-kFlexspiNorDevice_MXIC_MX25UM51345G     = 'Macronix_MX25UM51345G'
-kFlexspiNorDevice_MXIC_MX25UM51345G_2nd = 'Macronix_MX25UM51345G_2nd'
-kFlexspiNorDevice_Micron_MT25QL128A     = 'Micron_MT25QLxxxA'
-kFlexspiNorDevice_Micron_MT35X          = 'Micron_MT35XLxxxA_MT35XUxxxA'
-kFlexspiNorDevice_Adesto_AT25SF128A     = 'Adesto_AT25SFxxxA'
-kFlexspiNorDevice_Adesto_ATXP032        = 'Adesto_ATXPxxx'
-kFlexspiNorDevice_Cypress_S25FL128S     = 'Cypress_S25FSxxxS_S25FLxxxS'
-kFlexspiNorDevice_Cypress_S26KS512S     = 'Cypress_S26KSxxxS_S26KLxxxS'
-kFlexspiNorDevice_GigaDevice_GD25Q64C   = 'GigaDevice_GD25QxxxC'
-kFlexspiNorDevice_GigaDevice_GD25LB256E = 'GigaDevice_GD25LBxxxE'
-kFlexspiNorDevice_GigaDevice_GD25LT256E = 'GigaDevice_GD25LTxxxE'
-kFlexspiNorDevice_GigaDevice_GD25LX256E = 'GigaDevice_GD25LXxxxE'
-kFlexspiNorDevice_Winbond_W25Q128JV     = 'Winbond_W25QxxxJV'
-kFlexspiNorDevice_Microchip_SST26VF064B = 'Microchip_SST26VFxxxB'
-kFlexspiNorDevice_FudanMicro_FM25Q64    = 'FudanMicro_FM25Qxxx'
-kFlexspiNorDevice_BoyaMicro_BY25Q16BS   = 'BoyaMicro_BY25QxxxBS'
-kFlexspiNorDevice_XMC_XM25QH64B         = 'XMC_XM25QHxxxB_XM25QUxxxB'
-kFlexspiNorDevice_XTXtech_X25Q64D       = 'XTXtech_X25FxxxB_X25QxxxD'
-kFlexspiNorDevice_Puya_P25Q64LE         = 'Puya_P25QxxxLE_P25QxxxH_P25QxxxU'
-kFlexspiNorDevice_AMIC_A25LQ64          = 'AMIC_A25LQxxx'
+kFlexspiNorDevice_Winbond_W25Q128JV     = 'Winbond_QuadSPI_W25QxxxJV'
+kFlexspiNorDevice_Winbond_W35T51NW      = 'Winbond_OctalSPI_W35T51NW'
+kFlexspiNorDevice_MXIC_MX25L12845G      = 'Macronix_QuadSPI_MX25Uxxx32F_MX25Lxxx45G'
+kFlexspiNorDevice_MXIC_MX25UM51245G     = 'Macronix_OctalSPI_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G'
+kFlexspiNorDevice_MXIC_MX25UM51345G     = 'Macronix_OctalSPI_MX25UM51345G'
+kFlexspiNorDevice_MXIC_MX25UM51345G_2nd = 'Macronix_OctalSPI_MX25UM51345G_2nd'
+kFlexspiNorDevice_GigaDevice_GD25Q64C   = 'GigaDevice_QuadSPI_GD25QxxxC'
+kFlexspiNorDevice_GigaDevice_GD25LB256E = 'GigaDevice_QuadSPI_GD25LBxxxE'
+kFlexspiNorDevice_GigaDevice_GD25LT256E = 'GigaDevice_QuadSPI_GD25LTxxxE'
+kFlexspiNorDevice_GigaDevice_GD25LX256E = 'GigaDevice_OctalSPI_GD25LXxxxE'
+kFlexspiNorDevice_ISSI_IS25LP064A       = 'ISSI_QuadSPI_IS25LPxxxA_IS25WPxxxA'
+kFlexspiNorDevice_ISSI_IS25LX256        = 'ISSI_OctalSPI_IS25LXxxx_IS25WXxxx'
+kFlexspiNorDevice_ISSI_IS26KS512S       = 'ISSI_HyperFlash_IS26KSxxxS_IS26KLxxxS'
+kFlexspiNorDevice_Micron_MT25QL128A     = 'Micron_QuadSPI_MT25QLxxxA'
+kFlexspiNorDevice_Micron_MT35X          = 'Micron_OctalSPI_MT35XLxxxA_MT35XUxxxA'
+kFlexspiNorDevice_Adesto_AT25SF128A     = 'Adesto_QuadSPI_AT25SFxxxA'
+kFlexspiNorDevice_Adesto_ATXP032        = 'Adesto_OctalSPI_ATXPxxx'
+kFlexspiNorDevice_Cypress_S25FL128S     = 'Cypress_QuadSPI_S25FSxxxS_S25FLxxxS'
+kFlexspiNorDevice_Cypress_S26KS512S     = 'Cypress_HyperFlash_S26KSxxxS_S26KLxxxS'
+kFlexspiNorDevice_Microchip_SST26VF064B = 'Microchip_QuadSPI_SST26VFxxxB'
+kFlexspiNorDevice_FudanMicro_FM25Q64    = 'FudanMicro_QuadSPI_FM25Qxxx'
+kFlexspiNorDevice_BoyaMicro_BY25Q16BS   = 'BoyaMicro_QuadSPI_BY25QxxxBS'
+kFlexspiNorDevice_XMC_XM25QH64B         = 'XMC_QuadSPI_XM25QHxxxB_XM25QUxxxB'
+kFlexspiNorDevice_XTXtech_X25Q64D       = 'XTXtech_QuadSPI_X25FxxxB_X25QxxxD'
+kFlexspiNorDevice_Puya_P25Q64LE         = 'Puya_QuadSPI_P25QxxxLE_P25QxxxH_P25QxxxU'
+kFlexspiNorDevice_AMIC_A25LQ64          = 'AMIC_QuadSPI_A25LQxxx'
 
-kFlexspiNorOpt0_ISSI_IS25LP064A       = 0xc0000007
-kFlexspiNorOpt0_ISSI_IS26KS512S       = 0xc0233007
+kFlexspiNorOpt0_Winbond_W25Q128JV     = 0xc0000207
+kFlexspiNorOpt0_Winbond_W35T51NW      = 0xc0603005
 kFlexspiNorOpt0_MXIC_MX25L12845G      = 0xc0000007
 kFlexspiNorOpt0_MXIC_MX25UM51245G     = 0xc0403037
 kFlexspiNorOpt0_MXIC_MX25UM51345G     = 0xc0403007
 kFlexspiNorOpt0_MXIC_MX25UM51345G_2nd = 0xc1503051
 kFlexspiNorOpt1_MXIC_MX25UM51345G_2nd = 0x20000014
+kFlexspiNorOpt0_GigaDevice_GD25Q64C   = 0xc0000406
+kFlexspiNorOpt0_GigaDevice_GD25LB256E = 0xc0000007
+kFlexspiNorOpt0_GigaDevice_GD25LT256E = 0xc0000008
+kFlexspiNorOpt0_GigaDevice_GD25LX256E = 0xc0600008
+kFlexspiNorOpt0_ISSI_IS25LP064A       = 0xc0000007
+kFlexspiNorOpt0_ISSI_IS25LX256        = 0xC0603005
+kFlexspiNorOpt0_ISSI_IS26KS512S       = 0xc0233007
 kFlexspiNorOpt0_Micron_MT25QL128A     = 0xc0000007
 kFlexspiNorOpt0_Micron_MT35X          = 0xC0603005
 kFlexspiNorOpt0_Adesto_AT25SF128A     = 0xc0000007
 kFlexspiNorOpt0_Adesto_ATXP032        = 0xc0803007
 kFlexspiNorOpt0_Cypress_S25FL128S     = 0xc0000007
 kFlexspiNorOpt0_Cypress_S26KS512S     = 0xc0233007
-kFlexspiNorOpt0_GigaDevice_GD25Q64C   = 0xc0000406
-kFlexspiNorOpt0_GigaDevice_GD25LB256E = 0xc0000007
-kFlexspiNorOpt0_GigaDevice_GD25LT256E = 0xc0000008
-kFlexspiNorOpt0_GigaDevice_GD25LX256E = 0xc0600008
-kFlexspiNorOpt0_Winbond_W25Q128JV     = 0xc0000207
 kFlexspiNorOpt0_Microchip_SST26VF064B = 0xc0000005
 kFlexspiNorOpt0_FudanMicro_FM25Q64    = 0xc0000205
 kFlexspiNorOpt0_BoyaMicro_BY25Q16BS   = 0xc0000405

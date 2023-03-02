@@ -458,10 +458,10 @@ class secBootUi(secBootWin.secBootWin):
                 flexspiNorOpt0 = self.tgt.flexspiNorDevice
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_SipWinbond_W25Q32:
                 flexspiNorOpt0 = 0xC0000007
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS25LP064A:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LP064A
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS26KS512S:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Winbond_W25Q128JV:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Winbond_W25Q128JV
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Winbond_W35T51NW:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Winbond_W35T51NW
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_MXIC_MX25L12845G:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25L12845G
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_MXIC_MX25UM51245G:
@@ -471,6 +471,20 @@ class secBootUi(secBootWin.secBootWin):
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_2nd:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_2nd
                 flexspiNorOpt1 = uidef.kFlexspiNorOpt1_MXIC_MX25UM51345G_2nd
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25Q64C:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25Q64C
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25LB256E:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LB256E
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25LT256E:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LT256E
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25LX256E:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LX256E
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS25LP064A:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LP064A
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS25LX256:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS25LX256
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS26KS512S:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Micron_MT25QL128A:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT25QL128A
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Micron_MT35X:
@@ -483,16 +497,6 @@ class secBootUi(secBootWin.secBootWin):
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL128S
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S26KS512S
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25Q64C:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25Q64C
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25LB256E:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LB256E
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25LT256E:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LT256E
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_GigaDevice_GD25LX256E:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_GigaDevice_GD25LX256E
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Winbond_W25Q128JV:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Winbond_W25Q128JV
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Microchip_SST26VF064B:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Microchip_SST26VF064B
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_FudanMicro_FM25Q64:

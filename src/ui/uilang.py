@@ -771,6 +771,18 @@ kRevision_4_0_0_zh = u"【v4.0.0】 \n" + \
                      u"     2. [RTyyyy] 对于SiP芯片（(RT1024/RT1064)）支持设置串行 NOR flash 选项 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 对于RT116x/RT117x，切换使用SECv5里的Flashloader以修复串行NAND烧写问题 \n\n"
+kRevision_4_1_0_en =  "【v4.1.0】 \n" + \
+                      "  Feature: \n" + \
+                      "     1. Support MKE13Z/14Z/15Z/17Z \n" + \
+                      "     2. Support MKW45/K32W148 \n" + \
+                      "     3. Support two more Octal NOR devices (ISSI, Winbond) \n" + \
+                      "      \n\n"
+kRevision_4_1_0_zh = u"【v4.1.0】 \n" + \
+                     u"  特性: \n" + \
+                     u"     1. 支持MKE13Z/14Z/15Z/17Z \n" + \
+                     u"     2. 支持MKW45/K32W148 \n" + \
+                     u"     3. 支持来自ISSI和Winbond的Octal Flash \n" + \
+                     u"     \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -805,6 +817,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v3_4_0':             [kRevision_3_4_0_en,                      kRevision_3_4_0_zh],
         'revisionHistory_v3_5_0':             [kRevision_3_5_0_en,                      kRevision_3_5_0_zh],
         'revisionHistory_v4_0_0':             [kRevision_4_0_0_en,                      kRevision_4_0_0_zh],
+        'revisionHistory_v4_1_0':             [kRevision_4_1_0_en,                      kRevision_4_1_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
