@@ -57,7 +57,7 @@ class secBootUiCfgDcd(bootDeviceWin_DCD.bootDeviceWin_DCD):
         if self.dcdSettingsDict['sdramBase'] != None:
             self.m_textCtrl_sdramBase.Clear()
             self.m_textCtrl_sdramBase.write(self.dcdSettingsDict['sdramBase'])
-        self._getDeviceModel()
+        self._getDeviceModel(False)
         if self.dcdSettingsDict['dcdDesc'] != None:
             self.m_textCtrl_dcdDesc.Clear()
             self.m_textCtrl_dcdDesc.write(self.dcdSettingsDict['dcdDesc'])
@@ -79,7 +79,6 @@ class secBootUiCfgDcd(bootDeviceWin_DCD.bootDeviceWin_DCD):
             self.m_choice_dcdPurpose.Enable( True )
             self.m_panel_dcdDesc.Enable( False )
             self._getDcdPurpose()
-            self._getDeviceModel()
         elif txt == 'Use DCD cfg file':
             self.dcdCtrlDict['isDcdEnabled'] = True
             self.m_filePicker_dcdBinFile.Enable( False )
@@ -87,7 +86,6 @@ class secBootUiCfgDcd(bootDeviceWin_DCD.bootDeviceWin_DCD):
             self.m_choice_dcdPurpose.Enable( True )
             self.m_panel_dcdDesc.Enable( False )
             self._getDcdPurpose()
-            self._getDeviceModel()
         elif txt == 'Use DCD descriptor':
             self.dcdCtrlDict['isDcdEnabled'] = True
             self.m_filePicker_dcdBinFile.Enable( False )
@@ -95,7 +93,6 @@ class secBootUiCfgDcd(bootDeviceWin_DCD.bootDeviceWin_DCD):
             self.m_choice_dcdPurpose.Enable( True )
             self.m_panel_dcdDesc.Enable( True )
             self._getDcdPurpose()
-            self._getDeviceModel()
         else:
             pass
 
@@ -166,12 +163,15 @@ class secBootUiCfgDcd(bootDeviceWin_DCD.bootDeviceWin_DCD):
             self.dcdSettingsDict['sdramBase'] = None
         return status
 
-    def _getDeviceModel( self ):
+    def _getDeviceModel( self, useTempModel=True ):
         if self.dcdSettingsDict['dcdSource'] == 'Use DCD descriptor':
             txt = self.m_choice_dcdModel.GetString(self.m_choice_dcdModel.GetSelection())
             if txt == 'No':
                 self.m_textCtrl_dcdDesc.Clear()
-                self.m_textCtrl_dcdDesc.LoadFile(os.path.join(self.dcdModelFolder, 'template', RTyyyy_gendef.kStdDcdFilename_Cfg))
+                if os.path.isfile(self.destCfgFilename) and (not useTempModel):
+                    self.m_textCtrl_dcdDesc.LoadFile(self.destCfgFilename)
+                else:
+                    self.m_textCtrl_dcdDesc.LoadFile(os.path.join(self.dcdModelFolder, 'template', RTyyyy_gendef.kStdDcdFilename_Cfg))
             elif txt == 'Micron_MT48LC16M16A2' or txt == 'ISSI_IS42S16160J':
                 self.m_textCtrl_dcdDesc.Clear()
                 self.m_textCtrl_dcdDesc.LoadFile(os.path.join(self.dcdModelFolder, txt, RTyyyy_gendef.kStdDcdFilename_Cfg))
@@ -201,7 +201,7 @@ class secBootUiCfgDcd(bootDeviceWin_DCD.bootDeviceWin_DCD):
         self._getDcdPurpose()
 
     def callbackSetDeviceModel( self, event ):
-        self._getDeviceModel()
+        self._getDeviceModel(True)
 
     def callbackOk( self, event ):
         self._getDcdSource()

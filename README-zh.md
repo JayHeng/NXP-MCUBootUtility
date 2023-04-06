@@ -1,6 +1,6 @@
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v4.1.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v4.1.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v4.1.1.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v4.1.1...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 [English](./README.md) | 中文
 
