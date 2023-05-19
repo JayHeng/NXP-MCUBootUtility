@@ -17,3 +17,8 @@ kSbLoaderVersion_v2_0 = 1
 kSbLoaderVersion_v2_1 = 2
 
 kImgVerOffset_NOR = 0x600
+
+kBootHeaderType_Vector    = 0
+kBootHeaderType_IVT       = 1
+kBootHeaderType_Container = 2
+

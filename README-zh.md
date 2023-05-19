@@ -1,6 +1,6 @@
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v4.1.1.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v4.1.1...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.0.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.0.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 [English](./README.md) | 中文
 
@@ -22,7 +22,7 @@
 > * 支持下载Bootable image进外部启动设备
 > * 支持外部启动设备的任意读/写/擦操作（即通用Flash编程器）  
 -------------------------------------------------------
-> * 支持i.MXRTyyyy全系列MCU，包含i.MXRT1011、i.MXRT1015、i.MXRT1021、i.MXRT1024 SIP、i.MXRT1042、i.MXRT105x、i.MXRT106x、i.MXRT1064 SIP、i.MXRT116x、i.MXRT117x  
+> * 支持i.MXRTyyyy全系列MCU，包含i.MXRT1011、i.MXRT1015、i.MXRT1021、i.MXRT1024 SIP、i.MXRT1042、i.MXRT105x、i.MXRT106x、i.MXRT1064 SIP、i.MXRT116x、i.MXRT117x、i.MXRT118x  
 > * 源image文件既可以是裸源image文件，也可以是含启动文件头的bootable image文件  
 > * 支持将裸源image文件自动转换成MfgTool和RT-Flash工具能下载的.sb格式文件  
 > * 支持下载Bootable image进主动启动设备 - FlexSPI接口NOR Flash  

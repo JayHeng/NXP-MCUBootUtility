@@ -1691,7 +1691,7 @@ class secBootWin ( wx.Frame ):
 
 		wSizer_memView = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
 
-		self.m_staticText_memStart = wx.StaticText( self.m_panel_memView, wx.ID_ANY, u"Start / Offset:", wx.DefaultPosition, wx.Size( 70,-1 ), 0 )
+		self.m_staticText_memStart = wx.StaticText( self.m_panel_memView, wx.ID_ANY, u"Range Start/Offset:", wx.DefaultPosition, wx.Size( 110,-1 ), 0 )
 		self.m_staticText_memStart.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_memStart, 0, wx.ALL, 5 )
@@ -1699,7 +1699,7 @@ class secBootWin ( wx.Frame ):
 		self.m_textCtrl_memStart = wx.TextCtrl( self.m_panel_memView, wx.ID_ANY, u"0x0", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
 		wSizer_memView.Add( self.m_textCtrl_memStart, 0, wx.ALL, 5 )
 
-		self.m_staticText_memLength = wx.StaticText( self.m_panel_memView, wx.ID_ANY, u"Byte Length (For Read/Erase):", wx.DefaultPosition, wx.Size( 160,-1 ), 0 )
+		self.m_staticText_memLength = wx.StaticText( self.m_panel_memView, wx.ID_ANY, u"Range Length (Byte):", wx.DefaultPosition, wx.Size( 120,-1 ), 0 )
 		self.m_staticText_memLength.Wrap( -1 )
 
 		wSizer_memView.Add( self.m_staticText_memLength, 0, wx.ALL, 5 )
@@ -1725,13 +1725,13 @@ class secBootWin ( wx.Frame ):
 
 		wSizer_memView.Add( self.m_staticText_null1MemView, 0, wx.ALL, 5 )
 
-		self.m_button_readMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Read", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
+		self.m_button_readMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Range Read", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_readMem, 0, wx.ALL, 5 )
 
-		self.m_button_eraseMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Erase", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
+		self.m_button_eraseMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Range Erase", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_eraseMem, 0, wx.ALL, 5 )
 
-		self.m_button_massEraseMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Mass Erase", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
+		self.m_button_massEraseMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Chip Erase", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_massEraseMem, 0, wx.ALL, 5 )
 
 		self.m_button_writeMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Write (Auto Erase)", wx.DefaultPosition, wx.Size( 130,-1 ), 0 )

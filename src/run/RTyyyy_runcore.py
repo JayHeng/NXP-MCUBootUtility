@@ -45,6 +45,8 @@ def RTyyyy_createTarget(device, exeBinRoot, flexspiXipRegionSel ):
         cpu = "MIMXRT1166"
     elif device == uidef.kMcuDevice_iMXRT117x:
         cpu = "MIMXRT1176"
+    elif device == uidef.kMcuDevice_iMXRT118x:
+        cpu = "MIMXRT1189"
     else:
         pass
     targetBaseDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'targets', cpu)
@@ -238,8 +240,11 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             return None
 
     def _readMcuDeviceRegisterUuid( self ):
-        self._getDeviceRegisterBySdphost( self.tgt.registerAddrDict['kRegisterAddr_OCOTP_UUID1'], 'OCOTP->UUID[31:00]')
-        self._getDeviceRegisterBySdphost( self.tgt.registerAddrDict['kRegisterAddr_OCOTP_UUID2'], 'OCOTP->UUID[63:32]')
+        if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
+            self._getDeviceRegisterBySdphost( self.tgt.registerAddrDict['kRegisterAddr_OCOTP_UUID1'], 'OCOTP->UUID[31:00]')
+            self._getDeviceRegisterBySdphost( self.tgt.registerAddrDict['kRegisterAddr_OCOTP_UUID2'], 'OCOTP->UUID[63:32]')
+        elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
+            self.getMcuDeviceBootloaderUniqueId()
 
     def _readMcuDeviceRegisterSrcSmbr( self ):
         self._getDeviceRegisterBySdphost( self.tgt.registerAddrDict['kRegisterAddr_SRC_SBMR1'], 'SRC->SBMR1')
@@ -256,14 +261,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 self.printDeviceStatus('BMOD[1:0] = 2\'b11 (Reserved)')
 
     def RTyyyy_getMcuDeviceInfoViaRom( self ):
-        self.printDeviceStatus("--------MCU device Register----------")
+        self.printDeviceStatus("--------MCU Device ROM Info--------")
+        self._readMcuDeviceRegisterUuid()
         if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
             # RT10yy supports SDP protocol, but some device(RT1011) doesn't support Read Register command
-            self._readMcuDeviceRegisterUuid()
             self._readMcuDeviceRegisterSrcSmbr()
         elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
             # RT11yy doesn't support SDP protocol
-            pass
+            self.getMcuDeviceBootloaderVersion()
 
     def getFlexramInfoViaRom( self ):
         self.printDeviceStatus("----------FlexRAM memory-----------")
@@ -293,11 +298,11 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 if secConfig != None:
                     self.mcuDeviceHabStatus = ((secConfig & self.tgt.registerDefnDict['kRegisterMask_SRC_SBMR2_SecConfig']) >> self.tgt.registerDefnDict['kRegisterShift_SRC_SBMR2_SecConfig'])
                     if self.mcuDeviceHabStatus == RTyyyy_fusedef.kHabStatus_FAB:
-                        self.printDeviceStatus('HAB status = FAB')
+                        self.printDeviceStatus('Life Cycle status = FAB')
                     elif self.mcuDeviceHabStatus == RTyyyy_fusedef.kHabStatus_Open:
-                        self.printDeviceStatus('HAB status = Open')
+                        self.printDeviceStatus('Life Cycle status = HAB Open')
                     elif self.mcuDeviceHabStatus == RTyyyy_fusedef.kHabStatus_Closed0 or self.mcuDeviceHabStatus == RTyyyy_fusedef.kHabStatus_Closed1:
-                        self.printDeviceStatus('HAB status = Closed')
+                        self.printDeviceStatus('Life Cycle status = HAB Closed')
                     else:
                         pass
             else:
@@ -305,10 +310,10 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 self.printLog(cmdStr)
                 if status == boot.status.kSDP_Status_HabEnabled:
                     self.mcuDeviceHabStatus = RTyyyy_fusedef.kHabStatus_Closed0
-                    self.printDeviceStatus('HAB status = Closed')
+                    self.printDeviceStatus('Life Cycle status = HAB Closed')
                 elif status == boot.status.kSDP_Status_HabDisabled:
                     self.mcuDeviceHabStatus = RTyyyy_fusedef.kHabStatus_Open
-                    self.printDeviceStatus('HAB status = Open')
+                    self.printDeviceStatus('Life Cycle status = HAB Open')
                 else:
                     pass
         elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
@@ -317,10 +322,10 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             if status == boot.status.kStatus_Success:
                 if results[0] == 0:
                     self.mcuDeviceHabStatus = RTyyyy_fusedef.kHabStatus_Open
-                    self.printDeviceStatus('HAB status = Open')
+                    self.printDeviceStatus('Life Cycle status = HAB Open')
                 else:
                     self.mcuDeviceHabStatus = RTyyyy_fusedef.kHabStatus_Closed0
-                    self.printDeviceStatus('HAB status = Closed')
+                    self.printDeviceStatus('Life Cycle status = HAB Closed')
             else:
                 pass
         else:
@@ -336,8 +341,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             flBinFile, flLoadAddr, flJumpAddr = self.genUserFlashloader(flSrecFile)
         else:
             if self.flashloaderResident == None:
+                flBinFile = None
+                if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                    flBinFile = os.path.join(self.cpuDir, 'ivt_flashloader.bin')
+                elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                    flBinFile = os.path.join(self.cpuDir, 'cntr_flashloader.bin')
+                else:
+                    pass
                 flSrecFile = os.path.join(self.cpuDir, 'flashloader.srec')
-                flBinFile = os.path.join(self.cpuDir, 'ivt_flashloader.bin')
                 flLoadAddr = self.tgt.flashloaderLoadAddr
                 flJumpAddr = self.tgt.flashloaderJumpAddr
             elif self.flashloaderResident == 'itcm' or \
@@ -416,9 +427,29 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_TESTER3'], '(0x440) TESTER3')
 
     def _RTyyyy_readMcuDeviceFuseBootCfg( self ):
-        self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG0'], '(0x450) BOOT_CFG0')
-        self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG1'], '(0x460) BOOT_CFG1')
-        self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG2'], '(0x470) BOOT_CFG2')
+        cfg0txt = ''
+        cfg1txt = ''
+        cfg2txt = ''
+        if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
+            cfg0txt = '(0x450)'
+            cfg1txt = '(0x460)'
+            cfg2txt = '(0x470)'
+        elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                cfg0txt = '(0x940)'
+                cfg1txt = '(0x950)'
+                cfg2txt = '(0x960)'
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                cfg0txt = '(0x18)'
+                cfg1txt = '(0x19)'
+                cfg2txt = '(0x1a)'
+            else:
+                pass
+        else:
+            pass
+        self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG0'], cfg0txt+' SYSBT_CFG0')
+        self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG1'], cfg1txt+' SYSBT_CFG1')
+        self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_BOOT_CFG2'], cfg2txt+' SYSBT_CFG2')
         if self.mcuDevice == uidef.kMcuDevice_iMXRT1060X:
             # It is ROM patch implementation (Move SPI_EN to fuse 0x6D0[20]
             sipBit = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_MISC_CONF0'], '', False)
@@ -460,33 +491,71 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_SW_GP2_2'], '(0x6B0) SW_GP2_2')
         self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_SW_GP2_3'], '(0x6C0) SW_GP2_3')
 
+    def _getMcuDeviceLifeCycleStatus( self ):
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            pass
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            sentinelMiscCtrl5 = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseLocation_SentinelMiscCtrl5'], '', False)
+            if sentinelMiscCtrl5 != None:
+                lcFab = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleFAB']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleFAB'])
+                lcNxpProvisioned = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleNxpProvisioned']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleNxpProvisioned'])
+                lcOemOpen = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleOemOpen']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleOemOpen'])
+                lcOemClosed = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleOemClosed']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleOemClosed'])
+                lcFrOem = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleFrOem']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleFrOem'])
+                lcFrNxp = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleFrNxp']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleFrNxp'])
+                lcCancelNr = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleCancelNr']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleCancelNr'])
+                lcNrLocked = ((sentinelMiscCtrl5 & self.tgt.efusemapDefnDict['kEfuseMask_LifeCycleNrLocked']) >> self.tgt.efusemapDefnDict['kEfuseShift_LifeCycleNrLocked'])
+
+                self.printDeviceStatus('Life Cycle status - FAB = '+str(lcFab))
+                self.printDeviceStatus('Life Cycle status - NXP_PROVISIONED = '+str(lcNxpProvisioned))
+                self.printDeviceStatus('Life Cycle status - OEM_OPEN = '+str(lcOemOpen))
+                self.printDeviceStatus('Life Cycle status - OEM_CLOSED = '+str(lcOemClosed))
+                self.printDeviceStatus('Life Cycle status - FR_OEM = '+str(lcFrOem))
+                self.printDeviceStatus('Life Cycle status - FR_NXP = '+str(lcFrNxp))
+                self.printDeviceStatus('Life Cycle status - CANCEL_NR = '+str(lcCancelNr))
+                self.printDeviceStatus('Life Cycle status - NR_LOCKED = '+str(lcNrLocked))
+        else:
+            pass
+
     def getMcuDeviceInfoViaFlashloader( self ):
-        self.printDeviceStatus("--------MCU Flashloader info-------")
+        self.printDeviceStatus("--------MCU Flashloader Info-------")
         self.getMcuDeviceBootloaderVersion()
         self.printDeviceStatus("--------MCU device eFusemap--------")
+        self._RTyyyy_readMcuDeviceFuseBootCfg()
         if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
             #self._readMcuDeviceFuseTester()
-            self._RTyyyy_readMcuDeviceFuseBootCfg()
             #self._readMcuDeviceFuseOtpmkDek()
             #self._readMcuDeviceFuseSrk()
             #self._readMcuDeviceFuseSwGp2()
+            pass
         elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
+            self._getMcuDeviceLifeCycleStatus()
+        else:
             pass
 
     def getMcuDeviceBtFuseSel( self ):
         btFuseSel = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseLocation_BtFuseSel'], '', False)
         if btFuseSel != None:
             self.mcuDeviceBtFuseSel = ((btFuseSel & self.tgt.efusemapDefnDict['kEfuseMask_BtFuseSel']) >> self.tgt.efusemapDefnDict['kEfuseShift_BtFuseSel'])
-            if self.mcuDeviceBtFuseSel == 0:
-                self.printDeviceStatus('BT_FUSE_SEL = 1\'b0')
-                self.printDeviceStatus('  When BMOD[1:0] = 2\'b00 (Boot From Fuses), It means there is no application in boot device, MCU will enter serial downloader mode directly')
-                self.printDeviceStatus('  When BMOD[1:0] = 2\'b10 (Internal Boot), It means MCU will boot application according to both BOOT_CFGx pins and Fuse BOOT_CFGx')
-            elif self.mcuDeviceBtFuseSel == 1:
-                self.printDeviceStatus('BT_FUSE_SEL = 1\'b1')
-                self.printDeviceStatus('  When BMOD[1:0] = 2\'b00 (Boot From Fuses), It means there is application in boot device, MCU will boot application according to Fuse BOOT_CFGx')
-                self.printDeviceStatus('  When BMOD[1:0] = 2\'b10 (Internal Boot), It means MCU will boot application according to Fuse BOOT_CFGx only')
-            else:
-                pass
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                if self.mcuDeviceBtFuseSel == 0:
+                    self.printDeviceStatus('BT_FUSE_SEL = 1\'b0')
+                    self.printDeviceStatus('  When BMOD[1:0] = 2\'b00 (Boot From Fuses), no app in boot device, MCU enters serial downloader mode directly')
+                    self.printDeviceStatus('  When BMOD[1:0] = 2\'b10 (Internal Boot), MCU boots app according to both BOOT_CFGx pins and Fuse BOOT_CFGx')
+                elif self.mcuDeviceBtFuseSel == 1:
+                    self.printDeviceStatus('BT_FUSE_SEL = 1\'b1')
+                    self.printDeviceStatus('  When BMOD[1:0] = 2\'b00 (Boot From Fuses), there is app in boot device, MCU boots app according to Fuse BOOT_CFGx')
+                    self.printDeviceStatus('  When BMOD[1:0] = 2\'b10 (Internal Boot), MCU boots app according to Fuse BOOT_CFGx only')
+                else:
+                    pass
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                forceBtFromFuse = ((btFuseSel & self.tgt.efusemapDefnDict['kEfuseMask_ForceBtFromFuse']) >> self.tgt.efusemapDefnDict['kEfuseShift_ForceBtFromFuse'])
+                if forceBtFromFuse == 0:
+                    self.printDeviceStatus('FORCE_BT_FROM_FUSE = 1\'b0, Boot mode determined by BOOT_MODE pins')
+                elif forceBtFromFuse == 1:
+                    self.printDeviceStatus('FORCE_BT_FROM_FUSE = 1\'b1, Boot mode determined by Fuse BOOT_MODE_FROM_FUSE')
+                else:
+                    pass
 
     def _getDeviceRegisterByBlhost( self, regAddr, regName, needToShow=True):
         filename = 'readReg.dat'
@@ -944,7 +1013,11 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 self.printOtpmkDekData(self.getFormattedHexValue(val32))
 
     def _eraseFlexspiNorForImageLoading( self ):
-        imageLen = os.path.getsize(self.destAppFilename)
+        imageLen = 0
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            imageLen = RTyyyy_gendef.kContainerOffset_NOR + os.path.getsize(self.destAppContainerFilename)
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            imageLen = os.path.getsize(self.destAppFilename)
         memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
         if self.isSbFileEnabledToGen:
             self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + memEraseLen))) + ";\n")
@@ -1414,14 +1487,22 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                     pass
                 image0Size = imageLoadAddr - self.bootDeviceMemBase + os.path.getsize(destEncAppFilename)
             else:
-                imageLoadAddr = self.bootDeviceMemBase + RTyyyy_gendef.kIvtOffset_NOR
+                headerOffset = 0
+                destAppFileToLoad = None
+                if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                    headerOffset = RTyyyy_gendef.kIvtOffset_NOR
+                    destAppFileToLoad = self.destAppNoPaddingFilename
+                elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                    headerOffset = RTyyyy_gendef.kContainerOffset_NOR
+                    destAppFileToLoad = self.destAppContainerFilename
+                imageLoadAddr = self.bootDeviceMemBase + headerOffset
                 if self.isSbFileEnabledToGen:
                     self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
                     status = boot.status.kStatus_Success
                 else:
-                    status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, self.destAppNoPaddingFilename, self.bootDeviceMemId)
+                    status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, destAppFileToLoad, self.bootDeviceMemId)
                     self.printLog(cmdStr)
-                image0Size = imageLoadAddr - self.bootDeviceMemBase + os.path.getsize(self.destAppNoPaddingFilename)
+                image0Size = imageLoadAddr - self.bootDeviceMemBase + os.path.getsize(destAppFileToLoad)
             self.isFlexspiNorErasedForImage = False
             self.isFdcbFromSrcApp = False
             if status != boot.status.kStatus_Success:

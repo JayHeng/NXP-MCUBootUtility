@@ -420,7 +420,7 @@ class secBootRTyyyyMain(RTyyyy_memcore.secBootRTyyyyMem):
         else:
             self._RTyyyy_startGaugeTimer()
             self.printLog("'Generate Bootable Image' button is clicked")
-            if self.createMatchedAppBdfile():
+            if self.createMatchedAppInfofile():
                 # Need to update image picture for DCD
                 needToPlaySound = False
                 self.RTyyyy_setSecureBootSeqColor(needToPlaySound)

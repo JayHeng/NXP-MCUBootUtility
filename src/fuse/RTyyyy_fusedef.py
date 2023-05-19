@@ -1,7 +1,9 @@
 import sys, os
 
 kGroupEfuseWords = 80
-kTotalEfuseWords = 320
+kTotalEfuseWords = 512  # For RT10xx, it is 80
+                        # For RT1160/1170, It is 320
+                        # For RT1180, it is 512
 
 ##################################################
 

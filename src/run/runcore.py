@@ -64,6 +64,20 @@ class secBootRun(gencore.secBootGen):
         else:
             pass
 
+    def getMcuDeviceBootloaderUniqueId( self ):
+        status, results, cmdStr = self.blhost.getProperty(boot.properties.kPropertyTag_UniqueDeviceIdent)
+        self.printLog(cmdStr)
+        if status == boot.status.kStatus_Success:
+            self.printDeviceStatus('Unique ID[31:00] = ' + self.convertLongIntHexText(str(hex(results[0]))))
+            self.printDeviceStatus('Unique ID[63:32] = ' + self.convertLongIntHexText(str(hex(results[1]))))
+            try:
+                self.printDeviceStatus('Unique ID[95:64] = ' + self.convertLongIntHexText(str(hex(results[2]))))
+                self.printDeviceStatus('Unique ID[127:96] = ' + self.convertLongIntHexText(str(hex(results[3]))))
+            except:
+                pass
+        else:
+            pass
+
     def getUsdhcSdMmcDeviceInfo ( self ):
         status, results, cmdStr = self.blhost.getProperty(boot.properties.kPropertyTag_ExternalMemoryAttribles, self.bootDeviceMemId)
         self.printLog(cmdStr)

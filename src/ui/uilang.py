@@ -132,12 +132,12 @@ kMainLanguageContentDict = {
         'button_burn':                        ['Burn',                                  u"烧写"],
 
         'panel_memView':                      ['Boot Device Memory',                    u"       通用Flash编程       "],
-        'sText_memStart':                     ['Start / Offset:',                       u"首地址/偏移："],
-        'sText_memLength':                    ['Byte Length (For Read/Erase):',         u"字节长度（回读/擦除）："],
+        'sText_memStart':                     ['Range Start/Offset:',                   u"区域首地址/偏移："],
+        'sText_memLength':                    ['Range Length (Byte):',                  u"区域长度（字节）："],
         'sText_memBinFile':                   ['bin/s19/hex:',                          u"源文件："],
-        'button_readMem':                     ['Read',                                  u"回读"],
-        'button_eraseMem':                    ['Erase',                                 u"擦除"],
-        'button_massEraseMem':                ['Mass Erase',                            u"全擦"],
+        'button_readMem':                     ['Range Read',                            u"区域回读"],
+        'button_eraseMem':                    ['Range Erase',                           u"区域擦除"],
+        'button_massEraseMem':                ['Chip Erase',                            u"芯片全擦"],
         'button_writeMem':                    ['Write (Auto Erase)',                    u"下载（含自动擦除）"],
         'button_executeApp':                  ['Execute From Start',                    u"从首地址处执行"],
         'button_viewMem':                     ['View Bootable Image',                   u"回读查看标注的程序"],
@@ -471,8 +471,8 @@ kRevision_1_4_0_zh = u"【v1.4.0】 \n" + \
                      u"     2. 为通用Flash编程器里的操作添加实时进度条显示 \n\n"
 kRevision_2_0_0_en =  "【v2.0.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support i.MXRT5xx A0, i.MXRT6xx A0 \n" + \
-                      "     2. Support i.MXRT1011, i.MXRT117x A0 \n" + \
+                      "     1. [RTxxx] Support i.MXRT5xx A0, i.MXRT6xx A0 \n" + \
+                      "     2. [RTyyyy] Support i.MXRT1011, i.MXRT117x A0 \n" + \
                       "     3. [RTyyyy] Support OTFAD encryption secure boot case (SNVS Key, User Key) \n" + \
                       "     4. [RTxxx] Support both UART and USB-HID ISP modes \n" + \
                       "     5. [RTxxx] Support for converting bare image into bootable image \n" + \
@@ -492,8 +492,8 @@ kRevision_2_0_0_en =  "【v2.0.0】 \n" + \
                       "     4. Cannot erase/read the last two pages of boot device via Flash Programmer \n\n"
 kRevision_2_0_0_zh = u"【v2.0.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. 支持i.MXRT5xx A0, i.MXRT6xx A0 \n" + \
-                     u"     2. 支持i.MXRT1011, i.MXRT117x A0 \n" + \
+                     u"     1. [RTxxx] 支持i.MXRT5xx A0, i.MXRT6xx A0 \n" + \
+                     u"     2. [RTyyyy] 支持i.MXRT1011, i.MXRT117x A0 \n" + \
                      u"     3. [RTyyyy] 支持基于OTFAD实现的安全加密启动（唯一SNVS key，用户自定义key） \n" + \
                      u"     4. [RTxxx] 支持UART和USB-HID两种串行编程方式（COM端口/USB设备自动识别） \n" + \
                      u"     5. [RTxxx] 支持将裸源image文件自动转换成i.MXRT能启动的Bootable image \n" + \
@@ -619,7 +619,7 @@ kRevision_2_3_1_zh = u"【v2.3.1】 \n" + \
                      u"     3. [RTyyyy] 在RT1011下，无法确认fuse cfg0区域的可视化设置 \n\n"
 kRevision_2_4_0_en =  "【v2.4.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support i.MXRT117x B0 \n" + \
+                      "     1. [RTyyyy] Support i.MXRT117x B0 \n" + \
                       "     2. [RTyyyy] Can recognize custom compiled flashloader to use \n" + \
                       "  Improvement: \n" + \
                       "     1. [RTxxx] Complete OTP memory operation \n" + \
@@ -627,7 +627,7 @@ kRevision_2_4_0_en =  "【v2.4.0】 \n" + \
                       "     1. [RTyyyy] Fix issue when using FlexibleUserKeys for OTFAD encryption \n\n"
 kRevision_2_4_0_zh = u"【v2.4.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. 支持i.MXRT117x B0 \n" + \
+                     u"     1. [RTyyyy] 支持i.MXRT117x B0 \n" + \
                      u"     2. [RTyyyy] 可以自动识别使用由用户生成的Flashloader \n" + \
                      u"  改进: \n" + \
                      u"     1. [RTxxx] 完善OTP烧写范围支持 \n" + \
@@ -635,11 +635,11 @@ kRevision_2_4_0_zh = u"【v2.4.0】 \n" + \
                      u"     1. [RTyyyy] 解决OTFAD加密模式下使用Flexible User Keys报错的问题 \n\n"
 kRevision_3_0_0_en =  "【v3.0.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support Kinetis with ROM \n" + \
+                      "     1. [Kinetis] Support Kinetis with ROM \n" + \
                       "     2. [Kinetis] Support both UART and USB-HID download modes \n" + \
                       "     3. [Kinetis] Support for loading bootable image into FTFx NOR Flash \n" + \
                       "     4. [Kinetis] Support development boot case (Unsigned) \n" + \
-                      "     5. Support LPC5500 Series(550x/551x/552x/55S6x) \n" + \
+                      "     5. [LPC] Support LPC5500 Series(550x/551x/552x/55S6x) \n" + \
                       "     6. [LPC] Support both UART and USB-HID download modes \n" + \
                       "     7. [LPC] Support for loading bootable image into C040HD NOR Flash \n" + \
                       "     8. [LPC] Support development boot case (Unsigned) \n" + \
@@ -647,11 +647,11 @@ kRevision_3_0_0_en =  "【v3.0.0】 \n" + \
                       "     1. [RTxxx] Cannot restore user image info (path, base, format) of last time setting \n\n"
 kRevision_3_0_0_zh = u"【v3.0.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. 支持所有含ROM的Kinetis系列 \n" + \
+                     u"     1. [Kinetis] 支持所有含ROM的Kinetis系列 \n" + \
                      u"     2. [Kinetis] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
                      u"     3. [Kinetis] 支持下载Bootable image进内部Flash \n" + \
                      u"     4. [Kinetis] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
-                     u"     5. 支持LPC5500系列(550x/551x/552x/55S6x) \n" + \
+                     u"     5. [LPC] 支持LPC5500系列(550x/551x/552x/55S6x) \n" + \
                      u"     6. [LPC] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
                      u"     7. [LPC] 支持下载Bootable image进内部Flash \n" + \
                      u"     8. [LPC] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
@@ -659,12 +659,12 @@ kRevision_3_0_0_zh = u"【v3.0.0】 \n" + \
                      u"     1. [RTxxx] 不能恢复上一次用户源应用程序设置(文件路径、基地址、格式) \n\n"
 kRevision_3_1_0_en =  "【v3.1.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support i.MXRT1024 SIP \n" + \
-                      "     2. Support Kinetis K32L \n\n"
+                      "     1. [RTyyyy] Support i.MXRT1024 SIP \n" + \
+                      "     2. [Kinetis] Support Kinetis K32L \n\n"
 kRevision_3_1_0_zh = u"【v3.1.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. 支持i.MXRT1024 SIP \n" + \
-                     u"     2. 支持Kinetis K32L系列 \n\n"
+                     u"     1. [RTyyyy] 支持i.MXRT1024 SIP \n" + \
+                     u"     2. [Kinetis] 支持Kinetis K32L系列 \n\n"
 kRevision_3_1_1_en =  "【v3.1.1】 \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Fix UART download issue for RT1170 \n\n"
@@ -673,13 +673,13 @@ kRevision_3_1_1_zh = u"【v3.1.1】 \n" + \
                      u"     1. [RTyyyy] 修复RT1170下UART口无法正常下载问题 \n\n"
 kRevision_3_2_0_en =  "【v3.2.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support i.MXRT116x \n" + \
+                      "     1. [RTyyyy] Support i.MXRT116x \n" + \
                       "     2. [RTxxx] Support SB file generation for RT500/600 \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Fix .SB file generation issue for RT1170 \n\n"
 kRevision_3_2_0_zh = u"【v3.2.0】 \n" + \
                      u"  特性: \n" + \
-                      "     1. 支持i.MXRT116x \n" + \
+                      "     1. [RTyyyy] 支持i.MXRT116x \n" + \
                      u"     2. [RTxxx] 支持RT500/600下SB文件生成 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 修复RT1170下SB文件无法正常生成问题 \n\n"
@@ -745,10 +745,10 @@ kRevision_3_5_0_zh = u"【v3.5.0】 \n" + \
                      u"     4. [RTyyyy] 修复RT1170下HAB验签硬件引擎类型选择错误问题 \n\n"
 kRevision_4_0_0_en =  "【v4.0.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support i.MXRT1061X/1062X \n" + \
-                      "     2. Support i.MXRT1042 \n" + \
-                      "     3. Support LPC5500 Series(553x/S3x) \n" + \
-                      "     4. Support MCXN94x/N54x \n" + \
+                      "     1. [RTyyyy] Support i.MXRT1061X/1062X \n" + \
+                      "     2. [RTyyyy] Support i.MXRT1042 \n" + \
+                      "     3. [LPC] Support LPC5500 Series(553x/S3x) \n" + \
+                      "     4. [MCX] Support MCXN94x/N54x \n" + \
                       "     5. [MCX] Support both UART and USB-HID download modes \n" + \
                       "     6. [MCX] Support for loading bootable image into C040HD NOR Flash \n" + \
                       "     7. [MCX] Support development boot case (Unsigned) \n" + \
@@ -759,10 +759,10 @@ kRevision_4_0_0_en =  "【v4.0.0】 \n" + \
                       "     1. [RTyyyy] Use SECv5 version flashloader of RT116x/RT117x to fix FlexSPI NAND issue \n\n"
 kRevision_4_0_0_zh = u"【v4.0.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. 支持i.MXRT1061X/1062X \n" + \
-                     u"     2. 支持i.MXRT1042 \n" + \
-                     u"     3. 支持LPC5500系列(553x/S3x) \n" + \
-                     u"     4. 支持MCXN94x/N54x \n" + \
+                     u"     1. [RTyyyy] 支持i.MXRT1061X/1062X \n" + \
+                     u"     2. [RTyyyy] 支持i.MXRT1042 \n" + \
+                     u"     3. [LPC] 支持LPC5500系列(553x/S3x) \n" + \
+                     u"     4. [MCX] 支持MCXN94x/N54x \n" + \
                      u"     5. [MCX] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
                      u"     6. [MCX] 支持下载Bootable image进内部Flash \n" + \
                      u"     7. [MCX] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
@@ -773,14 +773,14 @@ kRevision_4_0_0_zh = u"【v4.0.0】 \n" + \
                      u"     1. [RTyyyy] 对于RT116x/RT117x，切换使用SECv5里的Flashloader以修复串行NAND烧写问题 \n\n"
 kRevision_4_1_0_en =  "【v4.1.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. Support MKE13Z/14Z/15Z/17Z \n" + \
-                      "     2. Support MKW45/K32W148 \n" + \
+                      "     1. [Kinetis] Support MKE13Z/14Z/15Z/17Z \n" + \
+                      "     2. [Kinetis] Support MKW45/K32W148 \n" + \
                       "     3. Support two more Octal NOR devices (ISSI, Winbond) \n" + \
                       "      \n\n"
 kRevision_4_1_0_zh = u"【v4.1.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. 支持MKE13Z/14Z/15Z/17Z \n" + \
-                     u"     2. 支持MKW45/K32W148 \n" + \
+                     u"     1. [Kinetis] 支持MKE13Z/14Z/15Z/17Z \n" + \
+                     u"     2. [Kinetis] 支持MKW45/K32W148 \n" + \
                      u"     3. 支持来自ISSI和Winbond的Octal Flash \n" + \
                      u"     \n\n"
 kRevision_4_1_1_en =  "【v4.1.1】 \n" + \
@@ -790,6 +790,14 @@ kRevision_4_1_1_en =  "【v4.1.1】 \n" + \
 kRevision_4_1_1_zh = u"【v4.1.1】 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 在DCD Desc窗口输入内容不生效\n" + \
+                     u"     \n\n"
+kRevision_5_0_0_en =  "【v5.0.0】 \n" + \
+                      "  Feature: \n" + \
+                      "     1. [RTyyyy] Support i.MXRT118x A0\n" + \
+                      "      \n\n"
+kRevision_5_0_0_zh = u"【v5.0.0】 \n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTyyyy] 支持i.MXRT118x A0\n" + \
                      u"     \n\n"
 
 kMsgLanguageContentDict = {
@@ -827,6 +835,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v4_0_0':             [kRevision_4_0_0_en,                      kRevision_4_0_0_zh],
         'revisionHistory_v4_1_0':             [kRevision_4_1_0_en,                      kRevision_4_1_0_zh],
         'revisionHistory_v4_1_1':             [kRevision_4_1_1_en,                      kRevision_4_1_1_zh],
+        'revisionHistory_v5_0_0':             [kRevision_5_0_0_en,                      kRevision_5_0_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

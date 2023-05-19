@@ -16,6 +16,7 @@ from ui import uicore
 from ui import uidef
 from ui import uivar
 from ui import uilang
+from gen import gendef
 from operator import itemgetter
 
 class secBootRTyyyyFuse(RTyyyy_runcore.secBootRTyyyyRun):
@@ -40,11 +41,11 @@ class secBootRTyyyyFuse(RTyyyy_runcore.secBootRTyyyyRun):
         if self.toolRunMode == uidef.kToolRunMode_Entry:
             for i in range(RTyyyy_fusedef.kTotalEfuseWords):
                 idx = i + self.tgt.efusemapIndexDict['kEfuseIndex_START']
-                if (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion0IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion0IndexEnd']) or \
-                   (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion1IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion1IndexEnd']) or \
-                   (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion2IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion2IndexEnd']) or \
-                   (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion3IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion3IndexEnd']) or \
-                   (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion4IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion4IndexEnd']) or \
+                if (self.tgt.efusemapIndexDict['kEfuseEntryModeRegion0IndexStart'] != None and (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion0IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion0IndexEnd'])) or \
+                   (self.tgt.efusemapIndexDict['kEfuseEntryModeRegion1IndexStart'] != None and (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion1IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion1IndexEnd'])) or \
+                   (self.tgt.efusemapIndexDict['kEfuseEntryModeRegion2IndexStart'] != None and (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion2IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion2IndexEnd'])) or \
+                   (self.tgt.efusemapIndexDict['kEfuseEntryModeRegion3IndexStart'] != None and (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion3IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion3IndexEnd'])) or \
+                   (self.tgt.efusemapIndexDict['kEfuseEntryModeRegion4IndexStart'] != None and (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion4IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion4IndexEnd'])) or \
                    (self.tgt.efusemapIndexDict['kEfuseEntryModeRegion5IndexStart'] != None and (idx >= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion5IndexStart'] and idx <= self.tgt.efusemapIndexDict['kEfuseEntryModeRegion5IndexEnd'])):
                     self.runModeFuseFlagList[i] = True
                 else:
@@ -202,41 +203,49 @@ class secBootRTyyyyFuse(RTyyyy_runcore.secBootRTyyyyRun):
             with open(self.fuseSettingFilename, 'w') as fileObj:
                 FuseMapDict = collections.OrderedDict(sorted(FuseMapDict.iteritems(), key=itemgetter(0), reverse=False))
                 if self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
-                    if self.efuseGroupSel == 0:
-                        for i in range(RTyyyy_fusedef.kGroupEfuseWords):
-                            new_str = 'Fuse' + str(hex(2048 + i * 16))
-                            new_str = new_str[0:6] + '0' + new_str[6:9]
-                            if self.saveFuselist[i] == None:
-                                FuseMapDict[new_str] = "None"
-                            else:
-                                FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
-                    elif self.efuseGroupSel == 1:
-                        for i in range(RTyyyy_fusedef.kGroupEfuseWords):
-                            if i<48:
-                                new_str = 'Fuse' + str(hex(3328 + i * 16))
+                    if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                        if self.efuseGroupSel == 0:
+                            for i in range(RTyyyy_fusedef.kGroupEfuseWords):
+                                new_str = 'Fuse' + str(hex(2048 + i * 16))
                                 new_str = new_str[0:6] + '0' + new_str[6:9]
-                            else:
-                                 new_str = 'Fuse' + str(hex(3328 + i * 16))
-                            if self.saveFuselist[i] == None:
-                                FuseMapDict[new_str] = "None"
-                            else:
-                                FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
-                    elif self.efuseGroupSel == 2:
+                                if self.saveFuselist[i] == None:
+                                    FuseMapDict[new_str] = "None"
+                                else:
+                                    FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
+                        elif self.efuseGroupSel == 1:
+                            for i in range(RTyyyy_fusedef.kGroupEfuseWords):
+                                if i<48:
+                                    new_str = 'Fuse' + str(hex(3328 + i * 16))
+                                    new_str = new_str[0:6] + '0' + new_str[6:9]
+                                else:
+                                     new_str = 'Fuse' + str(hex(3328 + i * 16))
+                                if self.saveFuselist[i] == None:
+                                    FuseMapDict[new_str] = "None"
+                                else:
+                                    FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
+                        elif self.efuseGroupSel == 2:
+                            for i in range(RTyyyy_fusedef.kGroupEfuseWords):
+                                new_str = 'Fuse' + str(hex(4608 + i * 16))
+                                if self.saveFuselist[i] == None:
+                                    FuseMapDict[new_str] = "None"
+                                else:
+                                    FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
+                        elif self.efuseGroupSel == 3:
+                            for i in range(RTyyyy_fusedef.kGroupEfuseWords):
+                                new_str = 'Fuse' + str(hex(5888 + i * 16))
+                                if self.saveFuselist[i] == None:
+                                    FuseMapDict[new_str] = "None"
+                                else:
+                                    FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
+                        else:
+                            pass
+                    elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
                         for i in range(RTyyyy_fusedef.kGroupEfuseWords):
-                            new_str = 'Fuse' + str(hex(4608 + i * 16))
+                            new_str = 'Fuse-W' + str(self.efuseGroupSel * RTyyyy_fusedef.kGroupEfuseWords + i)
                             if self.saveFuselist[i] == None:
                                 FuseMapDict[new_str] = "None"
                             else:
                                 FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
-                    elif self.efuseGroupSel == 3:
-                        for i in range(RTyyyy_fusedef.kGroupEfuseWords):
-                            new_str = 'Fuse' + str(hex(5888 + i * 16))
-                            if self.saveFuselist[i] == None:
-                                FuseMapDict[new_str] = "None"
-                            else:
-                                FuseMapDict[new_str] = (str(hex(self.saveFuselist[i])))[2:10]
-                    else:
-                        pass
                 else:
                     for i in range(RTyyyy_fusedef.kGroupEfuseWords):
                         new_str = 'Fuse' + str(hex(1024 + i * 16))

@@ -95,3 +95,6 @@ kMemBlockColor_Image           = wx.BLUE
 kMemBlockColor_CSF             = wx.Colour( 0xff, 0xc0, 0xcb ) #wx.PINK
 kMemBlockColor_HabKeyBlob      = wx.Colour( 0xff, 0x7f, 0x00 ) #wx.CORAL
 
+kMemBlockColor_ContainerHdr    = wx.RED
+kMemBlockColor_ImageEntry      = wx.GREEN
+

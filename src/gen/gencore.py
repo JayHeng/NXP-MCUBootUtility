@@ -37,7 +37,8 @@ class secBootGen(uicore.secBootUi):
         if ((start >= self.tgt.memoryRange['itcm'].start) and (start + length <= self.tgt.memoryRange['itcm'].start + self.tgt.memoryRange['itcm'].length)) or \
            ((start >= self.tgt.memoryRange['dtcm'].start) and (start + length <= self.tgt.memoryRange['dtcm'].start + self.tgt.memoryRange['dtcm'].length)) or \
            ((start >= self.tgt.memoryRange['ocram'].start) and (start + length <= self.tgt.memoryRange['ocram'].start + self.tgt.memoryRange['ocram'].length)) or \
-           (('itcm_cm4' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['itcm_cm4'].start) and (start + length <= self.tgt.memoryRange['itcm_cm4'].start + self.tgt.memoryRange['itcm_cm4'].length))):
+           (('itcm_sec' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['itcm_sec'].start) and (start + length <= self.tgt.memoryRange['itcm_sec'].start + self.tgt.memoryRange['itcm_sec'].length))) or \
+           (('dtcm_sec' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['dtcm_sec'].start) and (start + length <= self.tgt.memoryRange['dtcm_sec'].start + self.tgt.memoryRange['dtcm_sec'].length))):
             return True
         else:
             return False
@@ -204,6 +205,10 @@ class secBootGen(uicore.secBootUi):
                 fileObj.close()
             var32Vaule = (ord(var32Vaule[3])<<24) + (ord(var32Vaule[2])<<16) + (ord(var32Vaule[1])<<8) + ord(var32Vaule[0])
         return var32Vaule
+
+    def getVal16FromByteArray( self, binarray, offset=0):
+        val16Vaule = (binarray[1+offset]<<8) + binarray[0+offset]
+        return val16Vaule
 
     def getVal32FromByteArray( self, binarray, offset=0):
         val32Vaule = ((binarray[3+offset]<<24) + (binarray[2+offset]<<16) + (binarray[1+offset]<<8) + binarray[0+offset])

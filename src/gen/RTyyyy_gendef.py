@@ -47,3 +47,6 @@ kSbFileType_All   = 0x0
 kSbFileType_Flash = 0x1
 kSbFileType_Efuse = 0x2
 
+
+kContainerOffset_NOR         = 0x1000
+

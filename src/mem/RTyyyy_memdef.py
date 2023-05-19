@@ -20,6 +20,8 @@ kMemBlockSize_BootData        = 0x10
 kMemBlockSize_CSF             = 0x1000
 kMemBlockSize_HabKeyBlob      = 0x200
 
+kMemBlockSize_Container       = 0x2000
+
 kBootHeaderTag_IVT = 0xD1
 kBootHeaderTag_DCD = 0xD2
 
@@ -37,6 +39,15 @@ kMemberOffsetInBootData_Size   = 0x04
 kMemberOffsetInBootData_Plugin = 0x08
 
 kMemberOffsetInDcd_Tag = 0x00
+
+kMemberOffsetInContainer_Len      = 0x01
+kMemberOffsetInContainer_Tag      = 0x03
+kMemberOffsetInContainer_AppNum   = 0x0b
+
+kMemberOffsetInContainer_Img0Offset    = 0x10
+kMemberOffsetInContainer_Img0Size      = 0x14
+kMemberOffsetInContainer_Img0LoadAddr  = 0x18
+kMemberOffsetInContainer_Img0Entry     = 0x20
 
 kFlexramBankSize = 0x8000
 kFlexramBankId_Ocram = 0x1

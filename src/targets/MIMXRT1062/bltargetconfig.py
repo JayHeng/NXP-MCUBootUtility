@@ -46,6 +46,7 @@ availablePeripherals = 0x11
 romUsbVid = '0x1FC9'
 romUsbPid = '0x0135'
 hasSdpReadRegisterCmd = True
+bootHeaderType = gendef.kBootHeaderType_IVT
 flashloaderUsbVid = '0x15A2'
 flashloaderUsbPid = '0x0073'
 flashloaderLoadAddr = 0x20208200

@@ -10,7 +10,10 @@ sys.path.append(os.path.abspath(".."))
 from fuse import RTyyyy_fusecore
 from run import RTyyyy_rundef
 from ui import RTyyyy_uidef
+from gen import gendef
+from gen import RTyyyy_gendef
 from ui import uidef
+from ui import uiheader
 from ui import uivar
 from ui import uilang
 from utils import misc
@@ -40,6 +43,9 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowNfcbIntr = None
         self.needToShowDbbtIntr = None
         self.needToShowMbrdptIntr = None
+
+        self.needToShowContainerHdrIntr = None
+        self.needToShowImageEntryIntr = None
         self._RTyyyy_initShowIntr()
 
     def _RTyyyy_initShowIntr( self ):
@@ -59,6 +65,8 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowNfcbIntr = True
         self.needToShowDbbtIntr = True
         self.needToShowMbrdptIntr = True
+        self.needToShowContainerHdrIntr = True
+        self.needToShowImageEntryIntr = True
 
     def _getCsfBlockInfo( self ):
         self.destAppCsfAddress = self.getVal32FromBinFile(self.destAppFilename, self.destAppIvtOffset + RTyyyy_memdef.kMemberOffsetInIvt_Csf)
@@ -155,17 +163,165 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             pass
         return True
 
-    def RTyyyy_readProgrammedMemoryAndShow( self ):
-        if not os.path.isfile(self.destAppFilename):
-            self.popupMsgBox(uilang.kMsgLanguageContentDict['operImgError_hasnotProgImage'][self.languageIndex])
-            return
-        self.clearMem()
-        self._getInfoFromIvt()
-        self._getDcdInfo()
+    def _showOneLineContentForIvtType( self, addr, imageMemBase, contentToShow, memContent ):
+        if (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset):
+            if self.secureBootType == RTyyyy_uidef.kSecureBootType_OtfadCrypto:
+                keyBlobStart = imageMemBase + RTyyyy_memdef.kMemBlockOffset_HwCryptoKeyBlob
+                if addr > keyBlobStart and addr <= keyBlobStart + RTyyyy_memdef.kMemBlockSize_HwCryptoKeyBlob:
+                    if self.needToShowHwCryptoKeyBlobIntr:
+                        self.printMem('-----------------------------OTFAD DEK KeyBlob----------------------------------------', RTyyyy_uidef.kMemBlockColor_HwCryptoKeyBlob)
+                        self.needToShowHwCryptoKeyBlobIntr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_HwCryptoKeyBlob)
+                else:
+                    self.printMem(contentToShow)
+            else:
+                self.printMem(contentToShow)
+        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB) or (addr <= imageMemBase + RTyyyy_memdef.kMemBlockSize_FDCB):
+            if not self.isSdmmcCard:
+                if self.needToShowCfgIntr:
+                    self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
+                    self.needToShowCfgIntr = False
+                self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_FDCB)
+            else:
+                if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
+                    self.printMem(contentToShow)
+        elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion + len(memContent):
+            if self.flexspiNorImage0Version != None:
+                self.printMem('-------------------------------Image Version------------------------------------------', RTyyyy_uidef.kMemBlockColor_ImageVersion)
+                self.needToShowCfgIntr = False
+                self.printMem(contentToShow[0:(14 + memdef.kMemBlockSize_ImageVersion * 3)], RTyyyy_uidef.kMemBlockColor_ImageVersion, False)
+                self.printMem(contentToShow[(14 + memdef.kMemBlockSize_ImageVersion * 3):len(contentToShow)])
+            else:
+                self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppIvtOffset:
+            if self.secureBootType == RTyyyy_uidef.kSecureBootType_BeeCrypto:
+                ekib0Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EKIB0
+                eprdb0Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EPRDB0
+                ekib1Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EKIB1
+                eprdb1Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EPRDB1
+                if addr > ekib0Start and addr <= ekib0Start + RTyyyy_memdef.kMemBlockSize_EKIB:
+                    if self.needToShowEkib0Intr:
+                        self.printMem('-----------------------------------EKIB0----------------------------------------------', RTyyyy_uidef.kMemBlockColor_EKIB)
+                        self.needToShowEkib0Intr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EKIB)
+                elif addr > eprdb0Start and addr <= eprdb0Start + RTyyyy_memdef.kMemBlockSize_EPRDB:
+                    if self.needToShowEprdb0Intr:
+                        self.printMem('-----------------------------------EPRDB0---------------------------------------------', RTyyyy_uidef.kMemBlockColor_EPRDB)
+                        self.needToShowEprdb0Intr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EPRDB)
+                elif addr > ekib1Start and addr <= ekib1Start + RTyyyy_memdef.kMemBlockSize_EKIB:
+                    if self.needToShowEkib1Intr:
+                        self.printMem('-----------------------------------EKIB1----------------------------------------------', RTyyyy_uidef.kMemBlockColor_EKIB)
+                        self.needToShowEkib1Intr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EKIB)
+                elif addr > eprdb1Start and addr <= eprdb1Start + RTyyyy_memdef.kMemBlockSize_EPRDB:
+                    if self.needToShowEprdb1Intr:
+                        self.printMem('-----------------------------------EPRDB1---------------------------------------------', RTyyyy_uidef.kMemBlockColor_EPRDB)
+                        self.needToShowEprdb1Intr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EPRDB)
+                else:
+                    self.printMem(contentToShow)
+            else:
+                self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT:
+            if self.needToShowIvtIntr:
+                self.printMem('------------------------------------IVT-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_IVT)
+                self.needToShowIvtIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_IVT)
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT + RTyyyy_memdef.kMemBlockSize_BootData:
+            if self.needToShowBootDataIntr:
+                self.printMem('---------------------------------Boot Data--------------------------------------------', RTyyyy_uidef.kMemBlockColor_BootData)
+                self.needToShowBootDataIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_BootData)
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD + self.destAppDcdLength:
+            if self.needToShowDcdIntr:
+                self.printMem('------------------------------------DCD-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_DCD)
+                self.needToShowDcdIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_DCD)
+        elif addr <= imageMemBase + self.destAppVectorOffset:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppVectorOffset + self.destAppBinaryBytes:
+            if self.needToShowImageIntr:
+                self.printMem('-----------------------------------Image----------------------------------------------', RTyyyy_uidef.kMemBlockColor_Image)
+                self.needToShowImageIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_Image)
+        else:
+            hasShowed = False
+            if self.secureBootType == RTyyyy_uidef.kSecureBootType_HabAuth or self.secureBootType == RTyyyy_uidef.kSecureBootType_HabCrypto or \
+               ((self.secureBootType in RTyyyy_uidef.kSecureBootType_HwCrypto) and self.isCertEnabledForHwCrypto):
+                csfStart = imageMemBase + (self.destAppCsfAddress - self.destAppVectorAddress) + self.destAppInitialLoadSize
+                if addr > csfStart and addr <= csfStart + RTyyyy_memdef.kMemBlockSize_CSF:
+                    if self.needToShowCsfIntr:
+                        self.printMem('------------------------------------CSF-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_CSF)
+                        self.needToShowCsfIntr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_CSF)
+                    hasShowed = True
+            if self.secureBootType == RTyyyy_uidef.kSecureBootType_HabCrypto and self.habDekDataOffset != None:
+                keyBlobStart = imageMemBase + (self.destAppVectorOffset - self.destAppInitialLoadSize) + self.habDekDataOffset
+                if addr > keyBlobStart and addr <= keyBlobStart + RTyyyy_memdef.kMemBlockSize_HabKeyBlob:
+                    if self.needToShowHabKeyBlobIntr:
+                        self.printMem('------------------------------HAB DEK KeyBlob-----------------------------------------', RTyyyy_uidef.kMemBlockColor_HabKeyBlob)
+                        self.needToShowHabKeyBlobIntr = False
+                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_HabKeyBlob)
+                    hasShowed = True
+            if not hasShowed:
+                if not self.isSdmmcCard:
+                    self.printMem(contentToShow)
+                else:
+                    if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
+                        self.printMem(contentToShow)
 
+    def _showOneLineContentForContainerType( self, addr, imageMemBase, contentToShow, memContent ):
+        if (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset):
+            self.printMem(contentToShow)
+        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB) or (addr <= imageMemBase + RTyyyy_memdef.kMemBlockSize_FDCB):
+            if self.needToShowCfgIntr:
+                self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
+                self.needToShowCfgIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_FDCB)
+        elif addr <= imageMemBase + self.destAppContainerOffset:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppContainerOffset + uiheader.kContainerBlockSize_CntHdr:
+            if self.needToShowContainerHdrIntr:
+                self.printMem('------------------------------Container Header----------------------------------------', RTyyyy_uidef.kMemBlockColor_ContainerHdr)
+                self.needToShowContainerHdrIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_ContainerHdr)
+        elif addr <= imageMemBase + self.destAppContainerOffset + uiheader.kContainerBlockSize_CntHdr + uiheader.kContainerBlockSize_ImgEntry:
+            if self.needToShowImageEntryIntr:
+                self.printMem('-----------------------------Image Array Entry----------------------------------------', RTyyyy_uidef.kMemBlockColor_ImageEntry)
+                self.needToShowImageEntryIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_ImageEntry)
+        elif addr <= imageMemBase + self.destAppVectorOffset:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppVectorOffset + self.destAppBinaryBytes:
+            if self.needToShowImageIntr:
+                self.printMem('-----------------------------------Image----------------------------------------------', RTyyyy_uidef.kMemBlockColor_Image)
+                self.needToShowImageIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_Image)
+        else:
+            pass
+
+    def RTyyyy_readProgrammedMemoryAndShow( self ):
+        imageFileLen = 0
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            if not os.path.isfile(self.destAppContainerFilename):
+                self.popupMsgBox(uilang.kMsgLanguageContentDict['operImgError_hasnotProgImage'][self.languageIndex])
+                return
+            imageFileLen = RTyyyy_gendef.kContainerOffset_NOR + os.path.getsize(self.destAppContainerFilename)
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            if not os.path.isfile(self.destAppFilename):
+                self.popupMsgBox(uilang.kMsgLanguageContentDict['operImgError_hasnotProgImage'][self.languageIndex])
+                return
+            self._getInfoFromIvt()
+            self._getDcdInfo()
+            imageFileLen = os.path.getsize(self.destAppFilename)
+        self.clearMem()
         imageMemBase = 0
         readoutMemLen = 0
-        imageFileLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
             semcNandOpt, semcNandFcbOpt, semcNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
             status, dbbtAddr = self._showNandFcb('semc', RTyyyy_rundef.kSemcNandFcbOffset_Fingerprint, RTyyyy_rundef.kSemcNandFcbTag_Fingerprint, RTyyyy_rundef.kSemcNandFcbOffset_SemcTag, RTyyyy_rundef.kSemcNandFcbTag_Semc, RTyyyy_rundef.kSemcNandFcbOffset_DBBTSerachAreaStartPage)
@@ -210,116 +366,10 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
                 contentToShow, memContent = self.getOneLineContentToShow(addr, memLeft, fileObj)
                 memLeft -= len(memContent)
                 addr += len(memContent)
-                if (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset):
-                    if self.secureBootType == RTyyyy_uidef.kSecureBootType_OtfadCrypto:
-                        keyBlobStart = imageMemBase + RTyyyy_memdef.kMemBlockOffset_HwCryptoKeyBlob
-                        if addr > keyBlobStart and addr <= keyBlobStart + RTyyyy_memdef.kMemBlockSize_HwCryptoKeyBlob:
-                            if self.needToShowHwCryptoKeyBlobIntr:
-                                self.printMem('-----------------------------OTFAD DEK KeyBlob----------------------------------------', RTyyyy_uidef.kMemBlockColor_HwCryptoKeyBlob)
-                                self.needToShowHwCryptoKeyBlobIntr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_HwCryptoKeyBlob)
-                        else:
-                            self.printMem(contentToShow)
-                    else:
-                        self.printMem(contentToShow)
-                elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB) or (addr <= imageMemBase + RTyyyy_memdef.kMemBlockSize_FDCB):
-                    if not self.isSdmmcCard:
-                        if self.needToShowCfgIntr:
-                            self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
-                            self.needToShowCfgIntr = False
-                        self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_FDCB)
-                    else:
-                        if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
-                            self.printMem(contentToShow)
-                elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion:
-                    self.printMem(contentToShow)
-                elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion + len(memContent):
-                    if self.flexspiNorImage0Version != None:
-                        self.printMem('-------------------------------Image Version------------------------------------------', RTyyyy_uidef.kMemBlockColor_ImageVersion)
-                        self.needToShowCfgIntr = False
-                        self.printMem(contentToShow[0:(14 + memdef.kMemBlockSize_ImageVersion * 3)], RTyyyy_uidef.kMemBlockColor_ImageVersion, False)
-                        self.printMem(contentToShow[(14 + memdef.kMemBlockSize_ImageVersion * 3):len(contentToShow)])
-                    else:
-                        self.printMem(contentToShow)
-                elif addr <= imageMemBase + self.destAppIvtOffset:
-                    if self.secureBootType == RTyyyy_uidef.kSecureBootType_BeeCrypto:
-                        ekib0Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EKIB0
-                        eprdb0Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EPRDB0
-                        ekib1Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EKIB1
-                        eprdb1Start = imageMemBase + RTyyyy_memdef.kMemBlockOffset_EPRDB1
-                        if addr > ekib0Start and addr <= ekib0Start + RTyyyy_memdef.kMemBlockSize_EKIB:
-                            if self.needToShowEkib0Intr:
-                                self.printMem('-----------------------------------EKIB0----------------------------------------------', RTyyyy_uidef.kMemBlockColor_EKIB)
-                                self.needToShowEkib0Intr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EKIB)
-                        elif addr > eprdb0Start and addr <= eprdb0Start + RTyyyy_memdef.kMemBlockSize_EPRDB:
-                            if self.needToShowEprdb0Intr:
-                                self.printMem('-----------------------------------EPRDB0---------------------------------------------', RTyyyy_uidef.kMemBlockColor_EPRDB)
-                                self.needToShowEprdb0Intr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EPRDB)
-                        elif addr > ekib1Start and addr <= ekib1Start + RTyyyy_memdef.kMemBlockSize_EKIB:
-                            if self.needToShowEkib1Intr:
-                                self.printMem('-----------------------------------EKIB1----------------------------------------------', RTyyyy_uidef.kMemBlockColor_EKIB)
-                                self.needToShowEkib1Intr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EKIB)
-                        elif addr > eprdb1Start and addr <= eprdb1Start + RTyyyy_memdef.kMemBlockSize_EPRDB:
-                            if self.needToShowEprdb1Intr:
-                                self.printMem('-----------------------------------EPRDB1---------------------------------------------', RTyyyy_uidef.kMemBlockColor_EPRDB)
-                                self.needToShowEprdb1Intr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EPRDB)
-                        else:
-                            self.printMem(contentToShow)
-                    else:
-                        self.printMem(contentToShow)
-                elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT:
-                    if self.needToShowIvtIntr:
-                        self.printMem('------------------------------------IVT-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_IVT)
-                        self.needToShowIvtIntr = False
-                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_IVT)
-                elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT + RTyyyy_memdef.kMemBlockSize_BootData:
-                    if self.needToShowBootDataIntr:
-                        self.printMem('---------------------------------Boot Data--------------------------------------------', RTyyyy_uidef.kMemBlockColor_BootData)
-                        self.needToShowBootDataIntr = False
-                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_BootData)
-                elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD:
-                    self.printMem(contentToShow)
-                elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD + self.destAppDcdLength:
-                    if self.needToShowDcdIntr:
-                        self.printMem('------------------------------------DCD-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_DCD)
-                        self.needToShowDcdIntr = False
-                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_DCD)
-                elif addr <= imageMemBase + self.destAppVectorOffset:
-                    self.printMem(contentToShow)
-                elif addr <= imageMemBase + self.destAppVectorOffset + self.destAppBinaryBytes:
-                    if self.needToShowImageIntr:
-                        self.printMem('-----------------------------------Image----------------------------------------------', RTyyyy_uidef.kMemBlockColor_Image)
-                        self.needToShowImageIntr = False
-                    self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_Image)
-                else:
-                    hasShowed = False
-                    if self.secureBootType == RTyyyy_uidef.kSecureBootType_HabAuth or self.secureBootType == RTyyyy_uidef.kSecureBootType_HabCrypto or \
-                       ((self.secureBootType in RTyyyy_uidef.kSecureBootType_HwCrypto) and self.isCertEnabledForHwCrypto):
-                        csfStart = imageMemBase + (self.destAppCsfAddress - self.destAppVectorAddress) + self.destAppInitialLoadSize
-                        if addr > csfStart and addr <= csfStart + RTyyyy_memdef.kMemBlockSize_CSF:
-                            if self.needToShowCsfIntr:
-                                self.printMem('------------------------------------CSF-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_CSF)
-                                self.needToShowCsfIntr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_CSF)
-                            hasShowed = True
-                    if self.secureBootType == RTyyyy_uidef.kSecureBootType_HabCrypto and self.habDekDataOffset != None:
-                        keyBlobStart = imageMemBase + (self.destAppVectorOffset - self.destAppInitialLoadSize) + self.habDekDataOffset
-                        if addr > keyBlobStart and addr <= keyBlobStart + RTyyyy_memdef.kMemBlockSize_HabKeyBlob:
-                            if self.needToShowHabKeyBlobIntr:
-                                self.printMem('------------------------------HAB DEK KeyBlob-----------------------------------------', RTyyyy_uidef.kMemBlockColor_HabKeyBlob)
-                                self.needToShowHabKeyBlobIntr = False
-                            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_HabKeyBlob)
-                            hasShowed = True
-                    if not hasShowed:
-                        if not self.isSdmmcCard:
-                            self.printMem(contentToShow)
-                        else:
-                            if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
-                                self.printMem(contentToShow)
+                if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                    self._showOneLineContentForContainerType(addr, imageMemBase, contentToShow, memContent)
+                elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                    self._showOneLineContentForIvtType(addr, imageMemBase, contentToShow, memContent)
             fileObj.close()
         self._RTyyyy_initShowIntr()
         self.tryToSaveImageDataFile(memFilepath)

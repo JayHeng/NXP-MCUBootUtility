@@ -46,6 +46,7 @@ availablePeripherals = 0x11
 romUsbVid = '0x1FC9'
 romUsbPid = '0x013D'
 hasSdpReadRegisterCmd = None
+bootHeaderType = gendef.kBootHeaderType_IVT
 flashloaderUsbVid = '0x15A2'
 flashloaderUsbPid = '0x0073'
 flashloaderLoadAddr = None
@@ -115,11 +116,11 @@ memoryRange = {
     # ITCM_CM7, 512KByte
     'itcm' : MemoryRange(0x00000000, 0x80000, 'state_mem0.dat'),
     # ITCM_CM4, 128KByte
-    'itcm_cm4' : MemoryRange(0x1FFE0000, 0x20000, 'state_mem0.dat'),
+    'itcm_sec' : MemoryRange(0x1FFE0000, 0x20000, 'state_mem1.dat'),
     # DTCM, 512KByte
-    'dtcm' : MemoryRange(0x20000000, 0x80000, 'state_mem1.dat'),
+    'dtcm' : MemoryRange(0x20000000, 0x80000, 'state_mem2.dat'),
     # OCRAM, 2MByte
-    'ocram' : MemoryRange(0x20200000, 0x200000, 'state_mem2.dat'),
+    'ocram' : MemoryRange(0x20200000, 0x200000, 'state_mem3.dat'),
 
     # FLASH, 64KByte / 512MByte
     'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000)

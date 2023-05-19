@@ -14,6 +14,7 @@ from ui import RTyyyy_uidef
 from ui import uidef
 from ui import uivar
 from ui import uilang
+from ui import uiheader
 from run import rundef
 from run import RTyyyy_rundef
 from mem import RTyyyy_memdef
@@ -67,7 +68,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.destAppDcdLength = 0
 
         self.srcAppFilename = None
-        self.destAppFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'ivt_application.bin')
+        self.destAppFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'bt_application.bin')
         self.destAppNoPaddingFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'ivt_application_nopadding.bin')
         self.appBdFilename = os.path.join(self.exeTopRoot, 'gen', 'bd_file', 'imx_application_gen.bd')
         self.elftosbPath = os.path.join(self.exeTopRoot, 'tools', 'elftosb4', 'win', 'elftosb.exe')
@@ -120,6 +121,11 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
 
         self.flexspiNorImage0Version = None
         self.flexspiNorImage1Version = None
+
+        self.destAppContainerOffset = None
+        self.destAppExecAddr = 0
+        self.destAppRawBinFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'raw_application.bin')
+        self.destAppContainerFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'container_application_nopadding.bin')
 
     def _copyCstBinToElftosbFolder( self ):
         shutil.copy(self.cstBinFolder + '\\cst.exe', os.path.split(self.elftosbPath)[0])
@@ -363,36 +369,57 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         else:
             self.destAppDcdLength = 0
 
-    def _extractImageDataFromSrcApp(self, wholeSrcAppBytes, fdcbOffset, appName ):
-        destAppIvtOffset = self.destAppIvtOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
-        ivtEntry, ivtDcd, ivtBd, ivtSelf = self._getIvtInfoFromIvtBlockBytes(wholeSrcAppBytes[destAppIvtOffset:destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT])
-        # Check to see it is vector table address or reset handler address
-        if (ivtEntry % 2):
-            maxVectorOffset = misc.align_down(ivtEntry - ivtSelf, RTyyyy_gendef.kCortexmVectorTableAlignment)
-            vectorOffset = destAppIvtOffset + RTyyyy_gendef.kCortexmVectorTableAlignment
-            isVectorFound = False
-            while (vectorOffset <= maxVectorOffset):
-                if (ivtEntry == self.getVal32FromByteArray(wholeSrcAppBytes[vectorOffset + 0x4:vectorOffset + 0x8])):
-                    isVectorFound = True
-                    break
-                vectorOffset += RTyyyy_gendef.kCortexmVectorTableAlignment
-            if isVectorFound:
-                ivtEntry = ivtSelf + vectorOffset - destAppIvtOffset
-                #self.printLog('ivtEntry =' + str(hex(ivtEntry)))
-            else:
-                self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_vectorNotFound'][self.languageIndex] + srcAppFilename.encode('utf-8'))
-                return None, None, 0
-        imageDataOffset = destAppIvtOffset + ivtEntry - ivtSelf
-        imageDataBytes = wholeSrcAppBytes[imageDataOffset:len(wholeSrcAppBytes)]
-        imageEntryPoint = self.getVal32FromByteArray(wholeSrcAppBytes[imageDataOffset + 0x4:imageDataOffset + 0x8])
+    def _getContainerInfoFromContainerBlockBytes( self, containerBlockBytes ):
+        img0Offset= self.getVal32FromByteArray(containerBlockBytes[RTyyyy_memdef.kMemberOffsetInContainer_Img0Offset:RTyyyy_memdef.kMemberOffsetInContainer_Img0Offset + 4])
+        img0Size= self.getVal32FromByteArray(containerBlockBytes[RTyyyy_memdef.kMemberOffsetInContainer_Img0Size:RTyyyy_memdef.kMemberOffsetInContainer_Img0Size + 4])
+        img0LoadAddr= self.getVal32FromByteArray(containerBlockBytes[RTyyyy_memdef.kMemberOffsetInContainer_Img0LoadAddr:RTyyyy_memdef.kMemberOffsetInContainer_Img0LoadAddr + 4])
+        img0Entry= self.getVal32FromByteArray(containerBlockBytes[RTyyyy_memdef.kMemberOffsetInContainer_Img0Entry:RTyyyy_memdef.kMemberOffsetInContainer_Img0Entry + 4])
+        return img0Offset, img0Size, img0LoadAddr, img0Entry
+
+    def _genRawBinDestAppFile(self, imageDataBytes ):
         fmtObj = bincopy.BinFile()
-        fmtObj.add_binary(imageDataBytes, ivtEntry)
-        self.srcAppFilename = os.path.join(self.userFileFolder, appName + '_extracted' + gendef.kAppImageFileExtensionList_S19[0])
-        with open(self.srcAppFilename, 'wb') as fileObj:
-            fileObj.write(self._getSrecDataWithoutS6Frame(fmtObj.as_srec(16, 32)))
+        fmtObj.add_binary(imageDataBytes)
+        with open(self.destAppRawBinFilename, 'wb') as fileObj:
+            fileObj.write(fmtObj.as_binary())
             fileObj.close()
-        self.isConvertedAppUsed = True
-        return ivtEntry, imageEntryPoint, len(imageDataBytes)
+
+    def _extractImageDataFromSrcApp(self, wholeSrcAppBytes, fdcbOffset, appName ):
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            destAppIvtOffset = self.destAppIvtOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
+            ivtEntry, ivtDcd, ivtBd, ivtSelf = self._getIvtInfoFromIvtBlockBytes(wholeSrcAppBytes[destAppIvtOffset:destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT])
+            # Check to see it is vector table address or reset handler address
+            if (ivtEntry % 2):
+                maxVectorOffset = misc.align_down(ivtEntry - ivtSelf, RTyyyy_gendef.kCortexmVectorTableAlignment)
+                vectorOffset = destAppIvtOffset + RTyyyy_gendef.kCortexmVectorTableAlignment
+                isVectorFound = False
+                while (vectorOffset <= maxVectorOffset):
+                    if (ivtEntry == self.getVal32FromByteArray(wholeSrcAppBytes[vectorOffset + 0x4:vectorOffset + 0x8])):
+                        isVectorFound = True
+                        break
+                    vectorOffset += RTyyyy_gendef.kCortexmVectorTableAlignment
+                if isVectorFound:
+                    ivtEntry = ivtSelf + vectorOffset - destAppIvtOffset
+                    #self.printLog('ivtEntry =' + str(hex(ivtEntry)))
+                else:
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_vectorNotFound'][self.languageIndex] + srcAppFilename.encode('utf-8'))
+                    return None, None, 0
+            imageDataOffset = destAppIvtOffset + ivtEntry - ivtSelf
+            imageDataBytes = wholeSrcAppBytes[imageDataOffset:len(wholeSrcAppBytes)]
+            imageEntryPoint = self.getVal32FromByteArray(wholeSrcAppBytes[imageDataOffset + 0x4:imageDataOffset + 0x8])
+            fmtObj = bincopy.BinFile()
+            fmtObj.add_binary(imageDataBytes, ivtEntry)
+            self.srcAppFilename = os.path.join(self.userFileFolder, appName + '_extracted' + gendef.kAppImageFileExtensionList_S19[0])
+            with open(self.srcAppFilename, 'wb') as fileObj:
+                fileObj.write(self._getSrecDataWithoutS6Frame(fmtObj.as_srec(16, 32)))
+                fileObj.close()
+            self.isConvertedAppUsed = True
+            return ivtEntry, imageEntryPoint, len(imageDataBytes)
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            destAppContainerOffset = self.destAppContainerOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
+            img0Offset, img0Size, img0LoadAddr, img0Entry = self._getContainerInfoFromContainerBlockBytes(wholeSrcAppBytes[destAppContainerOffset:destAppContainerOffset + RTyyyy_memdef.kMemBlockSize_Container])
+            imageDataOffset = destAppContainerOffset + img0Offset
+            imageDataBytes = wholeSrcAppBytes[imageDataOffset:imageDataOffset+img0Size]
+            self._genRawBinDestAppFile(imageDataBytes)
 
     def _RTyyyy_isSrcAppBootableImage( self, initialLoadAppBytes ):
         try:
@@ -405,14 +432,23 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 fdcbOffset = self.tgt.xspiNorCfgInfoOffset
             if fdcbOffset == None:
                 return False, None
-            destAppIvtOffset = self.destAppIvtOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
-            ivtTag = initialLoadAppBytes[destAppIvtOffset + RTyyyy_memdef.kMemberOffsetInIvt_Tag]
-            ivtLen = initialLoadAppBytes[destAppIvtOffset + RTyyyy_memdef.kMemberOffsetInIvt_Len]
-            if ivtTag != RTyyyy_memdef.kBootHeaderTag_IVT or ivtLen != RTyyyy_memdef.kMemBlockSize_IVT:
-                return False, None
-            ivtEntry, ivtDcd, ivtBd, ivtSelf = self._getIvtInfoFromIvtBlockBytes(initialLoadAppBytes[destAppIvtOffset:destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT])
-            if (ivtBd <= ivtSelf) or (ivtBd - ivtSelf != RTyyyy_memdef.kMemBlockSize_IVT):
-                return False, None
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                destAppContainerOffset = self.destAppContainerOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
+                containerTag = initialLoadAppBytes[destAppContainerOffset + RTyyyy_memdef.kMemberOffsetInContainer_Tag]
+                containerLen = self.getVal16FromByteArray(initialLoadAppBytes, destAppContainerOffset + RTyyyy_memdef.kMemberOffsetInContainer_Len)
+                containerAppNum = initialLoadAppBytes[destAppContainerOffset + RTyyyy_memdef.kMemberOffsetInContainer_AppNum]
+                calcLen = uiheader.kContainerBlockSize_CntHdr + containerAppNum * uiheader.kContainerBlockSize_ImgEntry + uiheader.kContainerBlockSize_SignBlock
+                if containerTag != uiheader.kCntHdr_Tag or containerLen != calcLen:
+                    return False, None
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                destAppIvtOffset = self.destAppIvtOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
+                ivtTag = initialLoadAppBytes[destAppIvtOffset + RTyyyy_memdef.kMemberOffsetInIvt_Tag]
+                ivtLen = initialLoadAppBytes[destAppIvtOffset + RTyyyy_memdef.kMemberOffsetInIvt_Len]
+                if ivtTag != RTyyyy_memdef.kBootHeaderTag_IVT or ivtLen != RTyyyy_memdef.kMemBlockSize_IVT:
+                    return False, None
+                ivtEntry, ivtDcd, ivtBd, ivtSelf = self._getIvtInfoFromIvtBlockBytes(initialLoadAppBytes[destAppIvtOffset:destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT])
+                if (ivtBd <= ivtSelf) or (ivtBd - ivtSelf != RTyyyy_memdef.kMemBlockSize_IVT):
+                    return False, None
             self.printLog('Original image file is a bootable image file')
             return True, fdcbOffset
         except:
@@ -468,7 +504,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                         self.extractFdcbDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         if self.tgt.hasFlexspiNorDualImageBoot:
                             self.flexspiNorImage0Version = self.getImageVersionValueFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
-                        self._extractDcdDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
+                        if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                            self._extractDcdDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         startAddress, entryPointAddress, lengthInByte = self._extractImageDataFromSrcApp(srecObj.as_binary(), fdcbOffsetInApp, appName)
                         if startAddress != None:
                             isConvSuccessed = True
@@ -477,6 +514,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                         #entryPointAddress = srecObj.execution_start_address
                         entryPointAddress = self.getVal32FromByteArray(srecObj.as_binary(startAddress + 0x4, startAddress  + 0x8))
                         lengthInByte = len(srecObj.as_binary())
+                        if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                            self._genRawBinDestAppFile(srecObj.as_binary())
                         isConvSuccessed = True
                         if self.tgt.hasFlexspiNorDualImageBoot:
                             self.flexspiNorImage0Version = rundef.kFlexspiNorContent_Blank32
@@ -492,6 +531,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         #print ('Image Vector address is 0x%x' %(startAddress))
         #print ('Image Entry address is 0x%x' %(entryPointAddress))
         #print ('Image length is 0x%x' %(lengthInByte))
+        self.destAppExecAddr = startAddress
         return startAddress, entryPointAddress, lengthInByte
 
     def _verifyAppVectorAddressForBd( self, vectorAddr, initialLoadSize ):
@@ -502,8 +542,10 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
              executeBase = self.tgt.memoryRange['dtcm'].start
         elif ((vectorAddr >= self.tgt.memoryRange['ocram'].start) and (vectorAddr < self.tgt.memoryRange['ocram'].start + self.tgt.memoryRange['ocram'].length)):
              executeBase = self.tgt.memoryRange['ocram'].start
-        elif (('itcm_cm4' in self.tgt.memoryRange) and ((vectorAddr >= self.tgt.memoryRange['itcm_cm4'].start) and (vectorAddr < self.tgt.memoryRange['itcm_cm4'].start + self.tgt.memoryRange['itcm_cm4'].length))):
-            executeBase = self.tgt.memoryRange['itcm_cm4'].start
+        elif (('itcm_sec' in self.tgt.memoryRange) and ((vectorAddr >= self.tgt.memoryRange['itcm_sec'].start) and (vectorAddr < self.tgt.memoryRange['itcm_sec'].start + self.tgt.memoryRange['itcm_sec'].length))):
+            executeBase = self.tgt.memoryRange['itcm_sec'].start
+        elif (('dtcm_sec' in self.tgt.memoryRange) and ((vectorAddr >= self.tgt.memoryRange['dtcm_sec'].start) and (vectorAddr < self.tgt.memoryRange['dtcm_sec'].start + self.tgt.memoryRange['dtcm_sec'].length))):
+            executeBase = self.tgt.memoryRange['dtcm_sec'].start
         elif ((vectorAddr >= self.tgt.flexspiNorMemBase) and (vectorAddr < self.tgt.flexspiNorMemBase + RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor)):
              executeBase = self.tgt.flexspiNorMemBase
         elif ((vectorAddr >= RTyyyy_rundef.kBootDeviceMemBase_SemcNor) and (vectorAddr < RTyyyy_rundef.kBootDeviceMemBase_SemcNor + RTyyyy_rundef.kBootDeviceMemXipSize_SemcNor)):
@@ -586,8 +628,12 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
     def _setDestAppInitialBootHeaderInfo( self, bootDevice ):
         if bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
-            self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NOR
-            self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NOR
+                self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NOR
+                self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
         elif bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_SemcNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
@@ -871,7 +917,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                return False
             return self._RTyyyy_isValidNonXipAppImage(imageStartAddr)
 
-    def _createMatchedAppBdfile( self, ideRetryType ):
+    def _createMatchedAppInfofile( self, ideRetryType ):
         self.srcAppFilename = self.getUserAppFilePath()
         self._setDestAppInitialBootHeaderInfo(self.bootDevice)
         imageStartAddr, imageEntryAddr, imageLength = self._RTyyyy_getImageInfo(self.srcAppFilename, ideRetryType)
@@ -889,7 +935,10 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor))
                     return False
             else:
-                self.destAppVectorOffset = RTyyyy_gendef.kInitialLoadSize_NOR
+                if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                    self.destAppVectorOffset = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
+                elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                    self.destAppVectorOffset = RTyyyy_gendef.kInitialLoadSize_NOR
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
             if ((imageStartAddr >= RTyyyy_rundef.kBootDeviceMemBase_SemcNor) and (imageStartAddr < RTyyyy_rundef.kBootDeviceMemBase_SemcNor + RTyyyy_rundef.kBootDeviceMemXipSize_SemcNor)):
                 if (imageStartAddr + imageLength <= RTyyyy_rundef.kBootDeviceMemBase_SemcNor + RTyyyy_rundef.kBootDeviceMemXipSize_SemcNor):
@@ -908,16 +957,19 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         if not self.isCertificateGenerated(self.secureBootType):
             self.popupMsgBox(uilang.kMsgLanguageContentDict['operCertError_notGen'][self.languageIndex])
             return False
-        return self._updateBdfileContent(self.secureBootType, self.bootDevice, imageStartAddr, imageEntryAddr)
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            return self._updateBdfileContent(self.secureBootType, self.bootDevice, imageStartAddr, imageEntryAddr)
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            return True
 
-    def createMatchedAppBdfile( self ):
+    def createMatchedAppInfofile( self ):
         ideRetryCnt = 2
         ideRetryType = None
         ideRetryResult = False
         while ((ideRetryCnt != 0) and not ideRetryResult):
             if ideRetryCnt == 1:
                 ideRetryType = gendef.kIdeType_MCUX
-            ideRetryResult = self._createMatchedAppBdfile(ideRetryType)
+            ideRetryResult = self._createMatchedAppInfofile(ideRetryType)
             ideRetryCnt = ideRetryCnt - 1
             if not ideRetryResult:
                 self.deinitGauge()
@@ -1105,20 +1157,50 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     fileObj.close()
         return True
 
+    def _genCompleteContainerData( self, imageData ):
+        if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
+            containerStruct = uiheader.containerStruct()
+            containerStruct.set_members(self.tgt.flexspiNorMemBase, self.destAppExecAddr, imageData)
+            return containerStruct.out_bytes_str()
+        return None
+
+    def _genCompleteAppWithContainer( self ):
+        if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
+            imageDataBytes = None
+            with open(self.destAppRawBinFilename, 'rb') as fileObj:
+                imageDataBytes = fileObj.read()
+                fileObj.close()
+            containerDataBytes = self._genCompleteContainerData(imageDataBytes)
+            paddingByteNum = self.destAppVectorOffset -(RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container)
+            if paddingByteNum > 0:
+                paddingBytes = [0xFF] * paddingByteNum
+                paddingBytesStr = ''
+                for i in range(len(paddingBytes)):
+                    paddingBytesStr += chr(paddingBytes[i])
+                containerDataBytes += paddingBytesStr
+            finalBtAppData = containerDataBytes + imageDataBytes
+            with open(self.destAppContainerFilename, 'wb') as fileObj:
+                fileObj.write(finalBtAppData)
+                fileObj.close()
+
     def RTyyyy_genBootableImage( self ):
-        self._updateBdBatfileContent()
-        # We have to change system dir to the path of elftosb.exe, or elftosb.exe may not be ran successfully
-        curdir = os.getcwd()
-        os.chdir(os.path.split(self.elftosbPath)[0])
-        process = subprocess.Popen(self.appBdBatFilename, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        os.chdir(curdir)
-        commandOutput = process.communicate()[0]
-        print commandOutput
-        self._recoverDcdBecauseOfSrcApp()
-        if self._RTyyyy_parseBootableImageGenerationResult(commandOutput):
-            return self._RTyyyy_signPartOfImage()
-        else:
-            return False
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            self._updateBdBatfileContent()
+            # We have to change system dir to the path of elftosb.exe, or elftosb.exe may not be ran successfully
+            curdir = os.getcwd()
+            os.chdir(os.path.split(self.elftosbPath)[0])
+            process = subprocess.Popen(self.appBdBatFilename, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            os.chdir(curdir)
+            commandOutput = process.communicate()[0]
+            print commandOutput
+            self._recoverDcdBecauseOfSrcApp()
+            if self._RTyyyy_parseBootableImageGenerationResult(commandOutput):
+                return self._RTyyyy_signPartOfImage()
+            else:
+                return False
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            self._genCompleteAppWithContainer()
+            return True
 
     def showHabDekIfApplicable( self ):
         if self.secureBootType == RTyyyy_uidef.kSecureBootType_HabCrypto and self.habDekDataOffset != None:

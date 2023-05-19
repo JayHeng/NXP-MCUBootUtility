@@ -52,6 +52,7 @@ class Target(object):
         self.romUsbVid = misc.get_dict_default(kwargs, 'romUsbVid', None)
         self.romUsbPid = misc.get_dict_default(kwargs, 'romUsbPid', None)
         self.hasSdpReadRegisterCmd = misc.get_dict_default(kwargs, 'hasSdpReadRegisterCmd', None)
+        self.bootHeaderType = misc.get_dict_default(kwargs, 'bootHeaderType', None)
         self.flashloaderUsbVid = misc.get_dict_default(kwargs, 'flashloaderUsbVid', None)
         self.flashloaderUsbPid = misc.get_dict_default(kwargs, 'flashloaderUsbPid', None)
         self.flashloaderLoadAddr = misc.get_dict_default(kwargs, 'flashloaderLoadAddr', None)

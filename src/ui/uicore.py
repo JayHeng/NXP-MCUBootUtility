@@ -15,6 +15,7 @@ import uivar
 import uilang
 sys.path.append(os.path.abspath(".."))
 from win import secBootWin
+from gen import gendef
 from run import rundef
 from fuse import RTyyyy_fusedef
 from fuse import RTxxx_otpdef
@@ -269,21 +270,57 @@ class secBootUi(secBootWin.secBootWin):
             self.m_menuItem_efuseGroup1.Check(False)
             self.m_menuItem_efuseGroup2.Check(False)
             self.m_menuItem_efuseGroup3.Check(False)
+            self.m_menuItem_efuseGroup4.Check(False)
+            self.m_menuItem_efuseGroup5.Check(False)
+            self.m_menuItem_efuseGroup6.Check(False)
         elif self.toolCommDict['efuseGroupSel'] == 1:
             self.m_menuItem_efuseGroup0.Check(False)
             self.m_menuItem_efuseGroup1.Check(True)
             self.m_menuItem_efuseGroup2.Check(False)
             self.m_menuItem_efuseGroup3.Check(False)
+            self.m_menuItem_efuseGroup4.Check(False)
+            self.m_menuItem_efuseGroup5.Check(False)
+            self.m_menuItem_efuseGroup6.Check(False)
         elif self.toolCommDict['efuseGroupSel'] == 2:
             self.m_menuItem_efuseGroup0.Check(False)
             self.m_menuItem_efuseGroup1.Check(False)
             self.m_menuItem_efuseGroup2.Check(True)
             self.m_menuItem_efuseGroup3.Check(False)
+            self.m_menuItem_efuseGroup4.Check(False)
+            self.m_menuItem_efuseGroup5.Check(False)
+            self.m_menuItem_efuseGroup6.Check(False)
         elif self.toolCommDict['efuseGroupSel'] == 3:
             self.m_menuItem_efuseGroup0.Check(False)
             self.m_menuItem_efuseGroup1.Check(False)
             self.m_menuItem_efuseGroup2.Check(False)
             self.m_menuItem_efuseGroup3.Check(True)
+            self.m_menuItem_efuseGroup4.Check(False)
+            self.m_menuItem_efuseGroup5.Check(False)
+            self.m_menuItem_efuseGroup6.Check(False)
+        elif self.toolCommDict['efuseGroupSel'] == 4:
+            self.m_menuItem_efuseGroup0.Check(False)
+            self.m_menuItem_efuseGroup1.Check(False)
+            self.m_menuItem_efuseGroup2.Check(False)
+            self.m_menuItem_efuseGroup3.Check(False)
+            self.m_menuItem_efuseGroup4.Check(True)
+            self.m_menuItem_efuseGroup5.Check(False)
+            self.m_menuItem_efuseGroup6.Check(False)
+        elif self.toolCommDict['efuseGroupSel'] == 5:
+            self.m_menuItem_efuseGroup0.Check(False)
+            self.m_menuItem_efuseGroup1.Check(False)
+            self.m_menuItem_efuseGroup2.Check(False)
+            self.m_menuItem_efuseGroup3.Check(False)
+            self.m_menuItem_efuseGroup4.Check(False)
+            self.m_menuItem_efuseGroup5.Check(True)
+            self.m_menuItem_efuseGroup6.Check(False)
+        elif self.toolCommDict['efuseGroupSel'] == 6:
+            self.m_menuItem_efuseGroup0.Check(False)
+            self.m_menuItem_efuseGroup1.Check(False)
+            self.m_menuItem_efuseGroup2.Check(False)
+            self.m_menuItem_efuseGroup3.Check(False)
+            self.m_menuItem_efuseGroup4.Check(False)
+            self.m_menuItem_efuseGroup5.Check(False)
+            self.m_menuItem_efuseGroup6.Check(True)
         else:
             pass
 
@@ -316,6 +353,15 @@ class secBootUi(secBootWin.secBootWin):
                 self.efuseGroupSel = 3
             else:
                 pass
+            if self.mcuDevice == uidef.kMcuDevice_iMXRT118x:
+                if self.m_menuItem_efuseGroup4.IsChecked():
+                    self.efuseGroupSel = 4
+                elif self.m_menuItem_efuseGroup5.IsChecked():
+                    self.efuseGroupSel = 5
+                elif self.m_menuItem_efuseGroup6.IsChecked():
+                    self.efuseGroupSel = 6
+                else:
+                    pass
         else:
             self.efuseGroupSel = 0
             self.m_menuItem_efuseGroup0.Check(True)
