@@ -56,7 +56,9 @@ supportedPeripheralSpeed_uart = [4800, 9600, 19200, 57600, 115200] # @todo Verif
 availableSecureBootTypes = [RTyyyy_uidef.kSecureBootType_Development
                             ]
 hasRemappedFuse = False
-availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor]
+availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
+                        RTyyyy_uidef.kBootDevice_UsdhcSd,
+                        RTyyyy_uidef.kBootDevice_UsdhcMmc]
 flexspiNorDevice = uidef.kFlexspiNorDevice_ISSI_IS25LP064A
 flexspiNorMemBase0 = 0x38000000
 flexspiNorMemBase1 = 0x04000000

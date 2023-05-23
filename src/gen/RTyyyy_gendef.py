@@ -48,5 +48,12 @@ kSbFileType_Flash = 0x1
 kSbFileType_Efuse = 0x2
 
 
-kContainerOffset_NOR         = 0x1000
+kContainerOffset_NAND_EEPROM     = 0x400
+kContainerOffset_SD              = 0x800
+kContainerOffset_NOR             = 0x1000
+kContainerOffset_RAM_FLASHLOADER = 0x400
+
+kFirstLoadSize_NAND_EEPROM     = 0x2400
+kFirstLoadSize_SD              = 0x2800
+kFirstLoadSize_NOR             = 0x3000
 

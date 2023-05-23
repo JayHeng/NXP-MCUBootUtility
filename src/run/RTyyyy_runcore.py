@@ -1398,7 +1398,9 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
 
     def RTyyyy_flashBootableImage ( self ):
         self._RTyyyy_prepareForBootDeviceOperation()
-        imageLen = os.path.getsize(self.destAppFilename)
+        imageLen = 0
+        if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+            imageLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
             semcNandOpt, semcNandFcbOpt, semcNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
@@ -1560,8 +1562,17 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                     return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
+            headerOffset = 0
+            destAppFileToLoad = None
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                headerOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
+                destAppFileToLoad = self.destAppNoPaddingFilename
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                headerOffset = RTyyyy_gendef.kContainerOffset_SD
+                destAppFileToLoad = self.destAppContainerFilename
+                imageLen = os.path.getsize(destAppFileToLoad) + headerOffset
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
-            imageLoadAddr = self.bootDeviceMemBase + RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
+            imageLoadAddr = self.bootDeviceMemBase + headerOffset
             if self.isSbFileEnabledToGen:
                 self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ".." + self.convertLongIntHexText(str(hex(imageLoadAddr + memEraseLen))) + ";\n")
                 self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
@@ -1570,7 +1581,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False
-                status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, self.destAppNoPaddingFilename, self.bootDeviceMemId)
+                status, results, cmdStr = self.blhost.writeMemory(imageLoadAddr, destAppFileToLoad, self.bootDeviceMemId)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:
                     return False

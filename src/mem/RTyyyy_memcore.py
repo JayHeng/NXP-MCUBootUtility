@@ -279,10 +279,14 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         if (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset):
             self.printMem(contentToShow)
         elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB) or (addr <= imageMemBase + RTyyyy_memdef.kMemBlockSize_FDCB):
-            if self.needToShowCfgIntr:
-                self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
-                self.needToShowCfgIntr = False
-            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_FDCB)
+            if not self.isSdmmcCard:
+                if self.needToShowCfgIntr:
+                    self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
+                    self.needToShowCfgIntr = False
+                self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_FDCB)
+            else:
+                if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
+                    self.printMem(contentToShow)
         elif addr <= imageMemBase + self.destAppContainerOffset:
             self.printMem(contentToShow)
         elif addr <= imageMemBase + self.destAppContainerOffset + uiheader.kContainerBlockSize_CntHdr:

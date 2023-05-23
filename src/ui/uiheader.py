@@ -83,9 +83,9 @@ class imgEntryStruct(object):
         self.hash = [0x0] * 64
         self.iv = [0x0] * 32
 
-    def set_members( self, flexspiMapStart, imageExecAddr, imageData ):
-        if (flexspiMapStart & 0xFF000000) == (imageExecAddr & 0xFF000000):
-            self.offset = imageExecAddr - flexspiMapStart - RTyyyy_gendef.kContainerOffset_NOR
+    def set_members( self, deviceMapStart, imageExecAddr, imageData ):
+        if (deviceMapStart & 0xFF000000) == (imageExecAddr & 0xFF000000):
+            self.offset = imageExecAddr - deviceMapStart - RTyyyy_gendef.kContainerOffset_NOR
         else:
             self.offset = RTyyyy_memdef.kMemBlockSize_Container
         self.size = len(imageData)
@@ -195,9 +195,9 @@ class containerStruct(object):
         self.imgEntryStruct = imgEntryStruct()
         self.signBlockStruct = signBlockStruct()
 
-    def set_members( self, flexspiMapStart, imageExecAddr, imageData):
+    def set_members( self, deviceMapStart, imageExecAddr, imageData):
         self.cntHdrStruct.set_members(1)
-        self.imgEntryStruct.set_members(flexspiMapStart, imageExecAddr, imageData)
+        self.imgEntryStruct.set_members(deviceMapStart, imageExecAddr, imageData)
         self.signBlockStruct.set_members()
 
     def out_bytes_str( self ):

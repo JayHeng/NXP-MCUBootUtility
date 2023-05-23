@@ -775,30 +775,28 @@ kRevision_4_1_0_en =  "【v4.1.0】 \n" + \
                       "  Feature: \n" + \
                       "     1. [Kinetis] Support MKE13Z/14Z/15Z/17Z \n" + \
                       "     2. [Kinetis] Support MKW45/K32W148 \n" + \
-                      "     3. Support two more Octal NOR devices (ISSI, Winbond) \n" + \
-                      "      \n\n"
+                      "     3. Support two more Octal NOR devices (ISSI, Winbond) \n\n"
 kRevision_4_1_0_zh = u"【v4.1.0】 \n" + \
                      u"  特性: \n" + \
                      u"     1. [Kinetis] 支持MKE13Z/14Z/15Z/17Z \n" + \
                      u"     2. [Kinetis] 支持MKW45/K32W148 \n" + \
-                     u"     3. 支持来自ISSI和Winbond的Octal Flash \n" + \
-                     u"     \n\n"
+                     u"     3. 支持来自ISSI和Winbond的Octal Flash \n\n"
 kRevision_4_1_1_en =  "【v4.1.1】 \n" + \
                       "  Bugfix: \n" + \
-                      "     1. [RTyyyy] It doesn't take effect in DCD Descriptor window \n" + \
-                      "      \n\n"
+                      "     1. [RTyyyy] It doesn't take effect in DCD Descriptor window \n\n"
 kRevision_4_1_1_zh = u"【v4.1.1】 \n" + \
                      u"  修复: \n" + \
-                     u"     1. [RTyyyy] 在DCD Desc窗口输入内容不生效\n" + \
-                     u"     \n\n"
+                     u"     1. [RTyyyy] 在DCD Desc窗口输入内容不生效 \n\n"
 kRevision_5_0_0_en =  "【v5.0.0】 \n" + \
                       "  Feature: \n" + \
-                      "     1. [RTyyyy] Support i.MXRT118x A0\n" + \
-                      "      \n\n"
+                      "     1. [RTyyyy] Support i.MXRT118x A0 \n" + \
+                      "     2. [RT1180] Support FlexSPI NOR boot device \n" + \
+                      "     3. [RT1180] Support uSDHC SD&MMC boot device \n\n"
 kRevision_5_0_0_zh = u"【v5.0.0】 \n" + \
                      u"  特性: \n" + \
-                     u"     1. [RTyyyy] 支持i.MXRT118x A0\n" + \
-                     u"     \n\n"
+                     u"     1. [RTyyyy] 支持i.MXRT118x A0 \n" + \
+                     u"     2. [RT1180] 支持FlexSPI NOR启动设备 \n" + \
+                     u"     3. [RT1180] 支持uSDHC SD&MMC启动设备 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],

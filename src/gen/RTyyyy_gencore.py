@@ -636,11 +636,21 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
         elif bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_SemcNand or \
-             bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
-             bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc or \
              bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
-            self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
-            self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NAND_EEPROM
+                self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_NAND_EEPROM
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
+                self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
+        elif bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
+             bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_SD
+                self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_SD
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
+                self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
         elif bootDevice == RTyyyy_uidef.kBootDevice_RamFlashloader:
             self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_RAM_FLASHLOADER
             self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_RAM_FLASHLOADER
@@ -1158,30 +1168,42 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         return True
 
     def _genCompleteContainerData( self, imageData ):
+        containerStruct = uiheader.containerStruct()
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-            containerStruct = uiheader.containerStruct()
             containerStruct.set_members(self.tgt.flexspiNorMemBase, self.destAppExecAddr, imageData)
+            return containerStruct.out_bytes_str()
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
+             self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
+            containerStruct.set_members(0, self.destAppExecAddr, imageData)
             return containerStruct.out_bytes_str()
         return None
 
     def _genCompleteAppWithContainer( self ):
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-            imageDataBytes = None
-            with open(self.destAppRawBinFilename, 'rb') as fileObj:
-                imageDataBytes = fileObj.read()
-                fileObj.close()
-            containerDataBytes = self._genCompleteContainerData(imageDataBytes)
-            paddingByteNum = self.destAppVectorOffset -(RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container)
-            if paddingByteNum > 0:
-                paddingBytes = [0xFF] * paddingByteNum
-                paddingBytesStr = ''
-                for i in range(len(paddingBytes)):
-                    paddingBytesStr += chr(paddingBytes[i])
-                containerDataBytes += paddingBytesStr
-            finalBtAppData = containerDataBytes + imageDataBytes
-            with open(self.destAppContainerFilename, 'wb') as fileObj:
-                fileObj.write(finalBtAppData)
-                fileObj.close()
+            pass
+        elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
+             self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
+            self._setDestAppFinalBootHeaderInfo(self.bootDevice)
+        else:
+            return
+        imageDataBytes = None
+        with open(self.destAppRawBinFilename, 'rb') as fileObj:
+            imageDataBytes = fileObj.read()
+            fileObj.close()
+        containerDataBytes = self._genCompleteContainerData(imageDataBytes)
+        paddingByteNum = self.destAppVectorOffset - self.destAppInitialLoadSize
+        #self.printDeviceStatus("destAppVectorOffset  = " + str(hex(self.destAppVectorOffset)))
+        #self.printDeviceStatus("destAppInitialLoadSize  = " + str(hex(self.destAppInitialLoadSize)))
+        if paddingByteNum > 0:
+            paddingBytes = [0xFF] * paddingByteNum
+            paddingBytesStr = ''
+            for i in range(len(paddingBytes)):
+                paddingBytesStr += chr(paddingBytes[i])
+            containerDataBytes += paddingBytesStr
+        finalBtAppData = containerDataBytes + imageDataBytes
+        with open(self.destAppContainerFilename, 'wb') as fileObj:
+            fileObj.write(finalBtAppData)
+            fileObj.close()
 
     def RTyyyy_genBootableImage( self ):
         if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
