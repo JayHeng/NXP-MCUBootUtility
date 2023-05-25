@@ -50,6 +50,9 @@ kMainLanguageContentDict = {
         'subMenu_ivtEntryType':               ['IVT Entry Type',                        u"启动头IVT中Entry类型"],
         'mItem_ivtEntryReset':                ['Reset Handler',                         u"复位向量函数"],
         'mItem_ivtEntryVector':               ['Vector Table',                          u"中断向量表"],
+        'subMenu_edgelockFwOpt':              ['Use Edgelock Fw',                       u"加载Edgelock固件"],
+        'mItem_edgelockFwEn':                 ['Enable',                                u"使能"],
+        'mItem_edgelockFwDis':                ['Disable',                               u"禁用"],
         'menu_window':                        ['Window',                                u"界面"],
         'subMenu_soundEffect':                ['Sound Effect',                          u"音效模式"],
         'mItem_soundEffectContra':            ['Contra',                                u"魂斗罗"],
@@ -797,6 +800,12 @@ kRevision_5_0_0_zh = u"【v5.0.0】 \n" + \
                      u"     1. [RTyyyy] 支持i.MXRT118x A0 \n" + \
                      u"     2. [RT1180] 支持FlexSPI NOR启动设备 \n" + \
                      u"     3. [RT1180] 支持uSDHC SD&MMC启动设备 \n\n"
+kRevision_5_1_0_en =  "【v5.1.0】 \n" + \
+                      "  Feature: \n" + \
+                      "     1. [RT1180] Support edgelock FW \n\n"
+kRevision_5_1_0_zh = u"【v5.1.0】 \n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RT1180] 支持自动加载Edgelock固件 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -834,6 +843,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v4_1_0':             [kRevision_4_1_0_en,                      kRevision_4_1_0_zh],
         'revisionHistory_v4_1_1':             [kRevision_4_1_1_en,                      kRevision_4_1_1_zh],
         'revisionHistory_v5_0_0':             [kRevision_5_0_0_en,                      kRevision_5_0_0_zh],
+        'revisionHistory_v5_1_0':             [kRevision_5_1_0_en,                      kRevision_5_1_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
@@ -919,6 +929,8 @@ kMsgLanguageContentDict = {
                                               u"请首先选定一个程序文件 (.elf/.axf/.srec/.hex/.bin)!"],
         'srcImgError_xipSizeTooLarge':        ['XIP Application is detected but the size exceeds maximum XIP size ',
                                               u"XIP应用程序被检测到, 但其大小超过最大XIP范围 "],
+        'srcImgError_xipOffsetTooSmall':      ['XIP Application is detected but the offset is less than minimum reserved size ',
+                                              u"XIP应用程序被检测到, 但其偏移小于最低保留长度 "],
         'operCertError_notGen':               ['You should first generate certificates, or make sure you don\'t put the tool in path with blank space!',
                                               u"请首先生成证书, 或者确保NXP-MCUBootUtility工具存放的路径中没有空格!"],
         'srcImgError_failToGen':              ['Bootable image is not generated successfully! Make sure you don\'t put the tool in path with blank space!',
@@ -1023,4 +1035,9 @@ kMsgLanguageContentDict = {
                                                       u"Otp BOOT_CFG3[31:22]区域未成功烧录！"],
         'burnOtpError_failToBurnDualImageBootCfg2':   ['Otp BOOT_CFG2[31:28] FlexSPI remap size region was not burned successfully!',
                                                       u"Otp BOOT_CFG2[31:28]区域未成功烧录！"],
+
+        'edgelockFwError_cntrSizeTooLarge':   ['Edgelock container file is detected but the size exceeds maximum size ',
+                                              u"Edgelock启动头被检测到, 但其大小超出最大长度 "],
+        'edgelockFwError_imageSizeTooLarge':  ['Edgelock FW file is detected but the size exceeds maximum size ',
+                                              u"Edgelock固件被检测到, 但其大小超出最大长度 "],
 }

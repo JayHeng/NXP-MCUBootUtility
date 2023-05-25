@@ -66,7 +66,9 @@ availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
                         RTyyyy_uidef.kBootDevice_SemcNor]
 flexspiNorDevice = uidef.kFlexspiNorDevice_SipWinbond_W25Q32  # or 0xC0000007
 flexspiNorMemBase0 = 0x60000000
+flexspiNorMemBase0Aliased = 0x08000000
 flexspiNorMemBase1 = None
+flexspiNorMemBase1Aliased = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '75MHz', '80MHz', '100MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x0
 flexspiNorEfuseBootCfg0Bits = 10

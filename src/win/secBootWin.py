@@ -150,6 +150,15 @@ class secBootWin ( wx.Frame ):
 
 		self.m_menu_tools.AppendSubMenu( self.m_menu_ivtEntryType, u"IVT Entry Type" )
 
+		self.m_menu_edgelockFwOpt = wx.Menu()
+		self.m_menuItem_edgelockFwDis = wx.MenuItem( self.m_menu_edgelockFwOpt, wx.ID_ANY, u"Disable", wx.EmptyString, wx.ITEM_RADIO )
+		self.m_menu_edgelockFwOpt.Append( self.m_menuItem_edgelockFwDis )
+
+		self.m_menuItem_edgelockFwEn = wx.MenuItem( self.m_menu_edgelockFwOpt, wx.ID_ANY, u"Enable", wx.EmptyString, wx.ITEM_RADIO )
+		self.m_menu_edgelockFwOpt.Append( self.m_menuItem_edgelockFwEn )
+
+		self.m_menu_tools.AppendSubMenu( self.m_menu_edgelockFwOpt, u"Use Edgelock Fw" )
+
 		self.m_menubar.Append( self.m_menu_tools, u"Tools" )
 
 		self.m_menu_window = wx.Menu()
@@ -1889,6 +1898,8 @@ class secBootWin ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.callbackSetFlexspiXipRegionTo1, id = self.m_menuItem_flexspiXipRegion1.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetIvtEntryToResetHandler, id = self.m_menuItem_ivtEntryResetHandler.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetIvtEntryToVectorTable, id = self.m_menuItem_ivtEntryVectorTable.GetId() )
+		self.Bind( wx.EVT_MENU, self.callbackDisableEdgelockFw, id = self.m_menuItem_edgelockFwDis.GetId() )
+		self.Bind( wx.EVT_MENU, self.callbackEnableEdgelockFw, id = self.m_menuItem_edgelockFwEn.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetSoundEffectAsContra, id = self.m_menuItem_soundEffectContra.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetSoundEffectAsMario, id = self.m_menuItem_soundEffectMario.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetSoundEffectAsQuiet, id = self.m_menuItem_soundEffectQuiet.GetId() )
@@ -2042,6 +2053,12 @@ class secBootWin ( wx.Frame ):
 		event.Skip()
 
 	def callbackSetIvtEntryToVectorTable( self, event ):
+		event.Skip()
+
+	def callbackDisableEdgelockFw( self, event ):
+		event.Skip()
+
+	def callbackEnableEdgelockFw( self, event ):
 		event.Skip()
 
 	def callbackSetSoundEffectAsContra( self, event ):

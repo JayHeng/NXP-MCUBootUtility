@@ -109,6 +109,10 @@ class secBootUi(secBootWin.secBootWin):
         self._initIvtEntryType()
         self.setIvtEntryType()
 
+        self.edgelockFwEn = None
+        self._initEdgelockFwOption()
+        self.setEdgelockFwOption()
+
         self.isUartPortSelected = None
         self.isUsbhidPortSelected = None
         self.uartComPort = None
@@ -445,6 +449,28 @@ class secBootUi(secBootWin.secBootWin):
             self.m_menuItem_ivtEntryResetHandler.Check(True)
             self.m_menuItem_ivtEntryVectorTable.Check(False)
         self.toolCommDict['isIvtEntryResetHandler'] = self.isIvtEntryResetHandler
+
+    def _initEdgelockFwOption( self ):
+        if self.toolCommDict['edgelockFwEn']:
+            self.m_menuItem_edgelockFwDis.Check(False)
+            self.m_menuItem_edgelockFwEn.Check(True)
+        else:
+            self.m_menuItem_edgelockFwDis.Check(True)
+            self.m_menuItem_edgelockFwEn.Check(False)
+
+    def setEdgelockFwOption( self ):
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
+            if self.m_menuItem_edgelockFwEn.IsChecked():
+                self.edgelockFwEn = True
+            elif self.m_menuItem_edgelockFwDis.IsChecked():
+                self.edgelockFwEn = False
+            else:
+                pass
+        else:
+            self.edgelockFwEn = False
+            self.m_menuItem_edgelockFwDis.Check(True)
+            self.m_menuItem_edgelockFwEn.Check(False)
+        self.toolCommDict['edgelockFwEn'] = self.edgelockFwEn
 
     def checkIfSubWinHasBeenOpened( self ):
         runtimeSettings = uivar.getRuntimeSettings()
@@ -1397,6 +1423,9 @@ class secBootUi(secBootWin.secBootWin):
         self.m_menu_tools.SetLabel(self.m_menu_tools.FindItem(uilang.kMainLanguageContentDict['subMenu_ivtEntryType'][lastIndex]), uilang.kMainLanguageContentDict['subMenu_ivtEntryType'][langIndex])
         self.m_menuItem_ivtEntryResetHandler.SetItemLabel(uilang.kMainLanguageContentDict['mItem_ivtEntryReset'][langIndex])
         self.m_menuItem_ivtEntryVectorTable.SetItemLabel(uilang.kMainLanguageContentDict['mItem_ivtEntryVector'][langIndex])
+        self.m_menu_tools.SetLabel(self.m_menu_tools.FindItem(uilang.kMainLanguageContentDict['subMenu_edgelockFwOpt'][lastIndex]), uilang.kMainLanguageContentDict['subMenu_edgelockFwOpt'][langIndex])
+        self.m_menuItem_edgelockFwEn.SetItemLabel(uilang.kMainLanguageContentDict['mItem_edgelockFwEn'][langIndex])
+        self.m_menuItem_edgelockFwDis.SetItemLabel(uilang.kMainLanguageContentDict['mItem_edgelockFwDis'][langIndex])
         self.m_menubar.SetMenuLabel(uilang.kMenuPosition_Window, uilang.kMainLanguageContentDict['menu_window'][langIndex])
         self.m_menu_window.SetLabel(self.m_menu_window.FindItem(uilang.kMainLanguageContentDict['subMenu_soundEffect'][lastIndex]), uilang.kMainLanguageContentDict['subMenu_soundEffect'][langIndex])
         self.m_menuItem_soundEffectContra.SetItemLabel(uilang.kMainLanguageContentDict['mItem_soundEffectContra'][langIndex])

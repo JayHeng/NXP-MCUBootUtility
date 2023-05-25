@@ -83,11 +83,19 @@ class imgEntryStruct(object):
         self.hash = [0x0] * 64
         self.iv = [0x0] * 32
 
-    def set_members( self, deviceMapStart, imageExecAddr, imageData ):
+    def set_members( self, deviceMapStart, imageExecAddr, imageData, hasEdgelockFw=False ):
         if (deviceMapStart & 0xFF000000) == (imageExecAddr & 0xFF000000):
-            self.offset = imageExecAddr - deviceMapStart - RTyyyy_gendef.kContainerOffset_NOR
+            cntrOffset = 0
+            if hasEdgelockFw:
+                cntrOffset = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_gendef.kContainerSize_Edgelock
+            else:
+                cntrOffset = RTyyyy_gendef.kContainerOffset_NOR
+            self.offset = imageExecAddr - deviceMapStart - cntrOffset
         else:
-            self.offset = RTyyyy_memdef.kMemBlockSize_Container
+            if hasEdgelockFw:
+                self.offset = RTyyyy_memdef.kMemBlockSize_Container + RTyyyy_memdef.kMemBlockSize_Edgelock
+            else:
+                self.offset = RTyyyy_memdef.kMemBlockSize_Container
         self.size = len(imageData)
         self.load_addr = imageExecAddr
         self.entry = imageExecAddr
@@ -194,14 +202,19 @@ class containerStruct(object):
         self.cntHdrStruct = cntHdrStruct()
         self.imgEntryStruct = imgEntryStruct()
         self.signBlockStruct = signBlockStruct()
+        self.hasEdgelockFw = False
 
-    def set_members( self, deviceMapStart, imageExecAddr, imageData):
+    def set_members( self, deviceMapStart, imageExecAddr, imageData, hasEdgelockFw=False ):
+        self.hasEdgelockFw = hasEdgelockFw
         self.cntHdrStruct.set_members(1)
-        self.imgEntryStruct.set_members(deviceMapStart, imageExecAddr, imageData)
+        self.imgEntryStruct.set_members(deviceMapStart, imageExecAddr, imageData, hasEdgelockFw)
         self.signBlockStruct.set_members()
 
     def out_bytes_str( self ):
-        paddingBytes = [0x00] * (RTyyyy_memdef.kMemBlockSize_Container - self.cntHdrStruct.length)
+        edgelockCntrSize = 0
+        if self.hasEdgelockFw:
+            edgelockCntrSize = RTyyyy_gendef.kContainerSize_Edgelock
+        paddingBytes = [0x00] * (RTyyyy_memdef.kMemBlockSize_Container - edgelockCntrSize - self.cntHdrStruct.length)
         paddingBytesStr = ''
         for i in range(len(paddingBytes)):
             paddingBytesStr += chr(paddingBytes[i])

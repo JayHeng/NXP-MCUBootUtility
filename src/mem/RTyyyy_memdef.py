@@ -21,6 +21,7 @@ kMemBlockSize_CSF             = 0x1000
 kMemBlockSize_HabKeyBlob      = 0x200
 
 kMemBlockSize_Container       = 0x2000
+kMemBlockSize_Edgelock        = 0x8000
 
 kBootHeaderTag_IVT = 0xD1
 kBootHeaderTag_DCD = 0xD2

@@ -674,6 +674,12 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackSetIvtEntryToVectorTable( self, event ):
         self.setIvtEntryType()
 
+    def callbackDisableEdgelockFw( self, event ):
+        self.setEdgelockFwOption()
+
+    def callbackEnableEdgelockFw( self, event ):
+        self.setEdgelockFwOption()
+
     def _doSetLanguage( self ):
         self.setLanguage()
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
@@ -737,14 +743,15 @@ class secBootMain(MCX_main.secBootMcxMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v4_0_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v4_1_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v4_1_1'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_0_0'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_0_0'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_1_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v5.0.0")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v5.1.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

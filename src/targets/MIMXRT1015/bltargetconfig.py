@@ -63,7 +63,9 @@ availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
                         RTyyyy_uidef.kBootDevice_LpspiNor]
 flexspiNorDevice = uidef.kFlexspiNorDevice_Adesto_AT25SF128A
 flexspiNorMemBase0 = 0x60000000
+flexspiNorMemBase0Aliased = 0x08000000
 flexspiNorMemBase1 = None
+flexspiNorMemBase1Aliased = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '75MHz', '80MHz', '100MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x0
 flexspiNorEfuseBootCfg0Bits = 10

@@ -98,3 +98,6 @@ kMemBlockColor_HabKeyBlob      = wx.Colour( 0xff, 0x7f, 0x00 ) #wx.CORAL
 kMemBlockColor_ContainerHdr    = wx.RED
 kMemBlockColor_ImageEntry      = wx.GREEN
 
+kMemBlockColor_EdgeContainer   = wx.Colour( 255, 114, 86 )  #   Coral1
+kMemBlockColor_EdgeFw          = wx.Colour( 99, 184, 255 )  #   SteelBlue1
+

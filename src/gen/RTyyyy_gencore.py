@@ -126,6 +126,9 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.destAppExecAddr = 0
         self.destAppRawBinFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'raw_application.bin')
         self.destAppContainerFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'container_application_nopadding.bin')
+        self.edgelockContainerName = 'edgelock_cntr.bin'
+        self.edgelockFwName = 'edgelock_fw.bin'
+        self.hasEdgelockFw = False
 
     def _copyCstBinToElftosbFolder( self ):
         shutil.copy(self.cstBinFolder + '\\cst.exe', os.path.split(self.elftosbPath)[0])
@@ -629,8 +632,12 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         if bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
             if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
-                self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NOR
-                self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
+                if self.hasEdgelockFw:
+                    self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_gendef.kContainerSize_Edgelock
+                    self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container + RTyyyy_memdef.kMemBlockSize_Edgelock
+                else:
+                    self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NOR
+                    self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NOR
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
@@ -646,8 +653,12 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         elif bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
              bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
             if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
-                self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_SD
-                self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_SD
+                if self.hasEdgelockFw:
+                    self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_SD + RTyyyy_gendef.kContainerSize_Edgelock
+                    self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_SD + RTyyyy_memdef.kMemBlockSize_Edgelock
+                else:
+                    self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_SD
+                    self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_SD
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
@@ -664,14 +675,20 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             if self.isXipApp:
                 self.destAppInitialLoadSize = self.destAppVectorOffset
             else:
-                self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
+                if self.hasEdgelockFw:
+                    self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_gendef.kContainerSize_Edgelock + RTyyyy_memdef.kMemBlockSize_Container + RTyyyy_memdef.kMemBlockSize_Edgelock
+                else:
+                    self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
         elif bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_SemcNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
              bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc or \
              bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             self.isXipApp = False
-            self.destAppVectorOffset = self.destAppInitialLoadSize
+            if self.hasEdgelockFw:
+                self.destAppVectorOffset = self.destAppInitialLoadSize + RTyyyy_gendef.kContainerSize_Edgelock
+            else:
+                self.destAppVectorOffset = self.destAppInitialLoadSize
         else:
             pass
 
@@ -927,8 +944,28 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                return False
             return self._RTyyyy_isValidNonXipAppImage(imageStartAddr)
 
+    def _validateEdgelockFwFiles( self ):
+        if not self.edgelockFwEn:
+            self.hasEdgelockFw = False
+        elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            fwCntrFile = os.path.join(self.cpuDir, self.edgelockContainerName)
+            fwImgFile = os.path.join(self.cpuDir, self.edgelockFwName)
+            if os.path.isfile(fwCntrFile) and os.path.isfile(fwImgFile):
+                size = os.path.getsize(fwCntrFile)
+                if size > RTyyyy_gendef.kContainerSize_Edgelock:
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['edgelockFwError_cntrSizeTooLarge'][self.languageIndex] + str(hex(size)) + " !")
+                    return False
+                size = os.path.getsize(fwImgFile)
+                if size > RTyyyy_memdef.kMemBlockSize_Edgelock:
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['edgelockFwError_imageSizeTooLarge'][self.languageIndex] + str(hex(size)) + " !")
+                    return False
+                self.hasEdgelockFw = True
+        return True
+
     def _createMatchedAppInfofile( self, ideRetryType ):
         self.srcAppFilename = self.getUserAppFilePath()
+        if not self._validateEdgelockFwFiles():
+            return False
         self._setDestAppInitialBootHeaderInfo(self.bootDevice)
         imageStartAddr, imageEntryAddr, imageLength = self._RTyyyy_getImageInfo(self.srcAppFilename, ideRetryType)
         if imageStartAddr == None or imageEntryAddr == None:
@@ -941,12 +978,26 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor):
                     self.isXipApp = True
                     self.destAppVectorOffset = imageStartAddr - self.tgt.flexspiNorMemBase
+                    minReservedSize = 0
+                    if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                        minReservedSize = RTyyyy_gendef.kFirstLoadSize_NOR
+                        if self.hasEdgelockFw:
+                            minReservedSize += RTyyyy_memdef.kMemBlockSize_Edgelock
+                    elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                        minReservedSize = RTyyyy_gendef.kInitialLoadSize_NOR
+                    if self.destAppVectorOffset < minReservedSize:
+                        self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipOffsetTooSmall'][self.languageIndex] + str(hex(minReservedSize)) + " !")
+
+                        return False
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor))
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + str(hex(RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor)) + " !")
                     return False
             else:
                 if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
-                    self.destAppVectorOffset = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
+                    if self.hasEdgelockFw:
+                        self.destAppVectorOffset = RTyyyy_gendef.kFirstLoadSize_NOR + RTyyyy_memdef.kMemBlockSize_Edgelock  + RTyyyy_gendef.kContainerSize_Edgelock
+                    else:
+                        self.destAppVectorOffset = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
                 elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                     self.destAppVectorOffset = RTyyyy_gendef.kInitialLoadSize_NOR
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
@@ -955,7 +1006,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     self.isXipApp = True
                     self.destAppVectorOffset = imageStartAddr - RTyyyy_rundef.kBootDeviceMemBase_SemcNor
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(RTyyyy_rundef.kBootDeviceMemXipSize_SemcNor))
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + str(hex(RTyyyy_rundef.kBootDeviceMemXipSize_SemcNor)) + " !")
                     return False
             else:
                 self.destAppVectorOffset = RTyyyy_gendef.kInitialLoadSize_NOR
@@ -1170,13 +1221,20 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
     def _genCompleteContainerData( self, imageData ):
         containerStruct = uiheader.containerStruct()
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-            containerStruct.set_members(self.tgt.flexspiNorMemBase, self.destAppExecAddr, imageData)
+            containerStruct.set_members(self.tgt.flexspiNorMemBase, self.destAppExecAddr, imageData, self.hasEdgelockFw)
             return containerStruct.out_bytes_str()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
-            containerStruct.set_members(0, self.destAppExecAddr, imageData)
+            containerStruct.set_members(0, self.destAppExecAddr, imageData, self.hasEdgelockFw)
             return containerStruct.out_bytes_str()
         return None
+
+    def _genPaddingByteArrayStr( self, num, pattern=0x00 ):
+        paddingBytes = [pattern] * num
+        paddingBytesStr = ''
+        for i in range(num):
+            paddingBytesStr += chr(paddingBytes[i])
+        return paddingBytesStr
 
     def _genCompleteAppWithContainer( self ):
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
@@ -1186,21 +1244,44 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             self._setDestAppFinalBootHeaderInfo(self.bootDevice)
         else:
             return
+        finalBtAppData = ''
+        ##############################################################
+        if self.hasEdgelockFw:
+            edgelockCntrFile = os.path.join(self.cpuDir, self.edgelockContainerName)
+            edgelockCntrBytes = None
+            with open(edgelockCntrFile, 'rb') as fileObj:
+                edgelockCntrBytes = fileObj.read()
+                fileObj.close()
+            num = RTyyyy_gendef.kContainerSize_Edgelock - len(edgelockCntrBytes)
+            if num > 0:
+                edgelockCntrBytes += self._genPaddingByteArrayStr(num, 0x00)
+            finalBtAppData = edgelockCntrBytes
+        ##############################################################
         imageDataBytes = None
         with open(self.destAppRawBinFilename, 'rb') as fileObj:
             imageDataBytes = fileObj.read()
             fileObj.close()
         containerDataBytes = self._genCompleteContainerData(imageDataBytes)
-        paddingByteNum = self.destAppVectorOffset - self.destAppInitialLoadSize
+        finalBtAppData += containerDataBytes
+        ##############################################################
+        if self.hasEdgelockFw:
+            edgelockFwFile = os.path.join(self.cpuDir, self.edgelockFwName)
+            edgelockFwBytes = None
+            with open(edgelockFwFile, 'rb') as fileObj:
+                edgelockFwBytes = fileObj.read()
+                fileObj.close()
+            num = RTyyyy_memdef.kMemBlockSize_Edgelock - len(edgelockFwBytes)
+            if num > 0:
+                edgelockFwBytes += self._genPaddingByteArrayStr(num, 0x00)
+            finalBtAppData += edgelockFwBytes
+        ##############################################################
+        num = self.destAppVectorOffset - self.destAppInitialLoadSize
+        #self.printDeviceStatus("destAppContainerOffset  = " + str(hex(self.destAppContainerOffset)))
         #self.printDeviceStatus("destAppVectorOffset  = " + str(hex(self.destAppVectorOffset)))
         #self.printDeviceStatus("destAppInitialLoadSize  = " + str(hex(self.destAppInitialLoadSize)))
-        if paddingByteNum > 0:
-            paddingBytes = [0xFF] * paddingByteNum
-            paddingBytesStr = ''
-            for i in range(len(paddingBytes)):
-                paddingBytesStr += chr(paddingBytes[i])
-            containerDataBytes += paddingBytesStr
-        finalBtAppData = containerDataBytes + imageDataBytes
+        if num > 0:
+            finalBtAppData += self._genPaddingByteArrayStr(num, 0x00)
+        finalBtAppData += imageDataBytes
         with open(self.destAppContainerFilename, 'wb') as fileObj:
             fileObj.write(finalBtAppData)
             fileObj.close()

@@ -68,7 +68,9 @@ availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
                         RTyyyy_uidef.kBootDevice_LpspiNor]
 flexspiNorDevice = uidef.kFlexspiNorDevice_ISSI_IS25LP064A
 flexspiNorMemBase0 = 0x30000000
+flexspiNorMemBase0Aliased = None
 flexspiNorMemBase1 = 0x60000000
+flexspiNorMemBase1Aliased = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = 12

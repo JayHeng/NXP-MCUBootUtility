@@ -46,6 +46,8 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
 
         self.needToShowContainerHdrIntr = None
         self.needToShowImageEntryIntr = None
+        self.needToShowEdgelockContainerIntr = None
+        self.needToShowEdgelockFwIntr = None
         self._RTyyyy_initShowIntr()
 
     def _RTyyyy_initShowIntr( self ):
@@ -67,6 +69,8 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowMbrdptIntr = True
         self.needToShowContainerHdrIntr = True
         self.needToShowImageEntryIntr = True
+        self.needToShowEdgelockContainerIntr = True
+        self.needToShowEdgelockFwIntr = True
 
     def _getCsfBlockInfo( self ):
         self.destAppCsfAddress = self.getVal32FromBinFile(self.destAppFilename, self.destAppIvtOffset + RTyyyy_memdef.kMemberOffsetInIvt_Csf)
@@ -287,23 +291,37 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             else:
                 if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
                     self.printMem(contentToShow)
-        elif addr <= imageMemBase + self.destAppContainerOffset:
+        elif addr <= imageMemBase + self.destAppContainerOffset - RTyyyy_gendef.kContainerSize_Edgelock:
             self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppContainerOffset:
+            if self.hasEdgelockFw:
+                if self.needToShowEdgelockContainerIntr:
+                    self.printMem('----------------------------Container (Edgelock)--------------------------------------', RTyyyy_uidef.kMemBlockColor_EdgeContainer)
+                    self.needToShowEdgelockContainerIntr = False
+                self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EdgeContainer)
+            else:
+                self.printMem(contentToShow)
         elif addr <= imageMemBase + self.destAppContainerOffset + uiheader.kContainerBlockSize_CntHdr:
             if self.needToShowContainerHdrIntr:
-                self.printMem('------------------------------Container Header----------------------------------------', RTyyyy_uidef.kMemBlockColor_ContainerHdr)
+                self.printMem('-------------------------Container Header (User App)----------------------------------', RTyyyy_uidef.kMemBlockColor_ContainerHdr)
                 self.needToShowContainerHdrIntr = False
             self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_ContainerHdr)
         elif addr <= imageMemBase + self.destAppContainerOffset + uiheader.kContainerBlockSize_CntHdr + uiheader.kContainerBlockSize_ImgEntry:
             if self.needToShowImageEntryIntr:
-                self.printMem('-----------------------------Image Array Entry----------------------------------------', RTyyyy_uidef.kMemBlockColor_ImageEntry)
+                self.printMem('------------------------Image Array Entry (User App)----------------------------------', RTyyyy_uidef.kMemBlockColor_ImageEntry)
                 self.needToShowImageEntryIntr = False
             self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_ImageEntry)
         elif addr <= imageMemBase + self.destAppVectorOffset:
-            self.printMem(contentToShow)
+            if self.hasEdgelockFw and (addr > imageMemBase + self.destAppInitialLoadSize - RTyyyy_memdef.kMemBlockSize_Edgelock) and (addr <= imageMemBase + self.destAppInitialLoadSize):
+                if self.needToShowEdgelockFwIntr:
+                    self.printMem('----------------------------Firmware (Edgelock)---------------------------------------', RTyyyy_uidef.kMemBlockColor_EdgeFw)
+                    self.needToShowEdgelockFwIntr = False
+                self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_EdgeFw)
+            else:
+                self.printMem(contentToShow)
         elif addr <= imageMemBase + self.destAppVectorOffset + self.destAppBinaryBytes:
             if self.needToShowImageIntr:
-                self.printMem('-----------------------------------Image----------------------------------------------', RTyyyy_uidef.kMemBlockColor_Image)
+                self.printMem('-----------------------------Image (User App)-----------------------------------------', RTyyyy_uidef.kMemBlockColor_Image)
                 self.needToShowImageIntr = False
             self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_Image)
         else:
