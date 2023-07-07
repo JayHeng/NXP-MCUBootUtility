@@ -35,3 +35,5 @@ kFlexspiNorCfgOffset_BlockByteSize  = 0x1d0
 kXspiNorDefaultMemInfo_PageSize    = 0x100
 kXspiNorDefaultMemInfo_SectorSize  = 0x1000
 kXspiNorDefaultMemInfo_BlockSize   = 0x20000
+
+kBootDeviceMemXipSize_FlexspiNor   = 0x10000000 #256MB

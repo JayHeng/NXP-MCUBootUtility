@@ -423,6 +423,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             imageDataOffset = destAppContainerOffset + img0Offset
             imageDataBytes = wholeSrcAppBytes[imageDataOffset:imageDataOffset+img0Size]
             self._genRawBinDestAppFile(imageDataBytes)
+            return img0LoadAddr, img0Entry, len(imageDataBytes)
 
     def _RTyyyy_isSrcAppBootableImage( self, initialLoadAppBytes ):
         try:
@@ -453,6 +454,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 if (ivtBd <= ivtSelf) or (ivtBd - ivtSelf != RTyyyy_memdef.kMemBlockSize_IVT):
                     return False, None
             self.printLog('Original image file is a bootable image file')
+            #self.printDeviceStatus("fdcbOffset  = " + str(hex(fdcbOffset)))
             return True, fdcbOffset
         except:
             return False, None
@@ -974,8 +976,9 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.isXipApp = False
         self.destAppVectorAddress = imageStartAddr
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
-            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor)):
-                if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor):
+            self.adjustTgtFlexspiMemBaseAccordingToApp(imageStartAddr)
+            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+                if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor):
                     self.isXipApp = True
                     self.destAppVectorOffset = imageStartAddr - self.tgt.flexspiNorMemBase
                     minReservedSize = 0
@@ -990,7 +993,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
 
                         return False
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + str(hex(RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor)) + " !")
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + str(hex(rundef.kBootDeviceMemXipSize_FlexspiNor)) + " !")
                     return False
             else:
                 if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:

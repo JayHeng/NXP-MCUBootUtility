@@ -345,7 +345,10 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                     flBinFile = os.path.join(self.cpuDir, 'ivt_flashloader.bin')
                 elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
-                    flBinFile = os.path.join(self.cpuDir, 'cntr_flashloader.bin')
+                    if (self.tgt.flexspiNorMemBase >> 28) % 2:
+                        flBinFile = os.path.join(self.cpuDir, 'cntr_flashloader_s.bin')
+                    else:
+                        flBinFile = os.path.join(self.cpuDir, 'cntr_flashloader_ns.bin')
                 else:
                     pass
                 flSrecFile = os.path.join(self.cpuDir, 'flashloader.srec')

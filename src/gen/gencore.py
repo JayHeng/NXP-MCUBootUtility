@@ -242,3 +242,30 @@ class secBootGen(uicore.secBootUi):
             var32Vaule = rundef.kFlexspiNorContent_Blank32
         return var32Vaule
 
+    def adjustTgtFlexspiMemBaseAccordingToApp( self, imageStartAddr ):
+        flexspiNorMemBase  = None
+        flexspiNorMemBaseNs = None
+        flexspiNorMemBaseAliased = None
+        if self.flexspiXipRegionSel == 0:
+            flexspiNorMemBase  = self.tgt.flexspiNorMemBase0
+            flexspiNorMemBaseNs = self.tgt.flexspiNorMemBase0Ns
+            flexspiNorMemBase0Aliased = self.tgt.flexspiNorMemBase0Aliased
+        elif self.flexspiXipRegionSel == 1:
+            flexspiNorMemBase  = self.tgt.flexspiNorMemBase1
+            flexspiNorMemBaseNs = self.tgt.flexspiNorMemBase1Ns
+            flexspiNorMemBase1Aliased = self.tgt.flexspiNorMemBase1Aliased
+        else:
+            pass
+        if flexspiNorMemBase != None:
+            if ((imageStartAddr >= flexspiNorMemBase) and (imageStartAddr < flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+                self.tgt.flexspiNorMemBase = flexspiNorMemBase
+                return
+        if flexspiNorMemBaseNs != None:
+            if ((imageStartAddr >= flexspiNorMemBaseNs) and (imageStartAddr < flexspiNorMemBaseNs + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+                self.tgt.flexspiNorMemBase = flexspiNorMemBaseNs
+                return
+        if flexspiNorMemBaseAliased != None:
+            if ((imageStartAddr >= flexspiNorMemBaseAliased) and (imageStartAddr < flexspiNorMemBaseAliased + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+                self.tgt.flexspiNorMemBase = flexspiNorMemBaseAliased
+                return
+

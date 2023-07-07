@@ -354,7 +354,7 @@ kSubLanguageContentDict = {
         'button_userkeys_genRandomKek':       ['Generate Random Kek',                   u"产生随机全局密钥"],
 }
 
-kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
+kRevision_1_0_0_en =  "【v1.0.0】 - 2018.12\n" + \
                       "  Feature: \n" + \
                       "     1. Support i.MXRT1021, i.MXRT1051/1052, i.MXRT1061/1062, i.MXRT1064 SIP \n" + \
                       "     2. Support both UART and USB-HID serial downloader modes \n" + \
@@ -371,7 +371,7 @@ kRevision_1_0_0_en =  "【v1.0.0】 \n" + \
                       "    13. Support common eFuse memory operation \n" + \
                       "    14. Support common boot device memory operation \n" + \
                       "    15. Support for reading back and marking bootable image(NFCB/DBBT/FDCB/EKIB/EPRDB/IVT/Boot Data/DCD/Image/CSF/DEK KeyBlob) from boot device \n\n"
-kRevision_1_0_0_zh = u"【v1.0.0】 \n" + \
+kRevision_1_0_0_zh = u"【v1.0.0】 - 2018.12\n" + \
                      u"  特性: \n" + \
                      u"     1. 支持i.MXRT全系列MCU，包含i.MXRT1021、i.MXRT1051/1052、i.MXRT1061/1062、i.MXRT1064 SIP \n" + \
                      u"     2. 支持UART和USB-HID两种串行下载方式（COM端口/USB设备自动识别） \n" + \
@@ -388,7 +388,7 @@ kRevision_1_0_0_zh = u"【v1.0.0】 \n" + \
                      u"    13. 支持MCU芯片内部eFuse的回读和烧写操作（即专用eFuse烧写器） \n" + \
                      u"    14. 支持外部启动设备的任意读写擦操作（即通用Flash编程器） \n" + \
                      u"    15. 支持从外部启动设备回读Bootable image，并对其组成部分（NFCB/DBBT/FDCB/EKIB/EPRDB/IVT/Boot Data/DCD/Image/CSF/DEK KeyBlob）进行标注 \n\n"
-kRevision_1_1_0_en =  "【v1.1.0】 \n" + \
+kRevision_1_1_0_en =  "【v1.1.0】 - 2019.01\n" + \
                       "  Feature: \n" + \
                       "     1. Support i.MXRT1015 \n" + \
                       "     2. Add Language option in Menu/View and support Chinese\n" + \
@@ -398,7 +398,7 @@ kRevision_1_1_0_en =  "【v1.1.0】 \n" + \
                       "     3. Show boot sequence page dynamically according to action \n" + \
                       "  Interest: \n" + \
                       "     1. Add sound effect (Mario) \n\n"
-kRevision_1_1_0_zh = u"【v1.1.0】 \n" + \
+kRevision_1_1_0_zh = u"【v1.1.0】 - 2019.01\n" + \
                      u"  特性: \n" + \
                      u"     1. 支持i.MXRT1015 \n" + \
                      u"     2. 支持界面中文显示\n" + \
@@ -408,7 +408,7 @@ kRevision_1_1_0_zh = u"【v1.1.0】 \n" + \
                      u"     3. 根据操作过程自动跟随显示操作页面 \n" + \
                      u"  个性: \n" + \
                      u"     1. 增加马里奥音效 \n\n"
-kRevision_1_2_0_en =  "【v1.2.0】 \n" + \
+kRevision_1_2_0_en =  "【v1.2.0】 - 2019.04\n" + \
                       "  Feature: \n" + \
                       "     1. Can generate .sb file by all-in-one action for MfgTool and RT-Flash \n" + \
                       "     2. Can show cost time along with gauge \n" + \
@@ -418,7 +418,7 @@ kRevision_1_2_0_en =  "【v1.2.0】 \n" + \
                       "  Bugfix: \n" + \
                       "     1. Region count cannot be set more than 1 for Fixed OTPMK Key case \n" + \
                       "     2. Option1 field is not implemented for FlexSPI NOR configuration \n\n"
-kRevision_1_2_0_zh = u"【v1.2.0】 \n" + \
+kRevision_1_2_0_zh = u"【v1.2.0】 - 2019.04\n" + \
                      u"  特性: \n" + \
                      u"     1. 支持生成.sb格式的应用程序(通过all-in-one按钮)，可用于MfgTool和RT-Flash \n" + \
                      u"     2. 可以实时显示操作消耗的时间，随着进度条同步更新 \n" + \
@@ -428,7 +428,7 @@ kRevision_1_2_0_zh = u"【v1.2.0】 \n" + \
                      u"  修复: \n" + \
                      u"     1. 使用Fixed OTPMK Key的BEE加密模式下，加密区域不能被设超过1 \n" + \
                      u"     2. FlexSPI NOR启动设备配置界面，Option1不能被有效设置 \n\n"
-kRevision_1_3_0_en =  "【v1.3.0】 \n" + \
+kRevision_1_3_0_en =  "【v1.3.0】 - 2019.04\n" + \
                       "  Feature: \n" + \
                       "     1. Can generate .sb file by actions in efuse operation utility window \n" + \
                       "  Improvement: \n" + \
@@ -443,7 +443,7 @@ kRevision_1_3_0_en =  "【v1.3.0】 \n" + \
                       "     2. Cannot download large image file (eg 6.8MB) in some case \n" + \
                       "     3. There is language switch issue with some dynamic labels \n" + \
                       "     4. Some led demos of RT1050 EVKB board are invalid \n\n"
-kRevision_1_3_0_zh = u"【v1.3.0】 \n" + \
+kRevision_1_3_0_zh = u"【v1.3.0】 - 2019.04\n" + \
                      u"  特性: \n" + \
                      u"     1. 支持生成仅含自定义efuse烧写操作(在efuse operation windows里指定)的.sb格式文件 \n" + \
                      u"  改进: \n" + \
@@ -458,21 +458,21 @@ kRevision_1_3_0_zh = u"【v1.3.0】 \n" + \
                      u"     2. 当输入的源image文件非常大时(比如6.8MB)，下载可能会超时失败 \n" + \
                      u"     3. 当切换显示语言时，有一些控件标签(如Connect按钮)不能实时更新 \n" + \
                      u"     4. /apps目录下RT1050 EVKB板子的一些LED demo是无效的 \n\n"
-kRevision_1_4_0_en =  "【v1.4.0】 \n" + \
+kRevision_1_4_0_en =  "【v1.4.0】 - 2019.05\n" + \
                       "  Feature: \n" + \
                       "     1. Support for loading bootable image into uSDHC SD/eMMC boot device  \n" + \
                       "     2. Provide friendly way to view and set mixed eFuse fields  \n" + \
                       "  Improvement: \n" + \
                       "     1. Set default FlexSPI NOR device to align with  NXP EVK boards \n" + \
                       "     2. Enable real-time gauge for Flash Programmer actions \n\n"
-kRevision_1_4_0_zh = u"【v1.4.0】 \n" + \
+kRevision_1_4_0_zh = u"【v1.4.0】 - 2019.05\n" + \
                      u"  特性: \n" + \
                      u"     1. 支持下载Bootable image进主动启动设备 - uSDHC接口SD/eMMC卡 \n" + \
                      u"     2. 支持更直观友好的方式去查看/设置某些混合功能的eFuse区域 \n" + \
                      u"  改进: \n" + \
                      u"     1. 默认FlexSPI NOR device应与恩智浦官方EVK板卡相匹配 \n" + \
                      u"     2. 为通用Flash编程器里的操作添加实时进度条显示 \n\n"
-kRevision_2_0_0_en =  "【v2.0.0】 \n" + \
+kRevision_2_0_0_en =  "【v2.0.0】 - 2019.07\n" + \
                       "  Feature: \n" + \
                       "     1. [RTxxx] Support i.MXRT5xx A0, i.MXRT6xx A0 \n" + \
                       "     2. [RTyyyy] Support i.MXRT1011, i.MXRT117x A0 \n" + \
@@ -493,7 +493,7 @@ kRevision_2_0_0_en =  "【v2.0.0】 \n" + \
                       "     2. [RTyyyy] Editing mixed eFuse fields is not working as expected \n" + \
                       "     3. [RTyyyy] Cannot support 32MB or larger LPSPI NOR/EEPROM device \n" + \
                       "     4. Cannot erase/read the last two pages of boot device via Flash Programmer \n\n"
-kRevision_2_0_0_zh = u"【v2.0.0】 \n" + \
+kRevision_2_0_0_zh = u"【v2.0.0】 - 2019.07\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTxxx] 支持i.MXRT5xx A0, i.MXRT6xx A0 \n" + \
                      u"     2. [RTyyyy] 支持i.MXRT1011, i.MXRT117x A0 \n" + \
@@ -514,7 +514,7 @@ kRevision_2_0_0_zh = u"【v2.0.0】 \n" + \
                      u"     2. [RTyyyy] 可视化方式去编辑混合eFuse区域并没有生效 \n" + \
                      u"     3. [RTyyyy] 无法支持32MB及以上容量的LPSPI NOR/EEPROM设备 \n" + \
                      u"     4. 在通用Flash编程器模式下无法擦除/读取外部启动设备的最后两个Page \n\n"
-kRevision_2_1_0_en =  "【v2.1.0】 \n" + \
+kRevision_2_1_0_en =  "【v2.1.0】 - 2019.12\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support for loading bootable image into SEMC NOR boot device \n" + \
                       "     2. [RTyyyy] Support operation under both CM7 and CM4 of RT117x A0 \n" + \
@@ -540,7 +540,7 @@ kRevision_2_1_0_en =  "【v2.1.0】 \n" + \
                       "     9. [RTyyyy] Cannot mark DCD in readback image if it comes from source bootable image \n" + \
                       "  Interest: \n" + \
                       "     1. Add sound effect (Contra) \n\n"
-kRevision_2_1_0_zh = u"【v2.1.0】 \n" + \
+kRevision_2_1_0_zh = u"【v2.1.0】 - 2019.12\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持下载Bootable image进主动启动设备 - SEMC NOR接口Flash \n" + \
                      u"     2. [RTyyyy] 在RT1170无论是CM7还是CM4作为主核下均能正常工作 \n" + \
@@ -566,17 +566,17 @@ kRevision_2_1_0_zh = u"【v2.1.0】 \n" + \
                      u"     9. [RTyyyy] 如果DCD来自源Bootable image，则无法在读回的image中标记DCD \n" + \
                      u"  个性: \n" + \
                      u"     1. 增加魂斗罗音效 \n\n"
-kRevision_2_2_0_en =  "【v2.2.0】 \n" + \
+kRevision_2_2_0_en =  "【v2.2.0】 - 2019.12\n" + \
                       "  Feature: \n" + \
                       "     1. [RTxxx] Support i.MXRT6xx B0, switch to FlexSPI NOR boot device \n" + \
                       "     2. [RTxxx] Support for loading bootable image into Flexcomm SPI NOR recovery boot device \n" + \
                       "     3. [RTxxx] Support otp memory operation \n\n"
-kRevision_2_2_0_zh = u"【v2.2.0】 \n" + \
+kRevision_2_2_0_zh = u"【v2.2.0】 - 2019.12\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTxxx] 将i.MXRT6xx B0启动设备从QuadSPI NOR切换到FlexSPI NOR \n" + \
                      u"     2. [RTxxx] 支持下载Bootable image进主动启动设备 - Flexcomm SPI接口NOR Flash \n" + \
                      u"     3. [RTxxx] 支持OTP回读与烧写 \n\n"
-kRevision_2_3_0_en =  "【v2.3.0】 \n" + \
+kRevision_2_3_0_en =  "【v2.3.0】 - 2020.05\n" + \
                       "  Feature: \n" + \
                       "     1. [RTxxx] Support i.MXRT5xx B0/1 \n" + \
                       "     2. [RTxxx] Add more selections of FlexSPI NOR model \n" + \
@@ -590,7 +590,7 @@ kRevision_2_3_0_en =  "【v2.3.0】 \n" + \
                       "     2. Sometimes it cannot show correct flash memory info \n" + \
                       "     3. [RTyyyy] Erase region for FDCB is incorrect in generated sb-file \n" + \
                       "     4. [RTyyyy] fuse lock programming limitation doesn't exist in all RT devices \n\n"
-kRevision_2_3_0_zh = u"【v2.3.0】 \n" + \
+kRevision_2_3_0_zh = u"【v2.3.0】 - 2020.05\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTxxx] 支持i.MXRT5xx B0/1 \n" + \
                      u"     2. [RTxxx] 在FlexSPI NOR模型参数里增加更多选项 \n" + \
@@ -604,7 +604,7 @@ kRevision_2_3_0_zh = u"【v2.3.0】 \n" + \
                      u"     2. 有时候配置flash时无法显示其Page/Sector/Block Size信息 \n" + \
                      u"     3. [RTyyyy] 生成的.sb文件里擦除FDCB区域的长度指定有误 \n" + \
                      u"     4. [RTyyyy] Fuse Lock烧写限制不是存在于所有i.MXRT型号 \n\n"
-kRevision_2_3_1_en =  "【v2.3.1】 \n" + \
+kRevision_2_3_1_en =  "【v2.3.1】 - 2020.08\n" + \
                       "  Improvement: \n" + \
                       "     1. Can recognize source bootable image if FDCB doesn't start from offset 0 \n" + \
                       "     2. [RTyyyy] Do some blank check if erase unit is always 64KB in flashloader \n" + \
@@ -612,7 +612,7 @@ kRevision_2_3_1_en =  "【v2.3.1】 \n" + \
                       "     1. Read or Erase does sometimes not use correct parameters \n" + \
                       "     2. Setting spi speed option for 1bit SPI NOR device doesn't take effect \n" + \
                       "     3. [RTyyyy] Cannot edit fuse cfg0 for RT1011 in friendly way \n\n"
-kRevision_2_3_1_zh = u"【v2.3.1】 \n" + \
+kRevision_2_3_1_zh = u"【v2.3.1】 - 2020.08\n" + \
                      u"  改进: \n" + \
                      u"     1. 可以支持FDCB位置不在偏移0地址的Bootable Image作为源文件 \n" + \
                      u"     2. [RTyyyy] 在使用Flashloader里擦除操作时，某些情况下需要先检查目标区域是否为空 \n" + \
@@ -620,7 +620,7 @@ kRevision_2_3_1_zh = u"【v2.3.1】 \n" + \
                      u"     1. 当连接得到的flash Page/Sector/Block Size信息有误时，无法做进一步下载 \n" + \
                      u"     2. 设置恢复启动设备(1bit SPI NOR)的速度选项不生效 \n" + \
                      u"     3. [RTyyyy] 在RT1011下，无法确认fuse cfg0区域的可视化设置 \n\n"
-kRevision_2_4_0_en =  "【v2.4.0】 \n" + \
+kRevision_2_4_0_en =  "【v2.4.0】 - 2020.10\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support i.MXRT117x B0 \n" + \
                       "     2. [RTyyyy] Can recognize custom compiled flashloader to use \n" + \
@@ -628,7 +628,7 @@ kRevision_2_4_0_en =  "【v2.4.0】 \n" + \
                       "     1. [RTxxx] Complete OTP memory operation \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Fix issue when using FlexibleUserKeys for OTFAD encryption \n\n"
-kRevision_2_4_0_zh = u"【v2.4.0】 \n" + \
+kRevision_2_4_0_zh = u"【v2.4.0】 - 2020.10\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持i.MXRT117x B0 \n" + \
                      u"     2. [RTyyyy] 可以自动识别使用由用户生成的Flashloader \n" + \
@@ -636,7 +636,7 @@ kRevision_2_4_0_zh = u"【v2.4.0】 \n" + \
                      u"     1. [RTxxx] 完善OTP烧写范围支持 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 解决OTFAD加密模式下使用Flexible User Keys报错的问题 \n\n"
-kRevision_3_0_0_en =  "【v3.0.0】 \n" + \
+kRevision_3_0_0_en =  "【v3.0.0】 - 2021.01\n" + \
                       "  Feature: \n" + \
                       "     1. [Kinetis] Support Kinetis with ROM \n" + \
                       "     2. [Kinetis] Support both UART and USB-HID download modes \n" + \
@@ -648,7 +648,7 @@ kRevision_3_0_0_en =  "【v3.0.0】 \n" + \
                       "     8. [LPC] Support development boot case (Unsigned) \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTxxx] Cannot restore user image info (path, base, format) of last time setting \n\n"
-kRevision_3_0_0_zh = u"【v3.0.0】 \n" + \
+kRevision_3_0_0_zh = u"【v3.0.0】 - 2021.01\n" + \
                      u"  特性: \n" + \
                      u"     1. [Kinetis] 支持所有含ROM的Kinetis系列 \n" + \
                      u"     2. [Kinetis] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
@@ -660,67 +660,67 @@ kRevision_3_0_0_zh = u"【v3.0.0】 \n" + \
                      u"     8. [LPC] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTxxx] 不能恢复上一次用户源应用程序设置(文件路径、基地址、格式) \n\n"
-kRevision_3_1_0_en =  "【v3.1.0】 \n" + \
+kRevision_3_1_0_en =  "【v3.1.0】 - 2021.01\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support i.MXRT1024 SIP \n" + \
                       "     2. [Kinetis] Support Kinetis K32L \n\n"
-kRevision_3_1_0_zh = u"【v3.1.0】 \n" + \
+kRevision_3_1_0_zh = u"【v3.1.0】 - 2021.01\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持i.MXRT1024 SIP \n" + \
                      u"     2. [Kinetis] 支持Kinetis K32L系列 \n\n"
-kRevision_3_1_1_en =  "【v3.1.1】 \n" + \
+kRevision_3_1_1_en =  "【v3.1.1】 - 2021.01\n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Fix UART download issue for RT1170 \n\n"
-kRevision_3_1_1_zh = u"【v3.1.1】 \n" + \
+kRevision_3_1_1_zh = u"【v3.1.1】 - 2021.01\n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 修复RT1170下UART口无法正常下载问题 \n\n"
-kRevision_3_2_0_en =  "【v3.2.0】 \n" + \
+kRevision_3_2_0_en =  "【v3.2.0】 - 2021.03\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support i.MXRT116x \n" + \
                       "     2. [RTxxx] Support SB file generation for RT500/600 \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Fix .SB file generation issue for RT1170 \n\n"
-kRevision_3_2_0_zh = u"【v3.2.0】 \n" + \
+kRevision_3_2_0_zh = u"【v3.2.0】 - 2021.03\n" + \
                      u"  特性: \n" + \
                       "     1. [RTyyyy] 支持i.MXRT116x \n" + \
                      u"     2. [RTxxx] 支持RT500/600下SB文件生成 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 修复RT1170下SB文件无法正常生成问题 \n\n"
-kRevision_3_3_0_en =  "【v3.3.0】 \n" + \
+kRevision_3_3_0_en =  "【v3.3.0】 - 2021.05\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Can sign part of user application \n" + \
                       "     2. [RT/LPC] Support ISP downloading for SBL target \n" + \
                       "     3. Support more image formats (hex/s19) in Programmer \n" + \
                       "  Improvement: \n" + \
                       "     1. [RTyyyy] Both entry point address and vector table address can be set as IVT.entry \n\n"
-kRevision_3_3_0_zh = u"【v3.3.0】 \n" + \
+kRevision_3_3_0_zh = u"【v3.3.0】 - 2021.05\n" + \
                      u"  特性: \n" + \
                       "     1. [RTyyyy] 支持对源image文件进行部分签名 \n" + \
                       "     2. [RT/LPC] 支持SBL设备的ISP下载 \n" + \
                       "     3. 通用编程器模式下增加支持带格式源image文件(hex/s19) \n" + \
                      u"  改进: \n" + \
                      u"     1. [RTyyyy] 启动头IVT中entry参数既支持设为复位函数也支持中断向量表 \n\n"
-kRevision_3_3_1_en =  "【v3.3.1】 \n" + \
+kRevision_3_3_1_en =  "【v3.3.1】 - 2021.09\n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTxxx/LPC] Cannot connect to SBL target \n" + \
                       "     2. [LPC] Cannot r/w SBL target \n\n"
-kRevision_3_3_1_zh = u"【v3.3.1】 \n" + \
+kRevision_3_3_1_zh = u"【v3.3.1】 - 2021.09\n" + \
                      u"  修复: \n" + \
                      u"     1. [RTxxx/LPC] 修复SBL设备无法连接的问题 \n" + \
                      u"     2. [LPC] 修复SBL设备无法擦写的问题 \n\n"
-kRevision_3_4_0_en =  "【v3.4.0】 \n" + \
+kRevision_3_4_0_en =  "【v3.4.0】 - 2022.03\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support for loading bootable image into FlexSPI NAND boot device  \n" + \
                       "     2. Add memory mass erase support \n" + \
                       "  Improvement: \n" + \
                       "     1. [RTyyyy] Support bootable image generated from SDK 2.10 \n\n"
-kRevision_3_4_0_zh = u"【v3.4.0】 \n" + \
+kRevision_3_4_0_zh = u"【v3.4.0】 - 2022.03\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持下载Bootable image进主动启动设备 - FlexSPI NAND接口Flash \n" + \
                      u"     2. 支持对启动设备进行全擦操作 \n" + \
                      u"  改进: \n" + \
                      u"     1. [RTyyyy] 支持SDK 2.10及其之后生成的可启动文件作为源文件 \n\n"
-kRevision_3_5_0_en =  "【v3.5.0】 \n" + \
+kRevision_3_5_0_en =  "【v3.5.0】 - 2022.03\n" + \
                       "  Feature: \n" + \
                       "     1. [RT] Provide dual image download option for FlexSPI NOR device \n" + \
                       "     2. [RTxxx] Add support for uSDHC SD/eMMC boot device \n" + \
@@ -733,7 +733,7 @@ kRevision_3_5_0_en =  "【v3.5.0】 \n" + \
                       "     2. [RTxxx] Fix Plain CRC image boot support issue \n" + \
                       "     3. [RTyyyy] Correct M7SRK efuse idx for RT1170 \n" + \
                       "     4. [RTyyyy] Correct Auth HW engine type for RT1170 \n\n"
-kRevision_3_5_0_zh = u"【v3.5.0】 \n" + \
+kRevision_3_5_0_zh = u"【v3.5.0】 - 2022.03\n" + \
                      u"  特性: \n" + \
                      u"     1. [RT] 提供FlexSPI NOR设备的双程序启动设置选项 \n" + \
                      u"     2. [RTxxx] 新增SD/eMMC启动设备支持 \n" + \
@@ -746,7 +746,7 @@ kRevision_3_5_0_zh = u"【v3.5.0】 \n" + \
                      u"     2. [RTxxx] 修复Plain CRC启动模式下不可用的问题 \n" + \
                      u"     3. [RTyyyy] 修复RT1170下M7SRK efuse位置定义错误问题 \n" + \
                      u"     4. [RTyyyy] 修复RT1170下HAB验签硬件引擎类型选择错误问题 \n\n"
-kRevision_4_0_0_en =  "【v4.0.0】 \n" + \
+kRevision_4_0_0_en =  "【v4.0.0】 - 2023.01\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support i.MXRT1061X/1062X \n" + \
                       "     2. [RTyyyy] Support i.MXRT1042 \n" + \
@@ -760,7 +760,7 @@ kRevision_4_0_0_en =  "【v4.0.0】 \n" + \
                       "     2. [RTyyyy] Can set Serial NOR flash option for SiP device(RT1024/RT1064) \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Use SECv5 version flashloader of RT116x/RT117x to fix FlexSPI NAND issue \n\n"
-kRevision_4_0_0_zh = u"【v4.0.0】 \n" + \
+kRevision_4_0_0_zh = u"【v4.0.0】 - 2023.01\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持i.MXRT1061X/1062X \n" + \
                      u"     2. [RTyyyy] 支持i.MXRT1042 \n" + \
@@ -774,38 +774,54 @@ kRevision_4_0_0_zh = u"【v4.0.0】 \n" + \
                      u"     2. [RTyyyy] 对于SiP芯片（(RT1024/RT1064)）支持设置串行 NOR flash 选项 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 对于RT116x/RT117x，切换使用SECv5里的Flashloader以修复串行NAND烧写问题 \n\n"
-kRevision_4_1_0_en =  "【v4.1.0】 \n" + \
+kRevision_4_1_0_en =  "【v4.1.0】 - 2023.03\n" + \
                       "  Feature: \n" + \
                       "     1. [Kinetis] Support MKE13Z/14Z/15Z/17Z \n" + \
                       "     2. [Kinetis] Support MKW45/K32W148 \n" + \
                       "     3. Support two more Octal NOR devices (ISSI, Winbond) \n\n"
-kRevision_4_1_0_zh = u"【v4.1.0】 \n" + \
+kRevision_4_1_0_zh = u"【v4.1.0】 - 2023.03\n" + \
                      u"  特性: \n" + \
                      u"     1. [Kinetis] 支持MKE13Z/14Z/15Z/17Z \n" + \
                      u"     2. [Kinetis] 支持MKW45/K32W148 \n" + \
                      u"     3. 支持来自ISSI和Winbond的Octal Flash \n\n"
-kRevision_4_1_1_en =  "【v4.1.1】 \n" + \
+kRevision_4_1_1_en =  "【v4.1.1】 - 2023.04\n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] It doesn't take effect in DCD Descriptor window \n\n"
-kRevision_4_1_1_zh = u"【v4.1.1】 \n" + \
+kRevision_4_1_1_zh = u"【v4.1.1】 - 2023.04\n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 在DCD Desc窗口输入内容不生效 \n\n"
-kRevision_5_0_0_en =  "【v5.0.0】 \n" + \
+kRevision_5_0_0_en =  "【v5.0.0】 - 2023.05\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support i.MXRT118x A0 \n" + \
-                      "     2. [RT1180] Support FlexSPI NOR boot device \n" + \
-                      "     3. [RT1180] Support uSDHC SD&MMC boot device \n\n"
-kRevision_5_0_0_zh = u"【v5.0.0】 \n" + \
+                      "     2. [RT1180] Support raw app file(not bootable app) as source image \n" + \
+                      "     3. [RT1180] Support FlexSPI NOR boot device \n" + \
+                      "     4. [RT1180] Support uSDHC SD&MMC boot device \n\n"
+kRevision_5_0_0_zh = u"【v5.0.0】 - 2023.05\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持i.MXRT118x A0 \n" + \
-                     u"     2. [RT1180] 支持FlexSPI NOR启动设备 \n" + \
-                     u"     3. [RT1180] 支持uSDHC SD&MMC启动设备 \n\n"
-kRevision_5_1_0_en =  "【v5.1.0】 \n" + \
+                     u"     2. [RT1180] 支持裸应用程序文件作为输入源文件 \n" + \
+                     u"     3. [RT1180] 支持FlexSPI NOR启动设备 \n" + \
+                     u"     4. [RT1180] 支持uSDHC SD&MMC启动设备 \n\n"
+kRevision_5_1_0_en =  "【v5.1.0】 - 2023.05\n" + \
                       "  Feature: \n" + \
                       "     1. [RT1180] Support edgelock FW \n\n"
-kRevision_5_1_0_zh = u"【v5.1.0】 \n" + \
+kRevision_5_1_0_zh = u"【v5.1.0】 - 2023.05\n" + \
                      u"  特性: \n" + \
                      u"     1. [RT1180] 支持自动加载Edgelock固件 \n\n"
+kRevision_5_2_0_en =  "【v5.2.0】 - 2023.07\n" + \
+                      "  Feature: \n" + \
+                      "     1. [RTyyyy] Support i.MXRT118x B0 \n" + \
+                      "     2. [RT] Support both secure and non-secure addr CM33 image for FlexSPI NOR device \n" + \
+                      "     3. [RT] Support aliased addr image for FlexSPI NOR device \n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RT1180] Original image can be a bootable image (with Container) \n\n"
+kRevision_5_2_0_zh = u"【v5.2.0】 - 2023.07\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTyyyy] 支持i.MXRT118x B0 \n" + \
+                     u"     2. [RT] 对于FlexSPI NOR设备，支持下载安全与非安全两种地址链接的CM33程序 \n" + \
+                     u"     3. [RT] 对于FlexSPI NOR设备，支持别名地址链接的程序 \n" + \
+                     u"  改进: \n" + \
+                     u"     1. [RT1180] 用户输入的源程序文件可以包含启动头 (Container) \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -844,6 +860,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v4_1_1':             [kRevision_4_1_1_en,                      kRevision_4_1_1_zh],
         'revisionHistory_v5_0_0':             [kRevision_5_0_0_en,                      kRevision_5_0_0_zh],
         'revisionHistory_v5_1_0':             [kRevision_5_1_0_en,                      kRevision_5_1_0_zh],
+        'revisionHistory_v5_2_0':             [kRevision_5_2_0_en,                      kRevision_5_2_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

@@ -58,10 +58,11 @@ availableBootDevices = [RTxxx_uidef.kBootDevice_FlexspiNor,
                         RTxxx_uidef.kBootDevice_UsdhcMmc,
                         RTxxx_uidef.kBootDevice_FlexcommSpiNor]
 flexspiNorDevice = uidef.kFlexspiNorDevice_MXIC_MX25UM51345G
-flexspiNorMemBase0 = 0x08000000 # CM33 Non-Secure
-                    #0x18000000 # CM33 Secure
+flexspiNorMemBase0   = 0x18000000 # CM33 Secure
+flexspiNorMemBase0Ns = 0x08000000 # CM33 Non-Secure
 flexspiNorMemBase0Aliased = None
-flexspiNorMemBase1 = None
+flexspiNorMemBase1   = None
+flexspiNorMemBase1Ns = None
 flexspiNorMemBase1Aliased = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x400

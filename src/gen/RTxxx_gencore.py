@@ -231,12 +231,13 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
         self.isXipApp = False
         self.destAppVectorAddress = imageStartAddr
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
-            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + RTxxx_rundef.kBootDeviceMemXipSize_FlexspiNor)):
+            self.adjustTgtFlexspiMemBaseAccordingToApp(imageStartAddr)
+            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor)):
                 if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + RTxxx_rundef.kBootDeviceMemXipSize_FlexspiNor):
                     self.isXipApp = True
                     self.destAppVectorOffset = imageStartAddr - self.tgt.flexspiNorMemBase
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(RTxxx_rundef.kBootDeviceMemXipSize_FlexspiNor))
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(rundef.kBootDeviceMemXipSize_FlexspiNor))
                     return False
             else:
                 #self.destAppVectorOffset = RTyyyy_gendef.kInitialLoadSize_NOR
