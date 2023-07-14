@@ -74,7 +74,7 @@ class bootDeviceWin_FlexspiNand ( wx.Frame ):
 
         gSizer_nandOpt.Add( self.m_staticText_maxFreq, 0, wx.ALL, 5 )
 
-        m_choice_maxFreqChoices = [ u"30MHz", u"50MHz", u"60MHz", u"75MHz", u"80MHz", u"100MHz" ]
+        m_choice_maxFreqChoices = [ u"30MHz", u"50MHz", u"60MHz", u"72MHz", u"80MHz", u"100MHz", u"133MHz", u"166MHz" ]
         self.m_choice_maxFreq = wx.Choice( self.m_panel_nandOpt, wx.ID_ANY, wx.DefaultPosition, wx.Size( 108,-1 ), m_choice_maxFreqChoices, 0 )
         self.m_choice_maxFreq.SetSelection( 0 )
         gSizer_nandOpt.Add( self.m_choice_maxFreq, 0, wx.ALL, 5 )

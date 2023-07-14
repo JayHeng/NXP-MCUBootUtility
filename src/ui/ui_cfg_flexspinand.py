@@ -292,6 +292,9 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
         else:
             self.flexspiNandImageInfoList[7] = None
 
+        fcbOptBlockSize = imageCopies + 2
+        self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFFFFFFF0) | fcbOptBlockSize
+
     def callbackChangeImageCopies( self, event ):
         imageCopies = int(self.m_choice_imageCopies.GetString(self.m_choice_imageCopies.GetSelection()))
         self._updateImageInfoField(imageCopies)

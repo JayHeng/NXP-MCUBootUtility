@@ -963,12 +963,15 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             self.RTyyyy_setFlexspiNorInstance()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
-            configOptList.extend([flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, self.tgt.ramFreeSpaceStart_LoadCommOpt])
+            configOptList.extend([flexspiNandFcbOpt, self.tgt.ramFreeSpaceStart_LoadCommOpt + (flexspiNandFcbOpt & 0x0000000F) * 4])
             for i in range(len(flexspiNandImageInfoList)):
                 if flexspiNandImageInfoList[i] != None:
                     configOptList.extend([flexspiNandImageInfoList[i]])
                 else:
                     break
+            configOptList.extend([flexspiNandOpt0])
+            if ((flexspiNandOpt0 & 0x0F000000) >> 24) == 1:
+                configOptList.extend([flexspiNandOpt1])
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             lpspiNorOpt0, lpspiNorOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([lpspiNorOpt0, lpspiNorOpt1])
