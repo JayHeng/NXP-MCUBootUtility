@@ -102,7 +102,10 @@ class secBootMem(runcore.secBootRun):
         status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
         if status:
             memStart = self._convertComMemStart(memStart)
-            alignedMemStart = misc.align_down(memStart, self.comMemReadUnit)
+            if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
+                alignedMemStart = memStart
+            else:
+                alignedMemStart = misc.align_down(memStart, self.comMemReadUnit)
             alignedMemLength = misc.align_up(memLength, self.comMemReadUnit)
             if memLength + memStart > alignedMemStart + alignedMemLength:
                 alignedMemLength += self.comMemReadUnit
@@ -136,7 +139,10 @@ class secBootMem(runcore.secBootRun):
         status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
         if status:
             memStart = self._convertComMemStart(memStart)
-            alignedMemStart = misc.align_down(memStart, self.comMemEraseUnit)
+            if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
+                alignedMemStart = memStart
+            else:
+                alignedMemStart = misc.align_down(memStart, self.comMemEraseUnit)
             alignedMemLength = misc.align_up(memLength, self.comMemEraseUnit)
             if memLength + memStart > alignedMemStart + alignedMemLength:
                 alignedMemLength += self.comMemEraseUnit
@@ -183,15 +189,18 @@ class secBootMem(runcore.secBootRun):
                         pass
             else:
                 memStart = self._convertComMemStart(memStart)
-                if memStart % self.comMemWriteUnit:
-                    if self.languageIndex == uilang.kLanguageIndex_English:
-                        self.popupMsgBox('Start Address should be aligned with 0x%x !' %(self.comMemWriteUnit))
-                    elif self.languageIndex == uilang.kLanguageIndex_Chinese:
-                        self.popupMsgBox(u"起始地址应该以 0x%x 对齐！" %(self.comMemWriteUnit))
-                    else:
-                        pass
-                    return
-                eraseMemStart = misc.align_down(memStart, self.comMemEraseUnit)
+                if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
+                    alignedMemStart = memStart
+                else:
+                    if memStart % self.comMemWriteUnit:
+                        if self.languageIndex == uilang.kLanguageIndex_English:
+                            self.popupMsgBox('Start Address should be aligned with 0x%x !' %(self.comMemWriteUnit))
+                        elif self.languageIndex == uilang.kLanguageIndex_Chinese:
+                            self.popupMsgBox(u"起始地址应该以 0x%x 对齐！" %(self.comMemWriteUnit))
+                        else:
+                            pass
+                        return
+                    eraseMemStart = misc.align_down(memStart, self.comMemEraseUnit)
                 eraseMemEnd = misc.align_up(memStart + os.path.getsize(memBinFile), self.comMemEraseUnit)
                 status, results, cmdStr = self.blhost.flashEraseRegion(eraseMemStart, eraseMemEnd - eraseMemStart, self.bootDeviceMemId)
                 self.printLog(cmdStr)

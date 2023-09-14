@@ -24,15 +24,28 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 
 		wSizer_win = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
 
-		self.m_staticText_deviceModel = wx.StaticText( self, wx.ID_ANY, u"Use Typical Device Model:", wx.DefaultPosition, wx.Size( 149,-1 ), 0 )
+		self.m_staticText_bootInstance = wx.StaticText( self, wx.ID_ANY, u"Boot Instance:", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
+		self.m_staticText_bootInstance.Wrap( -1 )
+
+		wSizer_win.Add( self.m_staticText_bootInstance, 0, wx.ALL, 5 )
+
+		m_choice_bootInstanceChoices = [ u"1st", u"2nd" ]
+		self.m_choice_bootInstance = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 55,-1 ), m_choice_bootInstanceChoices, 0 )
+		self.m_choice_bootInstance.SetSelection( 0 )
+		wSizer_win.Add( self.m_choice_bootInstance, 0, wx.ALL, 5 )
+
+		self.m_staticText_deviceModel = wx.StaticText( self, wx.ID_ANY, u"Device Model:", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
 		self.m_staticText_deviceModel.Wrap( -1 )
 
 		wSizer_win.Add( self.m_staticText_deviceModel, 0, wx.ALL, 5 )
 
-		m_choice_deviceModeChoices = [ u"No", u"Complete_FDCB", u"Winbond_QuadSPI_W25QxxxJV", u"Winbond_OctalSPI_W35T51NW", u"Macronix_QuadSPI_MX25Uxxx32F_MX25Lxxx45G", u"Macronix_OctalSPI_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G", u"Macronix_OctalSPI_MX25UM51345G", u"Macronix_OctalSPI_MX25UM51345G_2nd", u"GigaDevice_QuadSPI_GD25QxxxC", u"GigaDevice_QuadSPI_GD25LBxxxE", u"GigaDevice_QuadSPI_GD25LTxxxE", u"GigaDevice_OctalSPI_GD25LXxxxE", u"ISSI_QuadSPI_IS25LPxxxA_IS25WPxxxA", u"ISSI_OctalSPI_IS25LXxxx_IS25WXxxx", u"ISSI_HyperFlash_IS26KSxxxS_IS26KLxxxS", u"Micron_QuadSPI_MT25QLxxxA", u"Micron_OctalSPI_MT35XLxxxA_MT35XUxxxA", u"Adesto_QuadSPI_AT25SFxxxA", u"Adesto_OctalSPI_ATXPxxx", u"Cypress_QuadSPI_S25FSxxxS_S25FLxxxS", u"Cypress_HyperFlash_S26KSxxxS_S26KLxxxS", u"Microchip_QuadSPI_SST26VFxxxB", u"FudanMicro_QuadSPI_FM25Qxxx", u"BoyaMicro_QuadSPI_BY25QxxxBS", u"XMC_QuadSPI_XM25QHxxxB_XM25QUxxxB", u"XTXtech_QuadSPI_X25FxxxB_X25QxxxD", u"Puya_QuadSPI_P25QxxxLE_P25QxxxH_P25QxxxU", u"AMIC_QuadSPI_A25LQxxx" ]
-		self.m_choice_deviceMode = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 593,-1 ), m_choice_deviceModeChoices, 0 )
+		m_choice_deviceModeChoices = [ u"No", u"Complete_FDCB", u"Winbond_QuadSPI_W25QxxxJV", u"Winbond_OctalSPI_W35T51NW", u"Macronix_QuadSPI_MX25Uxxx32F_MX25Lxxx45G", u"Macronix_OctalSPI_MX25UMxxx45G_MX66UMxxx45G_MX25LMxxx45G", u"Macronix_OctalSPI_MX25UM51345G", u"Macronix_OctalSPI_MX25UM51345G_2nd", u"GigaDevice_QuadSPI_GD25QxxxC", u"GigaDevice_QuadSPI_GD25LBxxxE", u"GigaDevice_QuadSPI_GD25LTxxxE", u"GigaDevice_OctalSPI_GD25LXxxxE", u"ISSI_QuadSPI_IS25LPxxxA_IS25WPxxxA", u"ISSI_OctalSPI_IS25LXxxx_IS25WXxxx", u"ISSI_HyperFlash_IS26KSxxxS_IS26KLxxxS", u"Micron_QuadSPI_MT25QLxxxA", u"Micron_OctalSPI_RW303-MT35XUxxxABA1G", u"Micron_OctalSPI_RW304-MT35XUxxxABA2G", u"Adesto_QuadSPI_AT25SFxxxA", u"Adesto_OctalSPI_ATXPxxx", u"Cypress_QuadSPI_S25FSxxxS_S25FLxxxS", u"Cypress_HyperFlash_S26KSxxxS_S26KLxxxS", u"Microchip_QuadSPI_SST26VFxxxB", u"FudanMicro_QuadSPI_FM25Qxxx", u"BoyaMicro_QuadSPI_BY25QxxxBS", u"XMC_QuadSPI_XM25QHxxxB_XM25QUxxxB", u"XTXtech_QuadSPI_X25FxxxB_X25QxxxD", u"Puya_QuadSPI_P25QxxxLE_P25QxxxH_P25QxxxU", u"AMIC_QuadSPI_A25LQxxx" ]
+		self.m_choice_deviceMode = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 380,-1 ), m_choice_deviceModeChoices, 0 )
 		self.m_choice_deviceMode.SetSelection( 0 )
 		wSizer_win.Add( self.m_choice_deviceMode, 0, wx.ALL, 5 )
+
+		self.m_button_completeFdcb = wx.Button( self, wx.ID_ANY, u"Complete FDCB CFG (512bytes)", wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+		wSizer_win.Add( self.m_button_completeFdcb, 0, wx.ALL, 5 )
 
 		self.m_checkBox_keepFdcb = wx.CheckBox( self, wx.ID_ANY, u"Keep FDCB", wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
 		wSizer_win.Add( self.m_checkBox_keepFdcb, 0, wx.ALL, 5 )
@@ -234,10 +247,7 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 
 		wSizer_win.Add( self.m_staticText_winNull0, 0, wx.ALL, 5 )
 
-		self.m_button_completeFdcb = wx.Button( self, wx.ID_ANY, u"Complete FDCB Configuration (512bytes)", wx.DefaultPosition, wx.Size( 238,-1 ), 0 )
-		wSizer_win.Add( self.m_button_completeFdcb, 0, wx.ALL, 5 )
-
-		self.m_staticText_winNull1 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 395,-1 ), 0 )
+		self.m_staticText_winNull1 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 645,-1 ), 0 )
 		self.m_staticText_winNull1.Wrap( -1 )
 
 		wSizer_win.Add( self.m_staticText_winNull1, 0, wx.ALL, 5 )
@@ -257,8 +267,8 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 		# Connect Events
 		self.Bind( wx.EVT_CLOSE, self.callbackClose )
 		self.m_choice_deviceMode.Bind( wx.EVT_CHOICE, self.callbackUseTypicalDeviceModel )
-		self.m_choice_hasOption1.Bind( wx.EVT_CHOICE, self.callbackHasOption1 )
 		self.m_button_completeFdcb.Bind( wx.EVT_BUTTON, self.callbackSetCompleteFdcb )
+		self.m_choice_hasOption1.Bind( wx.EVT_CHOICE, self.callbackHasOption1 )
 		self.m_button_ok.Bind( wx.EVT_BUTTON, self.callbackOk )
 		self.m_button_cancel.Bind( wx.EVT_BUTTON, self.callbackCancel )
 
@@ -273,10 +283,10 @@ class bootDeviceWin_FlexspiNor ( wx.Frame ):
 	def callbackUseTypicalDeviceModel( self, event ):
 		event.Skip()
 
-	def callbackHasOption1( self, event ):
+	def callbackSetCompleteFdcb( self, event ):
 		event.Skip()
 
-	def callbackSetCompleteFdcb( self, event ):
+	def callbackHasOption1( self, event ):
 		event.Skip()
 
 	def callbackOk( self, event ):

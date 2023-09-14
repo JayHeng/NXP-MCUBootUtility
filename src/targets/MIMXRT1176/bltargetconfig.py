@@ -127,7 +127,12 @@ memoryRange = {
     'ocram' : MemoryRange(0x20200000, 0x200000, 'state_mem3.dat'),
 
     # FLASH, 64KByte / 512MByte
-    'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000)
+    'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000),
+
+    # FlexSPI1 RAM, 256MByte
+    'flexspi1_ram' : MemoryRange(0x30000000, 0x10000000, 'state_flexspi1_mem.dat'),
+    # FlexSPI2 RAM, 256MByte
+    'flexspi2_ram' : MemoryRange(0x60000000, 0x10000000, 'state_flexspi2_mem.dat')
 }
 
 reservedRegionDict = {   # new

@@ -22,6 +22,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.flexspiFreqs = None
         self.cfgFdcbBinFilename = None
         self.hasFlexspiNorDualImageBoot = None
+        self.hasMultipleFlexspiInstance = None
         flexspiNorOpt0, flexspiNorOpt1, flexspiDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
         #1. Prepare Flash option
         # 0xc0000006 is the tag for Serial NOR parameter selection
@@ -51,10 +52,13 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.flexspiDeviceModel = flexspiDeviceModel
         self.isFdcbKept = isFdcbKept
         self.flexspiNorDualImageInfoList = flexspiNorDualImageInfoList
+        toolCommDict = uivar.getAdvancedSettings(uidef.kAdvancedSettings_Tool)
+        self.toolCommDict = toolCommDict.copy()
 
     def _setLanguage( self ):
         runtimeSettings = uivar.getRuntimeSettings()
         langIndex = runtimeSettings[3]
+        self.m_staticText_bootInstance.SetLabel(uilang.kSubLanguageContentDict['sText_bootInstance'][langIndex])
         self.m_staticText_deviceModel.SetLabel(uilang.kSubLanguageContentDict['sText_deviceModel'][langIndex])
         self.m_checkBox_keepFdcb.SetLabel(uilang.kSubLanguageContentDict['cBox_keepFdcb'][langIndex])
         self.m_notebook_norOpt0.SetPageText(0, uilang.kSubLanguageContentDict['panel_norOpt0'][langIndex])
@@ -81,7 +85,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.m_button_ok.SetLabel(uilang.kSubLanguageContentDict['button_flexspinor_ok'][langIndex])
         self.m_button_cancel.SetLabel(uilang.kSubLanguageContentDict['button_flexspinor_cancel'][langIndex])
 
-    def setNecessaryInfo( self, mcuSeries, flexspiFreqs, cfgFdcbBinFilename, hasFlexspiNorDualImageBoot ):
+    def setNecessaryInfo( self, mcuSeries, flexspiFreqs, cfgFdcbBinFilename, hasFlexspiNorDualImageBoot, hasMultipleFlexspiInstance ):
         if flexspiFreqs != None:
             self.m_choice_maxFrequency.Clear()
             self.m_choice_maxFrequency.SetItems(flexspiFreqs)
@@ -90,6 +94,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         self.mcuSeries = mcuSeries
         self.cfgFdcbBinFilename = cfgFdcbBinFilename
         self.hasFlexspiNorDualImageBoot = hasFlexspiNorDualImageBoot
+        self.hasMultipleFlexspiInstance = hasMultipleFlexspiInstance
         self._recoverLastSettings()
 
     def _updateOpt1Field ( self, isEnabled ):
@@ -109,6 +114,13 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.m_textCtrl_dummyCycles.Enable( False )
 
     def _recoverLastSettings ( self ):
+        if not self.hasMultipleFlexspiInstance:
+            self.m_choice_bootInstance.SetSelection(0)
+            self.m_choice_bootInstance.Enable(False)
+            self.toolCommDict['flexspiBootInstance'] = 0
+        else:
+            self.m_choice_bootInstance.SetSelection(self.toolCommDict['flexspiBootInstance'])
+
         self.m_checkBox_keepFdcb.SetValue(self.isFdcbKept)
 
         self.m_choice_deviceMode.SetSelection(self.m_choice_deviceMode.FindString(self.flexspiDeviceModel))
@@ -188,6 +200,9 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.m_textCtrl_image1Offset.Clear()
             self.m_textCtrl_image1Offset.write(str(hex((self.flexspiNorDualImageInfoList[2] & 0xffff) * (256 * 1024))))
             self.m_choice_image1Size.SetSelection(self.flexspiNorDualImageInfoList[2] >> 16)
+
+    def _getBootInstance( self ):
+        self.toolCommDict['flexspiBootInstance'] = self.m_choice_bootInstance.GetSelection()
 
     def _getDeviceType( self ):
         txt = self.m_choice_deviceType.GetString(self.m_choice_deviceType.GetSelection())
@@ -417,8 +432,10 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
         elif txt == uidef.kFlexspiNorDevice_Micron_MT25QL128A:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT25QL128A
-        elif txt == uidef.kFlexspiNorDevice_Micron_MT35X:
-            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X
+        elif txt == uidef.kFlexspiNorDevice_Micron_MT35X_RW303:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X_RW303
+        elif txt == uidef.kFlexspiNorDevice_Micron_MT35X_RW304:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X_RW304
         elif txt == uidef.kFlexspiNorDevice_Adesto_AT25SF128A:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_AT25SF128A
         elif txt == uidef.kFlexspiNorDevice_Adesto_ATXP032:
@@ -470,6 +487,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
         wx.MessageBox(messageText, "Error", wx.OK | wx.ICON_INFORMATION)
 
     def callbackOk( self, event ):
+        self._getBootInstance()
         self._getKeepFdcb()
         if self.flexspiDeviceModel == 'Complete_FDCB':
             if not (os.path.isfile(self.cfgFdcbBinFilename) and os.path.getsize(self.cfgFdcbBinFilename) == memdef.kMemBlockSize_FDCB):
@@ -501,6 +519,7 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             if not self._getImage1Size():
                 return
         uivar.setBootDeviceConfiguration(uidef.kBootDevice_XspiNor, self.flexspiNorOpt0, self.flexspiNorOpt1, self.flexspiDeviceModel, self.isFdcbKept, self.flexspiNorDualImageInfoList)
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         uivar.setRuntimeSettings(False)
         self.Show(False)
         runtimeSettings = uivar.getRuntimeSettings()

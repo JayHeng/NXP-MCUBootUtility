@@ -20,7 +20,7 @@ from boot import bltest
 from boot import target
 from utils import misc
 
-def RTyyyy_createTarget(device, exeBinRoot, flexspiXipRegionSel ):
+def RTyyyy_createTarget(device, exeBinRoot ):
     # Build path to target directory and config file.
     cpu = "MIMXRT1052"
     if device == uidef.kMcuDevice_iMXRT1011:
@@ -74,14 +74,6 @@ def RTyyyy_createTarget(device, exeBinRoot, flexspiXipRegionSel ):
     # Create the target object.
     tgt = target.Target(**targetConfig)
 
-    # Set main flexspi nor XIP region
-    if flexspiXipRegionSel == 0:
-        tgt.flexspiNorMemBase = tgt.flexspiNorMemBase0
-    elif flexspiXipRegionSel == 1:
-        tgt.flexspiNorMemBase = tgt.flexspiNorMemBase1
-    else:
-        pass
-
     return tgt, targetBaseDir
 
 ##
@@ -109,6 +101,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.flexspiNandImageCopies = None
         self.flexspiNandBlockSize = None
         self.isFlexspiNorErasedForImage = False
+        self.isFlexspiNandBlockAddr = None
 
         self.mcuDeviceHabStatus = None
         self.mcuDeviceBtFuseSel = None
@@ -125,13 +118,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.RTyyyy_createMcuTarget()
 
     def RTyyyy_createMcuTarget( self ):
-        self.tgt, self.cpuDir = RTyyyy_createTarget(self.mcuDevice, self.exeBinRoot, self.flexspiXipRegionSel)
+        self.tgt, self.cpuDir = RTyyyy_createTarget(self.mcuDevice, self.exeBinRoot)
 
     def RTyyyy_updateFlexspiNorMemBase( self ):
-        if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
-            pass
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
-            self.RTyyyy_createMcuTarget()
+        # Set main flexspi nor XIP region
+        if self.flexspiBootInstance == 0:
+            self.tgt.flexspiNorMemBase = self.tgt.flexspiNorMemBase0
+        elif self.flexspiBootInstance == 1:
+            self.tgt.flexspiNorMemBase = self.tgt.flexspiNorMemBase1
         else:
             pass
 
@@ -457,8 +451,8 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             # It is ROM patch implementation (Move SPI_EN to fuse 0x6D0[20]
             sipBit = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_MISC_CONF0'], '', False)
             if sipBit != None:
-                self.flexspiXipRegionSelFromFuse = (sipBit & 0x100000) >> 20
-                self.setFlexspiXipRegion()
+                self.flexspiBootInstanceFromFuse = (sipBit & 0x100000) >> 20
+                self.setFlexspiBootInstance()
 
     def _genOtpmkDekFile( self, otpmk4, otpmk5, otpmk6, otpmk7 ):
         try:
@@ -761,7 +755,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         return True
 
     def _calcFlexspiNandDeviceInfo ( self ):
-        flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
+        flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList, flexspiNandDeviceModel = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
         imageCopies = 1
         while (imageCopies <= 8):
             if flexspiNandImageInfoList[imageCopies - 1] == None:
@@ -819,8 +813,6 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         self.comMemEraseUnit = sectorByteSize
         self.comMemReadUnit = pageByteSize
         return True
-
-
 
     def getBootDeviceInfoViaFlashloader ( self ):
         if self.toolRunMode == uidef.kToolRunMode_SblOta:
@@ -916,14 +908,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             self.printLog(cmdStr)
             return (status == boot.status.kStatus_Success)
 
-    def RTyyyy_setFlexspiNorInstance( self ):
+    def RTyyyy_setFlexspiInstance( self ):
         if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
             pass
         elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
-            # In RT1170 flashloader, 0xFC900001/0xFC900002 is used to switch XIP region
-            #  0xFC900001 -> XIP 0x30000000
-            #  0xFC900002 -> XIP 0x60000000
-            configOpt = rundef.kFlexspiNorCfgInfo_Instance + self.flexspiXipRegionSel
+            # In RT1170 flashloader, 0xFC900001/0xFC900002 is used to switch FlexSPI instance
+            #  0xFC900001 -> Primary instance
+            #  0xFC900002 -> Secondary instance
+            configOpt = rundef.kFlexspiDevCfgInfo_Instance + self.flexspiBootInstance
             status = boot.status.kStatus_Success
             if self.RTyyyy_isDeviceEnabledToOperate:
                 status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt, 0x4, configOpt)
@@ -958,11 +950,15 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             semcNorOpt, semcNorSetting, semcNorDeviceModel= uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([semcNorOpt])
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
+            self.getFlexspiBootInstance()
+            self.RTyyyy_updateFlexspiNorMemBase()
             flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
             configOptList.extend([flexspiNorOpt0, flexspiNorOpt1])
-            self.RTyyyy_setFlexspiNorInstance()
+            self.RTyyyy_setFlexspiInstance()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
-            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            self.getFlexspiBootInstance()
+            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList, flexspiNandDeviceModel = uivar.getBootDeviceConfiguration(self.bootDevice)
+            self.isFlexspiNandBlockAddr = (flexspiNandFcbOpt & 0x00000F00) >> 8
             configOptList.extend([flexspiNandFcbOpt, self.tgt.ramFreeSpaceStart_LoadCommOpt + (flexspiNandFcbOpt & 0x0000000F) * 4])
             for i in range(len(flexspiNandImageInfoList)):
                 if flexspiNandImageInfoList[i] != None:
@@ -972,6 +968,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             configOptList.extend([flexspiNandOpt0])
             if ((flexspiNandOpt0 & 0x0F000000) >> 24) == 1:
                 configOptList.extend([flexspiNandOpt1])
+            self.RTyyyy_setFlexspiInstance()
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             lpspiNorOpt0, lpspiNorOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([lpspiNorOpt0, lpspiNorOpt1])
@@ -1528,7 +1525,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                         return False
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             self._calcFlexspiNandDeviceInfo()
-            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList, flexspiNandDeviceModel = uivar.getBootDeviceConfiguration(self.bootDevice)
             isAddressTypeBlockIdx = (((flexspiNandFcbOpt & 0x00000F00) >> 8) == 1)
             loadRegionStart = 0
             loadRegionEnd = 0

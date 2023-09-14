@@ -37,6 +37,13 @@ class secBootRTyyyyUi(memcore.secBootMem):
         self.isCertEnabledForHwCrypto = None
         self._RTyyyy_initSecureBootSeqValue()
         self._RTyyyy_initSecureBootSeqColor()
+        self.setDcdButtonEnablement(True)
+        self.setBdcButtonEnablement(True)
+        if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy:
+            self.setXmcdButtonEnablement(False)
+            self.disableXmcd(False)
+        elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
+            self.setXmcdButtonEnablement(True)
 
         self.RTyyyy_setLanguage()
 

@@ -17,13 +17,38 @@ import wx.xrc
 class bootDeviceWin_FlexspiNand ( wx.Frame ):
 
     def __init__( self, parent ):
-        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 802,433 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 802,458 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
         self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-        self.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+        #self.SetForegroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
         self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 
         wSizer_win = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
+
+        self.m_staticText_bootInstance = wx.StaticText( self, wx.ID_ANY, u"Boot Instance:", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
+        self.m_staticText_bootInstance.Wrap( -1 )
+
+        wSizer_win.Add( self.m_staticText_bootInstance, 0, wx.ALL, 5 )
+
+        m_choice_bootInstanceChoices = [ u"1st", u"2nd" ]
+        self.m_choice_bootInstance = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 55,-1 ), m_choice_bootInstanceChoices, 0 )
+        self.m_choice_bootInstance.SetSelection( 0 )
+        wSizer_win.Add( self.m_choice_bootInstance, 0, wx.ALL, 5 )
+
+        self.m_staticText_deviceModel = wx.StaticText( self, wx.ID_ANY, u"Device Model:", wx.DefaultPosition, wx.Size( 80,-1 ), 0 )
+        self.m_staticText_deviceModel.Wrap( -1 )
+
+        wSizer_win.Add( self.m_staticText_deviceModel, 0, wx.ALL, 5 )
+
+        m_choice_deviceModeChoices = [ u"No", u"Winbond_W25N01G", u"Winbond_W25N02K", u"Macronix_MX35UF1G_MX35LF1G", u"Macronix_MX35UF2G_MX35LF2G", u"GigaDevice_GD5F1GQ5", u"GigaDevice_GD5F2GQ5", u"Micron_MT29F1G01AA", u"Micron_MT29F2G01AA", u"Paragon_PN26Q01A_PN26G01A", u"Paragon_PN26Q02A_PN26G02A" ]
+        self.m_choice_deviceMode = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 300,-1 ), m_choice_deviceModeChoices, 0 )
+        self.m_choice_deviceMode.SetSelection( 0 )
+        wSizer_win.Add( self.m_choice_deviceMode, 0, wx.ALL, 5 )
+
+        self.m_staticText_winNull0 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
+        self.m_staticText_winNull0.Wrap( -1 )
+
+        wSizer_win.Add( self.m_staticText_winNull0, 0, wx.ALL, 5 )
 
         self.m_notebook_nandOpt = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
         self.m_panel_nandOpt = wx.Panel( self.m_notebook_nandOpt, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
@@ -257,10 +282,10 @@ class bootDeviceWin_FlexspiNand ( wx.Frame ):
 
         wSizer_win.Add( self.m_notebook_imageInfo, 1, wx.EXPAND |wx.ALL, 5 )
 
-        self.m_staticText_winNull0 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 518,-1 ), 0 )
-        self.m_staticText_winNull0.Wrap( -1 )
+        self.m_staticText_winNull1 = wx.StaticText( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 518,-1 ), 0 )
+        self.m_staticText_winNull1.Wrap( -1 )
 
-        wSizer_win.Add( self.m_staticText_winNull0, 0, wx.ALL, 5 )
+        wSizer_win.Add( self.m_staticText_winNull1, 0, wx.ALL, 5 )
 
         self.m_button_ok = wx.Button( self, wx.ID_ANY, u"Ok", wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
         wSizer_win.Add( self.m_button_ok, 0, wx.ALL, 5 )
@@ -276,6 +301,7 @@ class bootDeviceWin_FlexspiNand ( wx.Frame ):
 
         # Connect Events
         self.Bind( wx.EVT_CLOSE, self.callbackClose )
+        self.m_choice_deviceMode.Bind( wx.EVT_CHOICE, self.callbackUseTypicalDeviceModel )
         self.m_choice_imageCopies.Bind( wx.EVT_CHOICE, self.callbackChangeImageCopies )
         self.m_button_ok.Bind( wx.EVT_BUTTON, self.callbackOk )
         self.m_button_cancel.Bind( wx.EVT_BUTTON, self.callbackCancel )
@@ -286,6 +312,9 @@ class bootDeviceWin_FlexspiNand ( wx.Frame ):
 
     # Virtual event handlers, overide them in your derived class
     def callbackClose( self, event ):
+        event.Skip()
+
+    def callbackUseTypicalDeviceModel( self, event ):
         event.Skip()
 
     def callbackChangeImageCopies( self, event ):

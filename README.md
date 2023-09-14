@@ -29,13 +29,13 @@ gantt
     v5.1.0           :a24, 2023-05-24, 2023-05-25
     v5.2.0           :a25, 2023-05-26, 2023-07-07
     v5.2.1           :a26, 2023-07-08, 2023-07-14
-    v5.3.0           :a27, 2023-07-15, 2023-09-15
-    v5.4.0           :a28, 2023-09-16, 2023-11-15
+    v5.3.0           :a27, 2023-07-15, 2023-09-14
+    v5.4.0           :a28, 2023-09-15, 2023-11-15
 ```
 
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.2.1.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.2.1...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.3.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.3.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 English | [中文](./README-zh.md)
 
@@ -67,7 +67,8 @@ English | [中文](./README-zh.md)
 > * Support for loading bootable image into SEMC NOR boot device  
 > * Support for loading bootable image into uSDHC SD/eMMC boot device  
 > * Support for loading bootable image into LPSPI NOR/EEPROM recovery boot device  
-> * Support DCD which can help load image to SDRAM  
+> * Support DCD which can help configure device (eg. SDRAM) 
+> * Support XMCD which can help configure FlexSPI RAM/SEMC SDRAM
 > * Support development boot case (Unsigned)  
 > * Support HAB encryption secure boot case (Signed only, Signed and Encrypted)  
 > * Can back up certificate with time stamp

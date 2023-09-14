@@ -29,13 +29,13 @@ gantt
     v5.1.0           :a24, 2023-05-24, 2023-05-25
     v5.2.0           :a25, 2023-05-26, 2023-07-07
     v5.2.1           :a26, 2023-07-08, 2023-07-14
-    v5.3.0           :a27, 2023-07-15, 2023-09-15
-    v5.4.0           :a28, 2023-09-16, 2023-11-15
+    v5.3.0           :a27, 2023-07-15, 2023-09-14
+    v5.4.0           :a28, 2023-09-15, 2023-11-15
 ```
 
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.2.1.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.2.1...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.3.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.3.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 [English](./README.md) | 中文
 
@@ -67,6 +67,7 @@ gantt
 > * 支持下载Bootable image进主动启动设备 - uSDHC接口SD/eMMC卡  
 > * 支持下载Bootable image进备份启动设备 - LPSPI接口NOR/EEPROM Flash  
 > * 支持DCD配置功能，可用于加载image进SDRAM执行  
+> * 支持XMCD配置功能，可用于加载image进FlexSPI RAM/SEMC SDRAM执行  
 > * 支持用于开发阶段的非安全加密启动（未签名加密）  
 > * 支持基于HAB实现的安全加密启动（单签名，签名和加密），证书自动备份  
 > * 支持基于BEE实现的安全加密启动（唯一SNVS key，用户自定义key）  

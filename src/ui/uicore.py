@@ -100,10 +100,9 @@ class secBootUi(secBootWin.secBootWin):
         self._initEfuseLocker()
         self.setEfuseLocker()
 
-        self.flexspiXipRegionSel = 0
-        self.flexspiXipRegionSelFromFuse = uidef.kFlexspiNorInstance_Max
-        self._initFlexspiXipRegion()
-        self.setFlexspiXipRegion()
+        self.flexspiBootInstance = 0
+        self.flexspiBootInstanceFromFuse = uidef.kFlexspiInstance_Max
+        self.getFlexspiBootInstance()
 
         self.isIvtEntryResetHandler = None
         self._initIvtEntryType()
@@ -394,39 +393,20 @@ class secBootUi(secBootWin.secBootWin):
             pass
         self.toolCommDict['isAutomaticEfuseLocker'] = self.isAutomaticEfuseLocker
 
-    def _initFlexspiXipRegion( self ):
-        if self.toolCommDict['flexspiXipRegionSel'] == 0:
-            self.m_menuItem_flexspiXipRegion0.Check(True)
-            self.m_menuItem_flexspiXipRegion1.Check(False)
-        elif self.toolCommDict['flexspiXipRegionSel'] == 1:
-            self.m_menuItem_flexspiXipRegion0.Check(False)
-            self.m_menuItem_flexspiXipRegion1.Check(True)
-        else:
-            pass
-
-    def setFlexspiXipRegion( self ):
+    def getFlexspiBootInstance( self ):
         if self.mcuSeries == uidef.kMcuSeries_iMXRT11yy or \
            self.mcuDevice == uidef.kMcuDevice_iMXRT1060X:
-            if self.flexspiXipRegionSelFromFuse == uidef.kFlexspiNorInstance_Max:
-                if self.m_menuItem_flexspiXipRegion0.IsChecked():
-                    self.flexspiXipRegionSel = 0
-                elif self.m_menuItem_flexspiXipRegion1.IsChecked():
-                    self.flexspiXipRegionSel = 1
-                else:
-                    pass
+            if self.flexspiBootInstanceFromFuse == uidef.kFlexspiInstance_Max:
+                toolCommDict = uivar.getAdvancedSettings(uidef.kAdvancedSettings_Tool)
+                self.flexspiBootInstance = toolCommDict['flexspiBootInstance']
             else:
-                self.flexspiXipRegionSel = self.flexspiXipRegionSelFromFuse
-                if self.flexspiXipRegionSel == 0:
-                    self.m_menuItem_flexspiXipRegion0.Check(True)
-                    self.m_menuItem_flexspiXipRegion1.Check(False)
-                else:
-                    self.m_menuItem_flexspiXipRegion0.Check(False)
-                    self.m_menuItem_flexspiXipRegion1.Check(True)
+                self.flexspiBootInstance = self.flexspiBootInstanceFromFuse
+                self.toolCommDict['flexspiBootInstance'] = self.flexspiBootInstance
+                uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         else:
-            self.flexspiXipRegionSel = 0
-            self.m_menuItem_flexspiXipRegion0.Check(True)
-            self.m_menuItem_flexspiXipRegion1.Check(False)
-        self.toolCommDict['flexspiXipRegionSel'] = self.flexspiXipRegionSel
+            self.flexspiBootInstance = 0
+            self.toolCommDict['flexspiBootInstance'] = self.flexspiBootInstance
+            uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
 
     def _initIvtEntryType( self ):
         if self.toolCommDict['isIvtEntryResetHandler']:
@@ -559,8 +539,10 @@ class secBootUi(secBootWin.secBootWin):
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_ISSI_IS26KS512S
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Micron_MT25QL128A:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT25QL128A
-            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Micron_MT35X:
-                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Micron_MT35X_RW303:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X_RW303
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Micron_MT35X_RW304:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Micron_MT35X_RW304
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Adesto_AT25SF128A:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_AT25SF128A
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Adesto_ATXP032:
@@ -631,6 +613,15 @@ class secBootUi(secBootWin.secBootWin):
 
         self.mcuDevice = self.m_choice_mcuDevice.GetString(self.m_choice_mcuDevice.GetSelection())
         self.toolCommDict['mcuDevice'] = self.m_choice_mcuDevice.GetSelection()
+
+    def setBdcButtonEnablement( self, isEnabled ):
+        self.m_button_bootDeviceConfiguration.Enable( isEnabled )
+
+    def setDcdButtonEnablement( self, isEnabled ):
+        self.m_button_deviceConfigurationData.Enable( isEnabled )
+
+    def setXmcdButtonEnablement( self, isEnabled ):
+        self.m_button_externalMemConfigurationData.Enable( isEnabled )
 
     def task_doPlaySound( self ):
         while True:
@@ -1419,7 +1410,6 @@ class secBootUi(secBootWin.secBootWin):
         self.m_menu_tools.SetLabel(self.m_menu_tools.FindItem(uilang.kMainLanguageContentDict['subMenu_efuseLocker'][lastIndex]), uilang.kMainLanguageContentDict['subMenu_efuseLocker'][langIndex])
         self.m_menuItem_efuseLockerAutomatic.SetItemLabel(uilang.kMainLanguageContentDict['mItem_efuseLockerAutomatic'][langIndex])
         self.m_menuItem_efuseLockerManual.SetItemLabel(uilang.kMainLanguageContentDict['mItem_efuseLockerManual'][langIndex])
-        self.m_menu_tools.SetLabel(self.m_menu_tools.FindItem(uilang.kMainLanguageContentDict['subMenu_flexspiXipRegion'][lastIndex]), uilang.kMainLanguageContentDict['subMenu_flexspiXipRegion'][langIndex])
         self.m_menu_tools.SetLabel(self.m_menu_tools.FindItem(uilang.kMainLanguageContentDict['subMenu_ivtEntryType'][lastIndex]), uilang.kMainLanguageContentDict['subMenu_ivtEntryType'][langIndex])
         self.m_menuItem_ivtEntryResetHandler.SetItemLabel(uilang.kMainLanguageContentDict['mItem_ivtEntryReset'][langIndex])
         self.m_menuItem_ivtEntryVectorTable.SetItemLabel(uilang.kMainLanguageContentDict['mItem_ivtEntryVector'][langIndex])
@@ -1444,6 +1434,7 @@ class secBootUi(secBootWin.secBootWin):
         self.m_staticText_bootDevice.SetLabel(uilang.kMainLanguageContentDict['sText_bootDevice'][langIndex])
         self.m_button_bootDeviceConfiguration.SetLabel(uilang.kMainLanguageContentDict['button_bootDeviceConfiguration'][langIndex])
         self.m_button_deviceConfigurationData.SetLabel(uilang.kMainLanguageContentDict['button_deviceConfigurationData'][langIndex])
+        self.m_button_externalMemConfigurationData.SetLabel(uilang.kMainLanguageContentDict['button_externalMemConfigurationData'][langIndex])
 
         self.m_notebook_portSetup.SetPageText(0, uilang.kMainLanguageContentDict['panel_portSetup'][langIndex])
         self.m_radioBtn_uart.SetLabel(uilang.kMainLanguageContentDict['radioBtn_uart'][langIndex])

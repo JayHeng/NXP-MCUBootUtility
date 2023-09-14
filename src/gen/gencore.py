@@ -43,6 +43,13 @@ class secBootGen(uicore.secBootUi):
         else:
             return False
 
+    def isInTheRangeOfFlexspiRam( self, start, length ):
+        if (('flexspi1_ram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi1_ram'].start) and (start + length <= self.tgt.memoryRange['flexspi1_ram'].start + self.tgt.memoryRange['flexspi1_ram'].length))) or \
+           (('flexspi2_ram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi2_ram'].start) and (start + length <= self.tgt.memoryRange['flexspi2_ram'].start + self.tgt.memoryRange['flexspi2_ram'].length))):
+            return True
+        else:
+            return False
+
     def isInTheRangeOfSram( self, start, length ):
         if ((start >= self.tgt.memoryRange['sram'].start) and (start + length <= self.tgt.memoryRange['sram'].start + self.tgt.memoryRange['sram'].length)):
             return True
@@ -246,11 +253,11 @@ class secBootGen(uicore.secBootUi):
         flexspiNorMemBase  = None
         flexspiNorMemBaseNs = None
         flexspiNorMemBaseAliased = None
-        if self.flexspiXipRegionSel == 0:
+        if self.flexspiBootInstance == 0:
             flexspiNorMemBase  = self.tgt.flexspiNorMemBase0
             flexspiNorMemBaseNs = self.tgt.flexspiNorMemBase0Ns
             flexspiNorMemBase0Aliased = self.tgt.flexspiNorMemBase0Aliased
-        elif self.flexspiXipRegionSel == 1:
+        elif self.flexspiBootInstance == 1:
             flexspiNorMemBase  = self.tgt.flexspiNorMemBase1
             flexspiNorMemBaseNs = self.tgt.flexspiNorMemBase1Ns
             flexspiNorMemBase1Aliased = self.tgt.flexspiNorMemBase1Aliased
@@ -268,4 +275,16 @@ class secBootGen(uicore.secBootUi):
             if ((imageStartAddr >= flexspiNorMemBaseAliased) and (imageStartAddr < flexspiNorMemBaseAliased + rundef.kBootDeviceMemXipSize_FlexspiNor)):
                 self.tgt.flexspiNorMemBase = flexspiNorMemBaseAliased
                 return
+
+    def bincopyFileToFile( self, destBinFile, srcBinFile, offset ):
+        destFileObj = open(destBinFile,'rb')
+        destFileData = destFileObj.read()
+        destFileObj.close()
+        srcFileObj = open(srcBinFile,'rb')
+        srcFileData = srcFileObj.read()
+        srcFileObj.close()
+        finalFileData = destFileData[0:offset] + srcFileData + destFileData[offset+len(srcFileData):]
+        with open(destBinFile, 'wb') as fileObj:
+            fileObj.write(finalFileData)
+            fileObj.close()
 

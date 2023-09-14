@@ -14,6 +14,7 @@ from ui import uivar
 from ui import uilang
 from fuse import RTyyyy_fusedef
 from ui import ui_cfg_dcd
+from ui import ui_cfg_xmcd
 from ui import ui_settings_cert
 from ui import ui_settings_sign
 from ui import ui_settings_fixed_otpmk_key
@@ -91,6 +92,14 @@ class secBootRTyyyyMain(RTyyyy_memcore.secBootRTyyyyMem):
         dcdFrame.SetTitle(uilang.kSubLanguageContentDict['dcd_title'][self.languageIndex])
         dcdFrame.setNecessaryInfo(self.dcdBinFilename, self.dcdCfgFilename, self.dcdModelFolder)
         dcdFrame.Show(True)
+
+    def callbackExternalMemConfigurationData( self, event ):
+        if self.checkIfSubWinHasBeenOpened():
+            return
+        xmcdFrame = ui_cfg_xmcd.secBootUiCfgXmcd(None)
+        xmcdFrame.SetTitle(uilang.kSubLanguageContentDict['xmcd_title'][self.languageIndex])
+        xmcdFrame.setNecessaryInfo(self.xmcdBinFilename)
+        xmcdFrame.Show(True)
 
     def _RTyyyy_retryToPingBootloader( self, bootType ):
         pingStatus = False

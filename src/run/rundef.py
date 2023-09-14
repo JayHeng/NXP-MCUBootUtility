@@ -21,7 +21,8 @@ kFlexspiNorContent_Blank32 = 0xFFFFFFFF
 #kFlexspiNorCfgInfo_StartAddr = 0x0/0x400
 kFlexspiNorCfgInfo_Length    = 0x400
 kFlexspiNorCfgInfo_Notify    = 0xF000000F
-kFlexspiNorCfgInfo_Instance  = 0xCF900001
+
+kFlexspiDevCfgInfo_Instance  = 0xCF900001
 
 #kXspiNorCfgInfo_StartAddr    = 0x400
 kXspiNorCfgInfo_Length       = 0x400

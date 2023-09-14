@@ -124,6 +124,9 @@ class secBootMain(MCX_main.secBootMcxMain):
         else:
             pass
 
+    def _hasMultipleFlexspiInstance( self ):
+        return self.tgt.flexspiNorMemBase0 != None and self.tgt.flexspiNorMemBase1 != None
+
     def callbackBootDeviceConfiguration( self, event ):
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
@@ -141,11 +144,12 @@ class secBootMain(MCX_main.secBootMcxMain):
                 flexspiNorFrame.SetTitle(uilang.kSubLanguageContentDict['quadspinor_title'][self.languageIndex])
             else:
                 flexspiNorFrame.SetTitle(uilang.kSubLanguageContentDict['flexspinor_title'][self.languageIndex])
-            flexspiNorFrame.setNecessaryInfo(self.mcuSeries, self.tgt.flexspiFreqs, self.cfgFdcbBinFilename, self.tgt.hasFlexspiNorDualImageBoot)
+            flexspiNorFrame.setNecessaryInfo(self.mcuSeries, self.tgt.flexspiFreqs, self.cfgFdcbBinFilename, self.tgt.hasFlexspiNorDualImageBoot, self._hasMultipleFlexspiInstance())
             flexspiNorFrame.Show(True)
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
             flexspiNandFrame = ui_cfg_flexspinand.secBootUiFlexspiNand(None)
             flexspiNandFrame.SetTitle(uilang.kSubLanguageContentDict['flexspinand_title'][self.languageIndex])
+            flexspiNandFrame.setNecessaryInfo(self._hasMultipleFlexspiInstance())
             flexspiNandFrame.Show(True)
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
             semcNorFrame = ui_cfg_semcnor.secBootUiSemcNor(None)
@@ -647,27 +651,6 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackSetEfuseLockerAsManual( self, event ):
         self.setEfuseLocker()
 
-    def _switchFlexspiXipRegion( self ):
-        self.setFlexspiXipRegion()
-        if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
-            self.RTyyyy_updateFlexspiNorMemBase()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
-            pass
-        elif self.mcuSeries == uidef.kMcuSeries_LPC:
-            pass
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
-            pass
-        elif self.mcuSeries == uidef.kMcuSeries_MCX:
-            pass
-        else:
-            pass
-
-    def callbackSetFlexspiXipRegionTo0( self, event ):
-        self._switchFlexspiXipRegion()
-
-    def callbackSetFlexspiXipRegionTo1( self, event ):
-        self._switchFlexspiXipRegion()
-
     def callbackSetIvtEntryToResetHandler( self, event ):
         self.setIvtEntryType()
 
@@ -746,14 +729,15 @@ class secBootMain(MCX_main.secBootMcxMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_0_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_1_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_2_0'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_2_1'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_2_1'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v5.2.1")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v5.3.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

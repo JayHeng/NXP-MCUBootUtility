@@ -37,6 +37,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowIvtIntr = None
         self.needToShowBootDataIntr = None
         self.needToShowDcdIntr = None
+        self.needToShowXmcdIntr = None
         self.needToShowImageIntr = None
         self.needToShowCsfIntr = None
         self.needToShowHabKeyBlobIntr = None
@@ -61,6 +62,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
         self.needToShowIvtIntr = True
         self.needToShowBootDataIntr = True
         self.needToShowDcdIntr = True
+        self.needToShowXmcdIntr = True
         self.needToShowImageIntr = True
         self.needToShowCsfIntr = True
         self.needToShowHabKeyBlobIntr = True
@@ -121,7 +123,11 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
     def _showNandDbbt( self, ipTypeStr, dbbtAddr ):
         memFilename = ipTypeStr + 'NandDbbt.dat'
         memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
-        status, results, cmdStr = self.blhost.readMemory(dbbtAddr, RTyyyy_memdef.kMemBlockSize_DBBT, memFilename, self.bootDeviceMemId)
+        if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
+            dbbtBlockIndex = dbbtAddr / self.flexspiNandBlockSize
+            status, results, cmdStr = self.blhost.readMemory(dbbtBlockIndex, RTyyyy_memdef.kMemBlockSize_DBBT, memFilename, self.bootDeviceMemId)
+        else:
+            status, results, cmdStr = self.blhost.readMemory(dbbtAddr, RTyyyy_memdef.kMemBlockSize_DBBT, memFilename, self.bootDeviceMemId)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False
@@ -180,7 +186,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
                     self.printMem(contentToShow)
             else:
                 self.printMem(contentToShow)
-        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB) or (addr <= imageMemBase + RTyyyy_memdef.kMemBlockSize_FDCB):
+        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB):
             if not self.isSdmmcCard:
                 if self.needToShowCfgIntr:
                     self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
@@ -189,9 +195,9 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             else:
                 if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
                     self.printMem(contentToShow)
-        elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion:
+        elif (self.isXipableDevice and addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion):
             self.printMem(contentToShow)
-        elif addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion + len(memContent):
+        elif (self.isXipableDevice and addr <= imageMemBase + memdef.kMemBlockOffset_ImageVersion + len(memContent)):
             if self.flexspiNorImage0Version != None:
                 self.printMem('-------------------------------Image Version------------------------------------------', RTyyyy_uidef.kMemBlockColor_ImageVersion)
                 self.needToShowCfgIntr = False
@@ -241,11 +247,18 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_BootData)
         elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD:
             self.printMem(contentToShow)
-        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD + self.destAppDcdLength:
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_DCD + misc.align_up(self.destAppDcdLength, 16):
             if self.needToShowDcdIntr:
                 self.printMem('------------------------------------DCD-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_DCD)
                 self.needToShowDcdIntr = False
             self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_DCD)
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD + misc.align_up(self.destAppXmcdLength, 16):
+            if self.needToShowXmcdIntr:
+                self.printMem('-----------------------------------XMCD-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_XMCD)
+                self.needToShowXmcdIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_XMCD)
         elif addr <= imageMemBase + self.destAppVectorOffset:
             self.printMem(contentToShow)
         elif addr <= imageMemBase + self.destAppVectorOffset + self.destAppBinaryBytes:
@@ -343,6 +356,8 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             imageFileLen = os.path.getsize(self.destAppFilename)
         self.clearMem()
         imageMemBase = 0
+        self.isFlexspiNandBlockAddr = None
+        nandBlockIndex = 0
         readoutMemLen = 0
         if self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
             semcNandOpt, semcNandFcbOpt, semcNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
@@ -352,12 +367,14 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             # Only Readout first image
             imageMemBase = self.bootDeviceMemBase + (semcNandImageInfoList[0] >> 16) * self.semcNandBlockSize
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand:
-            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
+            flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList, flexspiNandDeviceModel = uivar.getBootDeviceConfiguration(self.bootDevice)
+            self.isFlexspiNandBlockAddr = (flexspiNandFcbOpt & 0x00000F00) >> 8
             status, dbbtAddr = self._showNandFcb('flexspi', RTyyyy_rundef.kFlexspiNandFcbOffset_Fingerprint, RTyyyy_rundef.kFlexspiNandFcbTag_Fingerprint, RTyyyy_rundef.kFlexspiNandFcbOffset_FlexspiTag, RTyyyy_rundef.kFlexspiNandFcbTag_Flexspi, RTyyyy_rundef.kFlexspiNandFcbOffset_DBBTSerachStartPage)
             if status:
                 self._showNandDbbt('flexspi', dbbtAddr)
             # Only Readout first image
-            imageMemBase = self.bootDeviceMemBase + (flexspiNandImageInfoList[0] >> 16) * self.flexspiNandBlockSize
+            nandBlockIndex = (flexspiNandImageInfoList[0] >> 16)
+            imageMemBase = self.bootDeviceMemBase + nandBlockIndex * self.flexspiNandBlockSize
         elif self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNor or \
              self.bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
@@ -375,7 +392,10 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
 
         memFilename = 'bootableImageFromBootDevice.dat'
         memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
-        status, results, cmdStr = self.blhost.readMemory(imageMemBase, readoutMemLen, memFilename, self.bootDeviceMemId)
+        if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
+            status, results, cmdStr = self.blhost.readMemory(nandBlockIndex, readoutMemLen, memFilename, self.bootDeviceMemId)
+        else:
+            status, results, cmdStr = self.blhost.readMemory(imageMemBase, readoutMemLen, memFilename, self.bootDeviceMemId)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False

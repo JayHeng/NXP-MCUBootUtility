@@ -26,6 +26,9 @@ class secBootLpcUi(RTxxx_main.secBootRTxxxMain):
         self.secureBootType = None
         self._LPC_initSecureBootSeqValue()
         self._LPC_initSecureBootSeqColor()
+        self.setDcdButtonEnablement(False)
+        self.setBdcButtonEnablement(False)
+        self.setXmcdButtonEnablement(False)
 
     def _LPC_initTargetSetupValue( self ):
         self.m_choice_bootDevice.Clear()

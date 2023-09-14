@@ -67,6 +67,12 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.isDcdFromSrcApp = False
         self.destAppDcdLength = 0
 
+        self.xmcdFolder = os.path.join(self.exeTopRoot, 'gen', 'xmcd_file')
+        self.xmcdBinFilename = os.path.join(self.exeTopRoot, 'gen', 'xmcd_file', RTyyyy_gendef.kStdXmcdFilename_Bin)
+        self.xmcdModelFolder = os.path.join(self.exeTopRoot, 'src', 'targets', 'xmcd_model')
+        self.isXmcdFromSrcApp = False
+        self.destAppXmcdLength = 0
+
         self.srcAppFilename = None
         self.destAppFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'bt_application.bin')
         self.destAppNoPaddingFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'ivt_application_nopadding.bin')
@@ -113,6 +119,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
 
         self.destAppIvtOffset = None
         self.destAppInitialLoadSize = 0
+        self.minAppInitialLoadSize = 0
         self.destAppVectorAddress = 0
         self.destAppVectorOffset = None
         self.destAppBinaryBytes = 0
@@ -372,6 +379,29 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         else:
             self.destAppDcdLength = 0
 
+    def _extractXmcdDataFromSrcApp(self, initialLoadAppBytes, fdcbOffset ):
+        dcdCtrlDict, dcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Dcd)
+        if self.destAppDcdLength != 0 or dcdCtrlDict['isDcdEnabled']:
+            self.disableXmcd(True)
+        else:
+            destAppIvtOffset = self.destAppIvtOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffset)
+            xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+            if not xmcdSettingsDict['isXmcdEnabled']:
+                xmcdDataOffset = destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD
+                xmcdHeaderTagVer = initialLoadAppBytes[xmcdDataOffset + RTyyyy_memdef.kMemberOffsetInXmcd_TagVer]
+                if xmcdHeaderTagVer == RTyyyy_memdef.kBootHeaderTagVer_XMCD:
+                    cfgBlockSize = initialLoadAppBytes[xmcdDataOffset + RTyyyy_memdef.kMemberOffsetInXmcd_BlockSize]
+                    cfgBlockSize += (initialLoadAppBytes[xmcdDataOffset + RTyyyy_memdef.kMemberOffsetInXmcd_BlockSize + 1] & 0xF) * 256
+                    xmcdDataBytes = initialLoadAppBytes[xmcdDataOffset:xmcdDataOffset + cfgBlockSize]
+                    with open(self.xmcdBinFilename, 'wb') as fileObj:
+                        fileObj.write(xmcdDataBytes)
+                        fileObj.close()
+                    self._enableXmcdBecauseOfSrcApp()
+                    self.isXmcdFromSrcApp = True
+                    self.destAppXmcdLength = len(xmcdDataBytes)
+            else:
+                self.destAppXmcdLength = 0
+
     def _getContainerInfoFromContainerBlockBytes( self, containerBlockBytes ):
         img0Offset= self.getVal32FromByteArray(containerBlockBytes[RTyyyy_memdef.kMemberOffsetInContainer_Img0Offset:RTyyyy_memdef.kMemberOffsetInContainer_Img0Offset + 4])
         img0Size= self.getVal32FromByteArray(containerBlockBytes[RTyyyy_memdef.kMemberOffsetInContainer_Img0Size:RTyyyy_memdef.kMemberOffsetInContainer_Img0Size + 4])
@@ -392,7 +422,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             ivtEntry, ivtDcd, ivtBd, ivtSelf = self._getIvtInfoFromIvtBlockBytes(wholeSrcAppBytes[destAppIvtOffset:destAppIvtOffset + RTyyyy_memdef.kMemBlockSize_IVT])
             # Check to see it is vector table address or reset handler address
             if (ivtEntry % 2):
-                maxVectorOffset = misc.align_down(ivtEntry - ivtSelf, RTyyyy_gendef.kCortexmVectorTableAlignment)
+                maxVectorOffset = misc.align_down(ivtEntry - ivtSelf + destAppIvtOffset, RTyyyy_gendef.kCortexmVectorTableAlignment)
                 vectorOffset = destAppIvtOffset + RTyyyy_gendef.kCortexmVectorTableAlignment
                 isVectorFound = False
                 while (vectorOffset <= maxVectorOffset):
@@ -404,7 +434,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     ivtEntry = ivtSelf + vectorOffset - destAppIvtOffset
                     #self.printLog('ivtEntry =' + str(hex(ivtEntry)))
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_vectorNotFound'][self.languageIndex] + srcAppFilename.encode('utf-8'))
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_vectorNotFound'][self.languageIndex] + self.srcAppFilename.encode('utf-8'))
                     return None, None, 0
             imageDataOffset = destAppIvtOffset + ivtEntry - ivtSelf
             imageDataBytes = wholeSrcAppBytes[imageDataOffset:len(wholeSrcAppBytes)]
@@ -511,11 +541,13 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                             self.flexspiNorImage0Version = self.getImageVersionValueFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                             self._extractDcdDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
+                            self._extractXmcdDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                         startAddress, entryPointAddress, lengthInByte = self._extractImageDataFromSrcApp(srecObj.as_binary(), fdcbOffsetInApp, appName)
                         if startAddress != None:
                             isConvSuccessed = True
                     else:
                         self.destAppDcdLength = 0
+                        self.destAppXmcdLength = 0
                         #entryPointAddress = srecObj.execution_start_address
                         entryPointAddress = self.getVal32FromByteArray(srecObj.as_binary(startAddress + 0x4, startAddress  + 0x8))
                         lengthInByte = len(srecObj.as_binary())
@@ -625,10 +657,39 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 pass
             if dcdConvResult:
                 shutil.copy(self.dcdBinFilename, os.path.join(os.path.split(self.elftosbPath)[0], RTyyyy_gendef.kStdDcdFilename_Bin))
+                self.destAppDcdLength = os.path.getsize(self.dcdBinFilename)
+                self.disableXmcd(True)
                 dcdContent += "    DCDFilePath = \"" + RTyyyy_gendef.kStdDcdFilename_Bin + "\";\n"
                 if dcdSettingsDict['sdramBase'] != None:
                     self.dcdSdramBaseAddress = self.getVal32FromHexText(dcdSettingsDict['sdramBase'])
         return dcdConvResult, dcdContent
+
+    def _enableXmcdBecauseOfSrcApp( self ):
+        xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+        xmcdSettingsDict['isXmcdEnabled'] = True
+        xmcdSettingsDict['xmcdSource'] = 'Use XMCD bin file'
+        xmcdSettingsDict['userBinFile'] = self.xmcdBinFilename
+        uivar.setBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd, xmcdSettingsDict)
+
+    def disableXmcd( self, showInfo ):
+        xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+        if xmcdSettingsDict['isXmcdEnabled']:
+            xmcdSettingsDict['isXmcdEnabled'] = False
+            uivar.setBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd, xmcdSettingsDict)
+            if showInfo:
+                self.popupMsgBox(uilang.kMsgLanguageContentDict['genImgError_bypassXmcd'][self.languageIndex])
+
+    def _recoverXmcdBecauseOfSrcApp( self ):
+        if self.isXmcdFromSrcApp:
+            self.disableXmcd(False)
+            self.isXmcdFromSrcApp = False
+
+    def _addXmcdContentIfAppliable( self ):
+        xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+        if xmcdSettingsDict['isXmcdEnabled']:
+            self.destAppXmcdLength = os.path.getsize(self.xmcdBinFilename)
+            self.bincopyFileToFile(self.destAppFilename, self.xmcdBinFilename, self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
+            self.bincopyFileToFile(self.destAppNoPaddingFilename, self.xmcdBinFilename, RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
 
     def _setDestAppInitialBootHeaderInfo( self, bootDevice ):
         if bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
@@ -640,18 +701,22 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 else:
                     self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NOR
                     self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
+                self.minAppInitialLoadSize = self.destAppInitialLoadSize
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NOR
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
+                self.minAppInitialLoadSize = RTyyyy_gendef.kMinInitialLoadSize_NOR
         elif bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_SemcNand or \
              bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
             if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
                 self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NAND_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_NAND_EEPROM
+                self.minAppInitialLoadSize = self.destAppInitialLoadSize
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
+                self.minAppInitialLoadSize = RTyyyy_gendef.kMinInitialLoadSize_NAND
         elif bootDevice == RTyyyy_uidef.kBootDevice_UsdhcSd or \
              bootDevice == RTyyyy_uidef.kBootDevice_UsdhcMmc:
             if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
@@ -661,12 +726,15 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 else:
                     self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_SD
                     self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_SD
+                self.minAppInitialLoadSize = self.destAppInitialLoadSize
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
+                self.minAppInitialLoadSize = RTyyyy_gendef.kMinInitialLoadSize_NAND
         elif bootDevice == RTyyyy_uidef.kBootDevice_RamFlashloader:
             self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_RAM_FLASHLOADER
             self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_RAM_FLASHLOADER
+            self.minAppInitialLoadSize = self.destAppInitialLoadSize
         else:
             pass
 
@@ -714,7 +782,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         bdContent += "    flags = " + flags + ";\n"
         startAddress = 0x0
         self._setDestAppFinalBootHeaderInfo(bootDevice)
-        if not self._verifyAppVectorAddressForBd(vectorAddress, self.destAppInitialLoadSize):
+        if not self._verifyAppVectorAddressForBd(vectorAddress, self.minAppInitialLoadSize):
             if bootDevice != RTyyyy_uidef.kBootDevice_RamFlashloader:
                 self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_invalidVector'][self.languageIndex] + self.srcAppFilename)
             return False
@@ -921,6 +989,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
     def _RTyyyy_isValidNonXipAppImage( self, imageStartAddr ):
         if self.isInTheRangeOfFlexram(imageStartAddr, 1):
             return True
+        elif self.isInTheRangeOfFlexspiRam(imageStartAddr, 1):
+            return True
         elif ((imageStartAddr >= RTyyyy_rundef.kBootDeviceMemBase_SemcSdram) and (imageStartAddr < RTyyyy_rundef.kBootDeviceMemBase_SemcSdram + RTyyyy_rundef.kBootDeviceMemMaxSize_SemcSdram)):
             return True
         else:
@@ -1047,6 +1117,9 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         dcdCtrlDict, dcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Dcd)
         if dcdCtrlDict['isDcdEnabled']:
             destAppName += '_dcd'
+        xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+        if xmcdSettingsDict['isXmcdEnabled']:
+            destAppName += '_xmcd'
         signSettingsDict = uivar.getAdvancedSettings(uidef.kAdvancedSettings_Sign)
         if self.secureBootType == RTyyyy_uidef.kSecureBootType_Development:
             destAppName += '_unsigned'
@@ -1300,10 +1373,14 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             commandOutput = process.communicate()[0]
             print commandOutput
             self._recoverDcdBecauseOfSrcApp()
+            status = None
             if self._RTyyyy_parseBootableImageGenerationResult(commandOutput):
-                return self._RTyyyy_signPartOfImage()
+                self._addXmcdContentIfAppliable()
+                status = self._RTyyyy_signPartOfImage()
             else:
-                return False
+                status = False
+            self._recoverXmcdBecauseOfSrcApp()
+            return status
         elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
             self._genCompleteAppWithContainer()
             return True

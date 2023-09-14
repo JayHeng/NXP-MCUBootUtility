@@ -129,7 +129,10 @@ class secBootKinetisRun(Kinetis_gencore.secBootKinetisGen):
             self.printDeviceStatus("SIM->UIDL  = " + self.convertLongIntHexText(str(hex(results[0]))))
             self.printDeviceStatus("SIM->UIDML = " + self.convertLongIntHexText(str(hex(results[1]))))
             self.printDeviceStatus("SIM->UIDMH = " + self.convertLongIntHexText(str(hex(results[2]))))
-            self.printDeviceStatus("SIM->UIDH  = " + self.convertLongIntHexText(str(hex(results[3]))))
+            try:
+                self.printDeviceStatus("SIM->UIDH  = " + self.convertLongIntHexText(str(hex(results[3]))))
+            except:
+                pass
         else:
             pass
 

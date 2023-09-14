@@ -28,7 +28,7 @@ g_toolCommDict = {'toolRunMode':None,
                   'flashloaderResident':None,
                   'efuseGroupSel':None,
                   'isAutomaticEfuseLocker':None,
-                  'flexspiXipRegionSel':None,
+                  'flexspiBootInstance':None,
                   'isIvtEntryResetHandler':None,
                   'edgelockFwEn':None,
                   'isEnglishLanguage':None,
@@ -57,6 +57,7 @@ g_flexspiNandOpt0 = None
 g_flexspiNandOpt1 = None
 g_flexspiNandFcbOpt = None
 g_flexspiNandImageInfoList = [None] * 8
+g_flexspiNandDeviceModel = None
 
 g_semcNorOpt = None
 g_semcNorSetting = None
@@ -86,6 +87,14 @@ g_dcdSettingsDict = {'dcdSource':None,
                      'sdramBase':None,
                      'deviceModel':None,
                      'dcdDesc':None}
+
+g_xmcdSettingsDict = {'isXmcdEnabled':None,
+                      'xmcdSource':None,
+                      'userBinFile':None,
+                      'xmcdHeader':None,
+                      'xmcdOption0':None,
+                      'xmcdOption1':None,
+                      'xmcdOption2':None}
 
 g_certSettingsDict = {'cstVersion':None,
                       'useExistingCaKey':None,
@@ -156,6 +165,7 @@ def initVar(cfgFilename):
     global g_flexspiNandOpt1
     global g_flexspiNandFcbOpt
     global g_flexspiNandImageInfoList
+    global g_flexspiNandDeviceModel
 
     global g_semcNandOpt
     global g_semcNandFcbOpt
@@ -178,6 +188,8 @@ def initVar(cfgFilename):
 
     global g_dcdCtrlDict
     global g_dcdSettingsDict
+
+    global g_xmcdSettingsDict
 
     global g_certSettingsDict
     global g_signSettingsDict
@@ -207,6 +219,7 @@ def initVar(cfgFilename):
         g_flexspiNandOpt1 = cfgDict["cfgFlexspiNand"][1]
         g_flexspiNandFcbOpt = cfgDict["cfgFlexspiNand"][2]
         g_flexspiNandImageInfoList = cfgDict["cfgFlexspiNand"][3]
+        g_flexspiNandDeviceModel = cfgDict["cfgFlexspiNand"][4]
 
         g_semcNandOpt = cfgDict["cfgSemcNand"][0]
         g_semcNandFcbOpt = cfgDict["cfgSemcNand"][1]
@@ -230,6 +243,8 @@ def initVar(cfgFilename):
         g_dcdCtrlDict = cfgDict["cfgDcd"][0]
         g_dcdSettingsDict = cfgDict["cfgDcd"][1]
 
+        g_xmcdSettingsDict = cfgDict["cfgXmcd"][0]
+
         g_certSettingsDict = cfgDict["cfgCertificate"][0]
         g_signSettingsDict = cfgDict["cfgSignature"][0]
 
@@ -240,13 +255,13 @@ def initVar(cfgFilename):
     else:
         g_toolCommDict = {'toolRunMode':uidef.kToolRunMode_Master,
                           'isDymaticUsbDetection':True,
-                          'soundEffectType':'contra',
+                          'soundEffectType':'quiet',
                           'isSbFileEnabledToGen':False,
                           'isAutomaticImageReadback':False,
                           'flashloaderResident':None,
                           'efuseGroupSel':0,
                           'isAutomaticEfuseLocker':True,
-                          'flexspiXipRegionSel':0,
+                          'flexspiBootInstance':0,
                           'isIvtEntryResetHandler':False,
                           'edgelockFwEn':False,
                           'isEnglishLanguage':True,
@@ -278,6 +293,7 @@ def initVar(cfgFilename):
         g_flexspiNandFcbOpt = 0xc2000104
         g_flexspiNandImageInfoList = [None] * 8
         g_flexspiNandImageInfoList[0] = 0x00040004
+        g_flexspiNandDeviceModel = uidef.kFlexspiNandDevice_None
 
         g_semcNandOpt = 0xD0010101
         g_semcNandFcbOpt = 0x00010101
@@ -308,6 +324,14 @@ def initVar(cfgFilename):
         g_dcdSettingsDict['sdramBase'] = '0x80000000'
         g_dcdSettingsDict['deviceModel'] = 'No'
         g_dcdSettingsDict['dcdDesc'] = None
+
+        g_xmcdSettingsDict['isXmcdEnabled'] = False
+        g_xmcdSettingsDict['xmcdSource'] = 'Disable XMCD'
+        g_xmcdSettingsDict['userBinFile'] = 'N/A'
+        g_xmcdSettingsDict['xmcdHeader'] = 0xC0000008
+        g_xmcdSettingsDict['xmcdOption0'] = 0xC0000700
+        g_xmcdSettingsDict['xmcdOption1'] = 0x0
+        g_xmcdSettingsDict['xmcdOption2'] = 0x0
 
         g_certSettingsDict['cstVersion'] = RTyyyy_uidef.kCstVersion_v3_0_1
         g_certSettingsDict['useExistingCaKey'] = 'n'
@@ -367,6 +391,7 @@ def deinitVar(cfgFilename=None):
         global g_flexspiNandOpt1
         global g_flexspiNandFcbOpt
         global g_flexspiNandImageInfoList
+        global g_flexspiNandDeviceModel
         global g_semcNandOpt
         global g_semcNandFcbOpt
         global g_semcNandImageInfoList
@@ -379,6 +404,7 @@ def deinitVar(cfgFilename=None):
         global g_usdhcMmcOpt1
         global g_dcdCtrlDict
         global g_dcdSettingsDict
+        global g_xmcdSettingsDict
         global g_certSettingsDict
         global g_signSettingsDict
         global g_otpmkKeyCommDict
@@ -387,7 +413,7 @@ def deinitVar(cfgFilename=None):
         cfgDict = {
             "cfgToolCommon": [g_toolCommDict],
             "cfgFlexspiNor": [g_flexspiNorOpt0, g_flexspiNorOpt1, g_flexspiNorDeviceModel, g_isFdcbKept, g_flexspiNorDualImageInfoList],
-            "cfgFlexspiNand": [g_flexspiNandOpt0, g_flexspiNandOpt1, g_flexspiNandFcbOpt, g_flexspiNandImageInfoList],
+            "cfgFlexspiNand": [g_flexspiNandOpt0, g_flexspiNandOpt1, g_flexspiNandFcbOpt, g_flexspiNandImageInfoList, g_flexspiNandDeviceModel],
             "cfgSemcNor": [g_semcNorOpt, g_semcNorSetting, g_semcNorDeviceModel],
             "cfgSemcNand": [g_semcNandOpt, g_semcNandFcbOpt, g_semcNandImageInfoList],
             "cfgLpspiNor": [g_lpspiNorOpt0, g_lpspiNorOpt1],
@@ -395,6 +421,7 @@ def deinitVar(cfgFilename=None):
             "cfgUsdhcSd": [g_usdhcSdOpt],
             "cfgUsdhcMmc": [g_usdhcMmcOpt0, g_usdhcMmcOpt1],
             "cfgDcd": [g_dcdCtrlDict, g_dcdSettingsDict],
+            "cfgXmcd": [g_xmcdSettingsDict],
             "cfgCertificate": [g_certSettingsDict],
             "cfgSignature": [g_signSettingsDict],
             "cfgSnvsKey": [g_otpmkKeyCommDict],
@@ -418,7 +445,8 @@ def getBootDeviceConfiguration( group ):
         global g_flexspiNandOpt1
         global g_flexspiNandFcbOpt
         global g_flexspiNandImageInfoList
-        return g_flexspiNandOpt0, g_flexspiNandOpt1, g_flexspiNandFcbOpt, g_flexspiNandImageInfoList
+        global g_flexspiNandDeviceModel
+        return g_flexspiNandOpt0, g_flexspiNandOpt1, g_flexspiNandFcbOpt, g_flexspiNandImageInfoList, g_flexspiNandDeviceModel
     elif group == RTyyyy_uidef.kBootDevice_SemcNor:
         global g_semcNorOpt
         global g_semcNorSetting
@@ -450,6 +478,9 @@ def getBootDeviceConfiguration( group ):
         global g_dcdCtrlDict
         global g_dcdSettingsDict
         return g_dcdCtrlDict, g_dcdSettingsDict
+    elif group == RTyyyy_uidef.kBootDevice_Xmcd:
+        global g_xmcdSettingsDict
+        return g_xmcdSettingsDict
     else:
         pass
 
@@ -473,10 +504,12 @@ def setBootDeviceConfiguration( group, *args ):
         global g_flexspiNandOpt1
         global g_flexspiNandFcbOpt
         global g_flexspiNandImageInfoList
+        global g_flexspiNandDeviceModel
         g_flexspiNandOpt0 = args[0]
         g_flexspiNandOpt1 = args[1]
         g_flexspiNandFcbOpt = args[2]
         g_flexspiNandImageInfoList = args[3]
+        g_flexspiNandDeviceModel = args[4]
     elif group == RTyyyy_uidef.kBootDevice_SemcNor:
         global g_semcNorOpt
         global g_semcNorSetting
@@ -516,6 +549,9 @@ def setBootDeviceConfiguration( group, *args ):
         global g_dcdSettingsDict
         g_dcdCtrlDict = args[0]
         g_dcdSettingsDict = args[1]
+    elif group == RTyyyy_uidef.kBootDevice_Xmcd:
+        global g_xmcdSettingsDict
+        g_xmcdSettingsDict = args[0]
     else:
         pass
 

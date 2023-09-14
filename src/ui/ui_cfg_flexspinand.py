@@ -15,16 +15,21 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
     def __init__(self, parent):
         bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand.__init__(self, parent)
         self._setLanguage()
-        flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
+        self.hasMultipleFlexspiInstance = None
+        flexspiNandOpt0, flexspiNandOpt1, flexspiNandFcbOpt, flexspiNandImageInfoList, flexspiDeviceModel = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand)
         self.flexspiNandOpt0 = flexspiNandOpt0
         self.flexspiNandOpt1 = flexspiNandOpt1
         self.flexspiNandFcbOpt = flexspiNandFcbOpt
         self.flexspiNandImageInfoList = flexspiNandImageInfoList[:]
-        self._recoverLastSettings()
+        self.flexspiDeviceModel = flexspiDeviceModel
+        toolCommDict = uivar.getAdvancedSettings(uidef.kAdvancedSettings_Tool)
+        self.toolCommDict = toolCommDict.copy()
 
     def _setLanguage( self ):
         runtimeSettings = uivar.getRuntimeSettings()
         langIndex = runtimeSettings[3]
+        self.m_staticText_bootInstance.SetLabel(uilang.kSubLanguageContentDict['sText_bootInstance'][langIndex])
+        self.m_staticText_deviceModel.SetLabel(uilang.kSubLanguageContentDict['sText_deviceModel'][langIndex])
         self.m_notebook_nandOpt.SetPageText(0, uilang.kSubLanguageContentDict['panel_nandOpt'][langIndex])
         self.m_staticText_flashSize.SetLabel(uilang.kSubLanguageContentDict['sText_flashSize'][langIndex])
         self.m_staticText_hasMultiplanes.SetLabel(uilang.kSubLanguageContentDict['sText_hasMultiplanes'][langIndex])
@@ -42,6 +47,10 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
         self.m_staticText_blockCount.SetLabel(uilang.kSubLanguageContentDict['sText_blockCount'][langIndex])
         self.m_button_ok.SetLabel(uilang.kSubLanguageContentDict['button_semcnand_ok'][langIndex])
         self.m_button_cancel.SetLabel(uilang.kSubLanguageContentDict['button_semcnand_cancel'][langIndex])
+
+    def setNecessaryInfo( self, hasMultipleFlexspiInstance ):
+        self.hasMultipleFlexspiInstance = hasMultipleFlexspiInstance
+        self._recoverLastSettings()
 
     def _updateImageInfoField ( self, imageCopies ):
         if imageCopies < 2:
@@ -102,6 +111,15 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
             self.m_textCtrl_image7Cnt.Enable( True )
 
     def _recoverLastSettings ( self ):
+        if not self.hasMultipleFlexspiInstance:
+            self.m_choice_bootInstance.SetSelection(0)
+            self.m_choice_bootInstance.Enable(False)
+            self.toolCommDict['flexspiBootInstance'] = 0
+        else:
+            self.m_choice_bootInstance.SetSelection(self.toolCommDict['flexspiBootInstance'])
+
+        self.m_choice_deviceMode.SetSelection(self.m_choice_deviceMode.FindString(self.flexspiDeviceModel))
+
         flashSize = (self.flexspiNandOpt0 & 0x000F0000) >> 16
         self.m_choice_flashSize.SetSelection(flashSize)
 
@@ -199,6 +217,9 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
             self.m_textCtrl_image7Idx.write(str(imageIdx))
             self.m_textCtrl_image7Cnt.write(str(imageCnt))
 
+    def _getBootInstance( self ):
+        self.toolCommDict['flexspiBootInstance'] = self.m_choice_bootInstance.GetSelection()
+
     def _getFlashSize( self ):
         val = self.m_choice_flashSize.GetSelection()
         self.flexspiNandOpt0 = (self.flexspiNandOpt0 & 0xFFF0FFFF) | (val << 16)
@@ -295,11 +316,50 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
         fcbOptBlockSize = imageCopies + 2
         self.flexspiNandFcbOpt = (self.flexspiNandFcbOpt & 0xFFFFFFF0) | fcbOptBlockSize
 
+    def callbackUseTypicalDeviceModel( self, event ):
+        txt = self.m_choice_deviceMode.GetString(self.m_choice_deviceMode.GetSelection())
+        self.flexspiDeviceModel = txt
+        if txt == uidef.kFlexspiNandDevice_Winbond_W25N01G:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_Winbond_W25N01G
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_Winbond_W25N01G
+        elif txt == uidef.kFlexspiNandDevice_Winbond_W25N02K:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_Winbond_W25N02K
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_Winbond_W25N02K
+        elif txt == uidef.kFlexspiNandDevice_MXIC_MX35UF1G:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_MXIC_MX35UF1G
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_MXIC_MX35UF1G
+        elif txt == uidef.kFlexspiNandDevice_MXIC_MX35UF2G:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_MXIC_MX35UF2G
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_MXIC_MX35UF2G
+        elif txt == uidef.kFlexspiNandDevice_GigaDevice_GD5F1GQ5:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_GigaDevice_GD5F1GQ5
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_GigaDevice_GD5F1GQ5
+        elif txt == uidef.kFlexspiNandDevice_GigaDevice_GD5F2GQ5:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_GigaDevice_GD5F2GQ5
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_GigaDevice_GD5F2GQ5
+        elif txt == uidef.kFlexspiNandDevice_Micron_MT29F1G01AA:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_Micron_MT29F1G01AA
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_Micron_MT29F1G01AA
+        elif txt == uidef.kFlexspiNandDevice_Micron_MT29F2G01AA:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_Micron_MT29F2G01AA
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_Micron_MT29F2G01AA
+        elif txt == uidef.kFlexspiNandDevice_Paragon_PN26Q01A:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_Paragon_PN26Q01A
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_Paragon_PN26Q01A
+        elif txt == uidef.kFlexspiNandDevice_Paragon_PN26Q02A:
+            self.flexspiNandOpt0 = uidef.kFlexspiNandOpt0_Paragon_PN26Q02A
+            self.flexspiNandOpt1 = uidef.kFlexspiNandOpt1_Paragon_PN26Q02A
+        else:
+            pass
+        if txt != 'No':
+            self._recoverLastSettings()
+
     def callbackChangeImageCopies( self, event ):
         imageCopies = int(self.m_choice_imageCopies.GetString(self.m_choice_imageCopies.GetSelection()))
         self._updateImageInfoField(imageCopies)
 
     def callbackOk( self, event ):
+        self._getBootInstance()
         self._getFlashSize()
         self._getHasMultiplanes()
         self._getPagesPerBlock()
@@ -311,7 +371,8 @@ class secBootUiFlexspiNand(bootDeviceWin_FlexspiNand.bootDeviceWin_FlexspiNand):
         self._getSearchStride()
         self._getAddressType()
         self._getImageInfo()
-        uivar.setBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand, self.flexspiNandOpt0, self.flexspiNandOpt1, self.flexspiNandFcbOpt, self.flexspiNandImageInfoList)
+        uivar.setBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_FlexspiNand, self.flexspiNandOpt0, self.flexspiNandOpt1, self.flexspiNandFcbOpt, self.flexspiNandImageInfoList, self.flexspiDeviceModel)
+        uivar.setAdvancedSettings(uidef.kAdvancedSettings_Tool, self.toolCommDict)
         uivar.setRuntimeSettings(False)
         self.Show(False)
         runtimeSettings = uivar.getRuntimeSettings()

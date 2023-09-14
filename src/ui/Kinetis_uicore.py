@@ -26,6 +26,9 @@ class secBootKinetisUi(LPC_main.secBootLpcMain):
         self.secureBootType = None
         self._Kinetis_initSecureBootSeqValue()
         self._Kinetis_initSecureBootSeqColor()
+        self.setDcdButtonEnablement(False)
+        self.setBdcButtonEnablement(False)
+        self.setXmcdButtonEnablement(False)
 
     def _Kinetis_initTargetSetupValue( self ):
         self.m_choice_bootDevice.Clear()

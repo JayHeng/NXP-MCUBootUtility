@@ -6,7 +6,8 @@ kMemBlockOffset_EPRDB0          = 0x480
 kMemBlockOffset_EKIB1           = 0x800
 kMemBlockOffset_EPRDB1          = 0x880
 
-kMemBlockOffsetToIvt_DCD = 0x40
+kMemBlockOffsetToIvt_DCD  = 0x40
+kMemBlockOffsetToIvt_XMCD = 0x40
 
 kMemBlockSize_HwCryptoKeyBlob = 0x100
 kMemBlockSize_NFCB            = 0x400
@@ -23,8 +24,9 @@ kMemBlockSize_HabKeyBlob      = 0x200
 kMemBlockSize_Container       = 0x2000
 kMemBlockSize_Edgelock        = 0x8000
 
-kBootHeaderTag_IVT = 0xD1
-kBootHeaderTag_DCD = 0xD2
+kBootHeaderTag_IVT     = 0xD1
+kBootHeaderTag_DCD     = 0xD2
+kBootHeaderTagVer_XMCD = 0xC0
 
 kMemberOffsetInIvt_Hdr      = 0x00
 kMemberOffsetInIvt_Tag      = 0x00
@@ -39,7 +41,9 @@ kMemberOffsetInBootData_Start  = 0x00
 kMemberOffsetInBootData_Size   = 0x04
 kMemberOffsetInBootData_Plugin = 0x08
 
-kMemberOffsetInDcd_Tag = 0x00
+kMemberOffsetInDcd_Tag        = 0x00
+kMemberOffsetInXmcd_TagVer    = 0x03
+kMemberOffsetInXmcd_BlockSize = 0x00
 
 kMemberOffsetInContainer_Len      = 0x01
 kMemberOffsetInContainer_Tag      = 0x03

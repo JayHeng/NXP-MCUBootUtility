@@ -26,6 +26,9 @@ class secBootMcxUi(Kinetis_main.secBootKinetisMain):
         self.secureBootType = None
         self._MCX_initSecureBootSeqValue()
         self._MCX_initSecureBootSeqColor()
+        self.setDcdButtonEnablement(False)
+        self.setBdcButtonEnablement(False)
+        self.setXmcdButtonEnablement(False)
 
     def _MCX_initTargetSetupValue( self ):
         self.m_choice_bootDevice.Clear()

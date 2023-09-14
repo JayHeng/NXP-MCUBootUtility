@@ -12,6 +12,7 @@ kBootDevice_UsdhcSd        = 'uSDHC SD'
 kBootDevice_UsdhcMmc       = 'uSDHC (e)MMC'
 kBootDevice_LpspiNor       = 'LPSPI NOR/EEPROM'
 kBootDevice_Dcd            = 'DCD'
+kBootDevice_Xmcd           = 'XMCD'
 kBootDevice_RamFlashloader = 'RAM FLASHLOADER'
 
 kBootDevice_v1_0_0 = [kBootDevice_FlexspiNor,                          kBootDevice_SemcNand,                                            kBootDevice_LpspiNor]
@@ -91,6 +92,7 @@ kMemBlockColor_ImageVersion    = wx.CYAN
 kMemBlockColor_IVT             = wx.RED
 kMemBlockColor_BootData        = wx.GREEN
 kMemBlockColor_DCD             = wx.Colour( 0xc9, 0xd2, 0x00 ) #wx.DARK_YELLOW
+kMemBlockColor_XMCD            = wx.Colour( 0xc9, 0xd2, 0x00 ) #wx.DARK_YELLOW
 kMemBlockColor_Image           = wx.BLUE
 kMemBlockColor_CSF             = wx.Colour( 0xff, 0xc0, 0xcb ) #wx.PINK
 kMemBlockColor_HabKeyBlob      = wx.Colour( 0xff, 0x7f, 0x00 ) #wx.CORAL

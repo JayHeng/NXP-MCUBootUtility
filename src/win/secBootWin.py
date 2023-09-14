@@ -132,15 +132,6 @@ class secBootWin ( wx.Frame ):
 
 		self.m_menu_tools.AppendSubMenu( self.m_menu_efuseLocker, u"eFuse Locker" )
 
-		self.m_menu_flexspiXipRegion = wx.Menu()
-		self.m_menuItem_flexspiXipRegion0 = wx.MenuItem( self.m_menu_flexspiXipRegion, wx.ID_ANY, u"0", wx.EmptyString, wx.ITEM_RADIO )
-		self.m_menu_flexspiXipRegion.Append( self.m_menuItem_flexspiXipRegion0 )
-
-		self.m_menuItem_flexspiXipRegion1 = wx.MenuItem( self.m_menu_flexspiXipRegion, wx.ID_ANY, u"1", wx.EmptyString, wx.ITEM_RADIO )
-		self.m_menu_flexspiXipRegion.Append( self.m_menuItem_flexspiXipRegion1 )
-
-		self.m_menu_tools.AppendSubMenu( self.m_menu_flexspiXipRegion, u"FlexSPI XIP Region" )
-
 		self.m_menu_ivtEntryType = wx.Menu()
 		self.m_menuItem_ivtEntryResetHandler = wx.MenuItem( self.m_menu_ivtEntryType, wx.ID_ANY, u"Reset Handler", wx.EmptyString, wx.ITEM_RADIO )
 		self.m_menu_ivtEntryType.Append( self.m_menuItem_ivtEntryResetHandler )
@@ -258,6 +249,19 @@ class secBootWin ( wx.Frame ):
 
 		self.m_button_deviceConfigurationData = wx.Button( self.m_panel_targetSetup, wx.ID_ANY, u"Device Configuration Data (DCD)", wx.DefaultPosition, wx.Size( 200,-1 ), 0 )
 		wSizer_targetSetup.Add( self.m_button_deviceConfigurationData, 0, wx.ALL, 5 )
+
+		self.m_staticText_null4TargetSetup = wx.StaticText( self.m_panel_targetSetup, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 15,-1 ), 0 )
+		self.m_staticText_null4TargetSetup.Wrap( -1 )
+
+		wSizer_targetSetup.Add( self.m_staticText_null4TargetSetup, 0, wx.ALL, 5 )
+
+		self.m_staticText_null5TargetSetup = wx.StaticText( self.m_panel_targetSetup, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 5,-1 ), 0 )
+		self.m_staticText_null5TargetSetup.Wrap( -1 )
+
+		wSizer_targetSetup.Add( self.m_staticText_null5TargetSetup, 0, wx.ALL, 5 )
+
+		self.m_button_externalMemConfigurationData = wx.Button( self.m_panel_targetSetup, wx.ID_ANY, u"Ext Memory Configuration Data (XMCD)", wx.DefaultPosition, wx.Size( 230,-1 ), 0 )
+		wSizer_targetSetup.Add( self.m_button_externalMemConfigurationData, 0, wx.ALL, 5 )
 
 
 		self.m_panel_targetSetup.SetSizer( wSizer_targetSetup )
@@ -1894,8 +1898,6 @@ class secBootWin ( wx.Frame ):
 		self.Bind( wx.EVT_MENU, self.callbackSetEfuseGroupTo6, id = self.m_menuItem_efuseGroup6.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetEfuseLockerAsAutomatic, id = self.m_menuItem_efuseLockerAutomatic.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetEfuseLockerAsManual, id = self.m_menuItem_efuseLockerManual.GetId() )
-		self.Bind( wx.EVT_MENU, self.callbackSetFlexspiXipRegionTo0, id = self.m_menuItem_flexspiXipRegion0.GetId() )
-		self.Bind( wx.EVT_MENU, self.callbackSetFlexspiXipRegionTo1, id = self.m_menuItem_flexspiXipRegion1.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetIvtEntryToResetHandler, id = self.m_menuItem_ivtEntryResetHandler.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackSetIvtEntryToVectorTable, id = self.m_menuItem_ivtEntryVectorTable.GetId() )
 		self.Bind( wx.EVT_MENU, self.callbackDisableEdgelockFw, id = self.m_menuItem_edgelockFwDis.GetId() )
@@ -1913,6 +1915,7 @@ class secBootWin ( wx.Frame ):
 		self.m_choice_bootDevice.Bind( wx.EVT_CHOICE, self.callbackSetBootDevice )
 		self.m_button_bootDeviceConfiguration.Bind( wx.EVT_BUTTON, self.callbackBootDeviceConfiguration )
 		self.m_button_deviceConfigurationData.Bind( wx.EVT_BUTTON, self.callbackDeviceConfigurationData )
+		self.m_button_externalMemConfigurationData.Bind( wx.EVT_BUTTON, self.callbackExternalMemConfigurationData )
 		self.m_radioBtn_uart.Bind( wx.EVT_RADIOBUTTON, self.callbackSetUartPort )
 		self.m_radioBtn_usbhid.Bind( wx.EVT_RADIOBUTTON, self.callbackSetUsbhidPort )
 		self.m_checkBox_oneStepConnect.Bind( wx.EVT_CHECKBOX, self.callbackSetOneStep )
@@ -2043,12 +2046,6 @@ class secBootWin ( wx.Frame ):
 	def callbackSetEfuseLockerAsManual( self, event ):
 		event.Skip()
 
-	def callbackSetFlexspiXipRegionTo0( self, event ):
-		event.Skip()
-
-	def callbackSetFlexspiXipRegionTo1( self, event ):
-		event.Skip()
-
 	def callbackSetIvtEntryToResetHandler( self, event ):
 		event.Skip()
 
@@ -2098,6 +2095,9 @@ class secBootWin ( wx.Frame ):
 		event.Skip()
 
 	def callbackDeviceConfigurationData( self, event ):
+		event.Skip()
+
+	def callbackExternalMemConfigurationData( self, event ):
 		event.Skip()
 
 	def callbackSetUartPort( self, event ):

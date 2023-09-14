@@ -29,6 +29,9 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
         self.secureBootType = None
         self._RTxxx_initSecureBootSeqValue()
         self._RTxxx_initSecureBootSeqColor()
+        self.setDcdButtonEnablement(False)
+        self.setBdcButtonEnablement(True)
+        self.setXmcdButtonEnablement(False)
 
     def _RTxxx_initTargetSetupValue( self ):
         self.m_choice_bootDevice.Clear()

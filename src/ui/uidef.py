@@ -177,6 +177,8 @@ kMcuDevice_Kinetis_Latest = kMcuDevice_Kinetis_v4_1_0
 kMcuDevice_LPC_Latest     = kMcuDevice_LPC_v4_0_0
 kMcuDevice_MCX_Latest     = kMcuDevice_MCX_v4_0_0
 
+##############################################################################
+
 kBootDevice_XspiNor        = 'XSPI NOR'
 
 kFlexspiNorDevice_SipWinbond_W25Q32     = 'SipWinbond_W25Q32'
@@ -196,7 +198,8 @@ kFlexspiNorDevice_ISSI_IS25LP064A       = 'ISSI_QuadSPI_IS25LPxxxA_IS25WPxxxA'
 kFlexspiNorDevice_ISSI_IS25LX256        = 'ISSI_OctalSPI_IS25LXxxx_IS25WXxxx'
 kFlexspiNorDevice_ISSI_IS26KS512S       = 'ISSI_HyperFlash_IS26KSxxxS_IS26KLxxxS'
 kFlexspiNorDevice_Micron_MT25QL128A     = 'Micron_QuadSPI_MT25QLxxxA'
-kFlexspiNorDevice_Micron_MT35X          = 'Micron_OctalSPI_MT35XLxxxA_MT35XUxxxA'
+kFlexspiNorDevice_Micron_MT35X_RW303    = 'Micron_OctalSPI_RW303-MT35XUxxxABA1G'
+kFlexspiNorDevice_Micron_MT35X_RW304    = 'Micron_OctalSPI_RW304-MT35XUxxxABA2G'
 kFlexspiNorDevice_Adesto_AT25SF128A     = 'Adesto_QuadSPI_AT25SFxxxA'
 kFlexspiNorDevice_Adesto_ATXP032        = 'Adesto_OctalSPI_ATXPxxx'
 kFlexspiNorDevice_Cypress_S25FL128S     = 'Cypress_QuadSPI_S25FSxxxS_S25FLxxxS'
@@ -224,7 +227,8 @@ kFlexspiNorOpt0_ISSI_IS25LP064A       = 0xc0000007
 kFlexspiNorOpt0_ISSI_IS25LX256        = 0xC0603005
 kFlexspiNorOpt0_ISSI_IS26KS512S       = 0xc0233007
 kFlexspiNorOpt0_Micron_MT25QL128A     = 0xc0000007
-kFlexspiNorOpt0_Micron_MT35X          = 0xC0603005
+kFlexspiNorOpt0_Micron_MT35X_RW303    = 0xC0603005
+kFlexspiNorOpt0_Micron_MT35X_RW304    = 0xC0633005
 kFlexspiNorOpt0_Adesto_AT25SF128A     = 0xc0000007
 kFlexspiNorOpt0_Adesto_ATXP032        = 0xc0803007
 kFlexspiNorOpt0_Cypress_S25FL128S     = 0xc0000007
@@ -237,7 +241,47 @@ kFlexspiNorOpt0_XTXtech_X25Q64D       = 0xc0000407
 kFlexspiNorOpt0_Puya_P25Q64LE         = 0xc0000405
 kFlexspiNorOpt0_AMIC_A25LQ64          = 0xc0000105
 
-kFlexspiNorInstance_Max = 3
+##############################################################################
+
+kFlexspiNandDevice_None                 = 'No'
+kFlexspiNandDevice_Winbond_W25N01G      = 'Winbond_W25N01G'
+kFlexspiNandDevice_Winbond_W25N02K      = 'Winbond_W25N02K'
+kFlexspiNandDevice_MXIC_MX35UF1G        = 'Macronix_MX35UF1G_MX35LF1G'
+kFlexspiNandDevice_MXIC_MX35UF2G        = 'Macronix_MX35UF2G_MX35LF2G'
+kFlexspiNandDevice_GigaDevice_GD5F1GQ5  = 'GigaDevice_GD5F1GQ5'
+kFlexspiNandDevice_GigaDevice_GD5F2GQ5  = 'GigaDevice_GD5F2GQ5'
+kFlexspiNandDevice_Micron_MT29F1G01AA   = 'Micron_MT29F1G01AA'
+kFlexspiNandDevice_Micron_MT29F2G01AA   = 'Micron_MT29F2G01AA'
+kFlexspiNandDevice_Paragon_PN26Q01A     = 'Paragon_PN26Q01A_PN26G01A'
+kFlexspiNandDevice_Paragon_PN26Q02A     = 'Paragon_PN26Q02A_PN26G02A'
+#kFlexspiNandDevice_Toshiba_TC58xVG0     = 'Toshiba_TC58xVG0SxHxAIx'
+
+kFlexspiNandOpt0_Winbond_W25N01G     = 0xC0010026
+kFlexspiNandOpt1_Winbond_W25N01G     = 0x000000ef
+kFlexspiNandOpt0_Winbond_W25N02K     = 0xC0020026
+kFlexspiNandOpt1_Winbond_W25N02K     = 0x000000ef
+kFlexspiNandOpt0_MXIC_MX35UF1G       = 0xC0010026
+kFlexspiNandOpt1_MXIC_MX35UF1G       = 0x000000c2
+kFlexspiNandOpt0_MXIC_MX35UF2G       = 0xC0020026
+kFlexspiNandOpt1_MXIC_MX35UF2G       = 0x000000c2
+kFlexspiNandOpt0_GigaDevice_GD5F1GQ5 = 0xC0010026
+kFlexspiNandOpt1_GigaDevice_GD5F1GQ5 = 0x000000c8
+kFlexspiNandOpt0_GigaDevice_GD5F2GQ5 = 0xC0020026
+kFlexspiNandOpt1_GigaDevice_GD5F2GQ5 = 0x000000c8
+kFlexspiNandOpt0_Micron_MT29F1G01AA  = 0xC0011022
+kFlexspiNandOpt1_Micron_MT29F1G01AA  = 0x0000002c
+kFlexspiNandOpt0_Micron_MT29F2G01AA  = 0xC0021022
+kFlexspiNandOpt1_Micron_MT29F2G01AA  = 0x0000002c
+kFlexspiNandOpt0_Paragon_PN26Q01A    = 0xC0010026
+kFlexspiNandOpt1_Paragon_PN26Q01A    = 0x000000a1
+kFlexspiNandOpt0_Paragon_PN26Q02A    = 0xC0020026
+kFlexspiNandOpt1_Paragon_PN26Q02A    = 0x000000a1
+
+##############################################################################
+
+kFlexspiInstance_Max = 3
+
+##############################################################################
 
 kSemcNorDevice_None                  = 'No'
 kSemcNorDevice_Micron_MT28EW128ABA   = 'Micron_MT28EW128ABA'
@@ -245,6 +289,8 @@ kSemcNorDevice_Micron_MT28UG128ABA   = 'Micron_MT28UG128ABA'
 
 kSemcNorOpt0_Micron_MT28EW128ABA       = 0xD0000600
 kSemcNorOpt0_Micron_MT28UG128ABA       = 0xD0000601
+
+##############################################################################
 
 kAdvancedSettings_Tool      = 0
 kAdvancedSettings_Cert      = 1

@@ -37,11 +37,16 @@ kInitialLoadSize_NAND_SD_EEPROM  = 0x1000
 kInitialLoadSize_NOR             = 0x2000
 kInitialLoadSize_RAM_FLASHLOADER = 0x200
 
+kMinInitialLoadSize_NAND         = 0x800
+kMinInitialLoadSize_NOR          = 0x1400
+
 kUserDcdFileType_Bin = 0x0
 kUserDcdFileType_Cfg = 0x1
 
 kStdDcdFilename_Bin = 'dcd.bin'
 kStdDcdFilename_Cfg = 'dcd.cfg'
+
+kStdXmcdFilename_Bin = 'xmcd.bin'
 
 kSbFileType_All   = 0x0
 kSbFileType_Flash = 0x1

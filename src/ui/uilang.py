@@ -46,7 +46,6 @@ kMainLanguageContentDict = {
         'subMenu_efuseLocker':                ['eFuse Locker',                          u"eFuse锁定"],
         'mItem_efuseLockerAutomatic':         ['Automatic',                             u"自动"],
         'mItem_efuseLockerManual':            ['Manual',                                u"手动"],
-        'subMenu_flexspiXipRegion':           ['FlexSPI XIP Region',                    u"FlexSPI原地执行映射空间"],
         'subMenu_ivtEntryType':               ['IVT Entry Type',                        u"启动头IVT中Entry类型"],
         'mItem_ivtEntryReset':                ['Reset Handler',                         u"复位向量函数"],
         'mItem_ivtEntryVector':               ['Vector Table',                          u"中断向量表"],
@@ -71,6 +70,7 @@ kMainLanguageContentDict = {
         'sText_bootDevice':                   ['Boot Device:',                          u"启动设备类型："],
         'button_bootDeviceConfiguration':     ['Boot Device Configuration',             u"启动设备配置"],
         'button_deviceConfigurationData':     ['Device Configuration Data (DCD)',       u"DCD数据配置"],
+        'button_externalMemConfigurationData':['Ext Memory Configuration Data (XMCD)',  u"XMCD数据配置"],
 
         'panel_portSetup':                    ['Port Setup',                            u"下载接口设置"],
         'radioBtn_uart':                      ['UART',                                  u"串口"],
@@ -193,10 +193,31 @@ kSubLanguageContentDict = {
         'button_dcd_ok':                      ['Ok',                                    u"确定"],
         'button_dcd_cancel':                  ['Cancel',                                u"取消"],
 
+        #xmcd
+        'xmcd_title':                         ['External Memory Configuration Data',    u"配置XMCD参数"],
+        'sText_xmcdSource':                   ['XMCD Source:',                          u"XMCD来源："],
+        'sText_memoryInterface':              ['Memory Interface:',                     u"存储外设接口："],
+        'sText_interfaceInstance':            ['Interface Instance:',                   u"外设接口号："],
+        'sText_configBlockType':              ['Config Block Type:',                    u"配置块类型："],
+        'panel_flexspiRamOpt0':               ['FlexSPI RAM Option0',                   u"FlexSPI RAM选项0"],
+        'sText_deviceSizeInMB':               ['Device Size (MB):',                     u"设备容量(MB)："],
+        'panel_flexspiRamOpt1':               ['FlexSPI RAM Option1',                   u"FlexSPI RAM选项1"],
+        'sText_ramConnection':                ['RAM Connection:',                       u"RAM连接方式："],
+        'sText_dataPinmuxGroup':              ['Data Pinmux Group:',                    u"数据Pinmux组："],
+        'sText_writeDummyCycles':             ['Write Dummy Cycles:',                   u"写时序冗余周期数："],
+        'sText_readDummyCycles':              ['Read Dummy Cycles:',                    u"读时序冗余周期数："],
+        'panel_semcSdramOpt':                 ['SEMC SDRAM Option',                     u"SEMC SDRAM选项"],
+        'sText_clkFreq':                      ['Clk Freq (MHz):',                       u"时钟频率(MHz)："],
+        'sText_deviceSizeInKB':               ['Device Size (KB):',                     u"设备容量(KB)："],
+        'sText_xmcdBinFile':                  ['XMCD bin file:',                        u"XMCD bin文件："],
+        'button_xmcd_ok':                     ['Ok',                                    u"确定"],
+        'button_xmcd_cancel':                 ['Cancel',                                u"取消"],
+
         #flexspinor/quadspinor
         'flexspinor_title':                   ['FlexSPI NOR Device Configuration',      u"配置FlexSPI接口NOR Flash启动设备"],
         'quadspinor_title':                   ['QuadSPI NOR Device Configuration',      u"配置QuadSPI接口NOR Flash启动设备"],
-        'sText_deviceModel':                  ['Use Typical Device Model:',             u"使用典型设备型号："],
+        'sText_bootInstance':                 ['Boot Instance:',                        u"启动外设号："],
+        'sText_deviceModel':                  ['Device Model:',                         u"设备模型："],
         'cBox_keepFdcb':                      ['Keep FDCB',                             u"保留原FDCB"],
         'panel_norOpt0':                      ['Nor Option0',                           u"NOR选项0"],
         'sText_deviceType':                   ['Device Type:',                          u"设备类型："],
@@ -218,7 +239,7 @@ kSubLanguageContentDict = {
         'sText_dualImage1Version':            ['Image 1 Version(0-65535):',             u"程序1版本(0-65535)："],
         'sText_dualImage1Offset':             ['Image 1 Offset:',                       u"程序1偏移地址："],
         'sText_dualImage1Size':               ['Image 1 Size:',                         u"程序1大小："],
-        'button_completeFdcb':                ['Complete FDCB Configuration (512bytes)', u"完整FDCB配置(512字节)"],
+        'button_completeFdcb':                ['Complete FDCB CFG (512bytes)',          u"完整FDCB配置(512字节)"],
         'button_flexspinor_ok':               ['Ok',                                    u"确定"],
         'button_flexspinor_cancel':           ['Cancel',                                u"取消"],
 
@@ -237,7 +258,6 @@ kSubLanguageContentDict = {
         'lpspinor_title':                     ['LPSPI NOR/EEPROM Device Configuration', u"配置LPSPI接口NOR/EEPROM启动设备"],
         'flexcommspinor_title':               ['Flexcomm SPI NOR Device Configuration', u"配置Flexcomm SPI接口NOR Flash启动设备"],
         'panel_memOpt':                       ['Memory Option',                         u"存储器选项"],
-        'sText_deviceType':                   ['Device Type:',                          u"设备类型："],
         'sText_pageSize':                     ['Page Size (Bytes):',                    u"页大小(B)："],
         'sText_sectorSize':                   ['Sector Size (KBytes):',                 u"扇区大小（KB）："],
         'sText_totalSize':                    ['Total Size (KBytes):',                  u"总容量（KB）："],
@@ -363,7 +383,7 @@ kRevision_1_0_0_en =  "【v1.0.0】 - 2018.12\n" + \
                       "     5. Support for converting bare image into bootable image \n" + \
                       "     6. Support for loading bootable image into FlexSPI NOR and SEMC NAND boot devices \n" + \
                       "     7. Support for loading bootable image into LPSPI NOR/EEPROM recovery boot device \n" + \
-                      "     8. Support DCD which can help load image to SDRAM \n" + \
+                      "     8. Support DCD which can help configure device(eg. SDRAM) \n" + \
                       "     9. Support development boot case (Unsigned) \n" + \
                       "    10. Support HAB encryption secure boot case (Signed only, Signed and Encrypted) \n" + \
                       "    11. Can back up certificate with time stamp \n" + \
@@ -828,6 +848,26 @@ kRevision_5_2_1_en =  "【v5.2.1】 - 2023.07\n" + \
 kRevision_5_2_1_zh = u"【v5.2.1】 - 2023.07\n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 修复对FlexSPI NAND设备的下载支持 \n\n"
+kRevision_5_3_0_en =  "【v5.3.0】 - 2023.09\n" + \
+                      "  Feature: \n" + \
+                      "     1. [RTyyyy] Support XMCD which can help configure FlexSPI RAM/SEMC SDRAM \n" + \
+                      "     2. [RTyyyy] Support secondary FlexSPI instance for NAND boot \n" + \
+                      "     3. [RT] Add FlexSPI NAND device model support \n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RTyyyy] Change FlexSPI instance selection from menu to config win \n" + \
+                      "     2. [RTyyyy] Can recognise Non-XIP image which is linked in FlexSPI RAM region \n" + \
+                      "  Bugfix: \n" + \
+                      "     1. [RTyyyy] Cannot recognise bootable image which offset of reset handler to vector is less than 0xB00 \n\n"
+kRevision_5_3_0_zh = u"【v5.3.0】 - 2023.08\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTyyyy] 支持XMCD配置功能，可用于加载image进FlexSPI RAM/SEMC SDRAM执行 \n" + \
+                     u"     2. [RTyyyy] 支持第二个FlexSPI去下载启动NAND \n" + \
+                     u"     3. [RTyyyy] 新增FlexSPI NAND启动设备模型支持 \n" + \
+                     u"  改进: \n" + \
+                     u"     1. [RTyyyy] 将FlexSPI序号选择从菜单栏改至设备配置界面 \n" + \
+                     u"     2. [RTyyyy] 可以识别链接在FlexSPI RAM区域的程序 \n" + \
+                     u"  修复: \n" + \
+                     u"     1. [RTyyyy] 无法识别IVT中复位函数地址相对向量表首地址偏移小于0xB00的可启动程序文件 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -868,6 +908,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v5_1_0':             [kRevision_5_1_0_en,                      kRevision_5_1_0_zh],
         'revisionHistory_v5_2_0':             [kRevision_5_2_0_en,                      kRevision_5_2_0_zh],
         'revisionHistory_v5_2_1':             [kRevision_5_2_1_en,                      kRevision_5_2_1_zh],
+        'revisionHistory_v5_3_0':             [kRevision_5_3_0_en,                      kRevision_5_3_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
@@ -937,12 +978,14 @@ kMsgLanguageContentDict = {
                                               u"无法根据该可启动文件IVT头找到有效中断向量表地址: "],
         'genImgError_formatNotValid':         ['Cannot recognise/convert the format of image file: ',
                                               u"无法识别/转换该程序文件格式: "],
+        'genImgError_bypassXmcd':             ['XMCD is bypassed due to DCD! For this case, you can download bootable binary under Programmer mode.',
+                                              u"因为DCD的存在导致XMCD被忽略了! 这种情况建议使用通用编程器模式去下载"],
         'genDcdError_failToGen':              ['DCD binary is not generated successfully! Check your DCD descriptor file and make sure you don\'t put the tool in path with blank space!',
                                               u"DCD文件未成功生成!检查DCD描述符文件, 并确保NXP-MCUBootUtility工具的路径中没有空格!"],
         'srcImgError_invalidVector':          ['Invalid vector address found in image file: ',
                                               u"该程序文件起始链接地址是无效的:"],
-        'srcImgError_invalidNonXipRange':     ['Non-XIP Application is detected but it is not in the range of ITCM/DTCM/OCRAM/SDRAM!',
-                                              u"检测到非XIP应用程序,但它没有链接到ITCM/DTCM/OCRAM/SDRAM范围内!"],
+        'srcImgError_invalidNonXipRange':     ['Non-XIP Application is detected but it is not in the range of ITCM/DTCM/OCRAM/SDRAM/FlexSPI RAM!',
+                                              u"检测到非XIP应用程序,但它没有链接到ITCM/DTCM/OCRAM/SDRAM/FlexSPI RAM范围内!"],
         'srcImgError_nonXipNotAppliable':     ['Non-XIP Application is detected but it is not appliable for HAB Signed image boot when boot device is FlexSPI/SEMC NOR under selected MCU device!',
                                               u"Non-XIP应用程序被检测到, 但它在选中的微控制器型号以及FlexSPI/SEMC NOR启动设备下不适用于HAB签名启动!"],
         'srcImgError_xipNotForHabCrypto':     ['XIP Application is detected but it is not appliable for HAB Encrypted image boot!',
