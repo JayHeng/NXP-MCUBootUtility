@@ -855,14 +855,14 @@ kRevision_5_3_0_en =  "【v5.3.0】 - 2023.09\n" + \
                       "     3. [RT] Add FlexSPI NAND device model support \n" + \
                       "  Improvement: \n" + \
                       "     1. [RTyyyy] Change FlexSPI instance selection from menu to config win \n" + \
-                      "     2. [RTyyyy] Can recognise Non-XIP image which is linked in FlexSPI RAM region \n" + \
+                      "     2. [RTyyyy] Can recognize Non-XIP image which is linked in FlexSPI RAM region \n" + \
                       "  Bugfix: \n" + \
-                      "     1. [RTyyyy] Cannot recognise bootable image which offset of reset handler to vector is less than 0xB00 \n\n"
-kRevision_5_3_0_zh = u"【v5.3.0】 - 2023.08\n" + \
+                      "     1. [RTyyyy] Cannot recognize bootable image which offset of reset handler to vector is less than 0xB00 \n\n"
+kRevision_5_3_0_zh = u"【v5.3.0】 - 2023.09\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持XMCD配置功能，可用于加载image进FlexSPI RAM/SEMC SDRAM执行 \n" + \
                      u"     2. [RTyyyy] 支持第二个FlexSPI去下载启动NAND \n" + \
-                     u"     3. [RTyyyy] 新增FlexSPI NAND启动设备模型支持 \n" + \
+                     u"     3. [RT] 新增FlexSPI NAND启动设备模型支持 \n" + \
                      u"  改进: \n" + \
                      u"     1. [RTyyyy] 将FlexSPI序号选择从菜单栏改至设备配置界面 \n" + \
                      u"     2. [RTyyyy] 可以识别链接在FlexSPI RAM区域的程序 \n" + \
@@ -914,7 +914,7 @@ kMsgLanguageContentDict = {
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],
         'connectError_cannotSetOneStep':      ['One Step mode cannot be set under Entry Mode, Please switch to Master Mode and try again!',
                                               u"在软件入门级模式下，[一键连接]模式不可改，请切换到软件专家级模式下再试！"],
-        'connectError_InvalidUserFl':         ['Cannot recognise user flashloader file, please check linker address of flashloader!',
+        'connectError_InvalidUserFl':         ['Cannot recognize user flashloader file, please check linker address of flashloader!',
                                               u"无法识别flashloader_user.srec文件，请检查该flashloader地址链接是否合法！"],
         'connectError_failToJumpToFl':        ['MCU has entered ROM SDP mode but failed to jump to Flashloader, Please reset board and try again!',
                                               u"微控制器已成功进入ROM SDP模式，但是未能跳转进入Flashloader，请复位板子再试！"],
@@ -976,7 +976,7 @@ kMsgLanguageContentDict = {
                                               u"密钥因子没有设置正确！"],
         'genImgError_vectorNotFound':         ['Cannot find the vector table address in this bootable image file: ',
                                               u"无法根据该可启动文件IVT头找到有效中断向量表地址: "],
-        'genImgError_formatNotValid':         ['Cannot recognise/convert the format of image file: ',
+        'genImgError_formatNotValid':         ['Cannot recognize/convert the format of image file: ',
                                               u"无法识别/转换该程序文件格式: "],
         'genImgError_bypassXmcd':             ['XMCD is bypassed due to DCD! For this case, you can download bootable binary under Programmer mode.',
                                               u"因为DCD的存在导致XMCD被忽略了! 这种情况建议使用通用编程器模式去下载"],

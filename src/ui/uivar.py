@@ -328,7 +328,7 @@ def initVar(cfgFilename):
         g_xmcdSettingsDict['isXmcdEnabled'] = False
         g_xmcdSettingsDict['xmcdSource'] = 'Disable XMCD'
         g_xmcdSettingsDict['userBinFile'] = 'N/A'
-        g_xmcdSettingsDict['xmcdHeader'] = 0xC0000008
+        g_xmcdSettingsDict['xmcdHeader'] = 0xC0010008
         g_xmcdSettingsDict['xmcdOption0'] = 0xC0000700
         g_xmcdSettingsDict['xmcdOption1'] = 0x0
         g_xmcdSettingsDict['xmcdOption2'] = 0x0

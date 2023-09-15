@@ -66,7 +66,10 @@ class secBootUiCfgXmcd(bootDeviceWin_XMCD.bootDeviceWin_XMCD):
             memInterface = (self.xmcdHeader & 0x00F00000) >> 20
             self.m_choice_memoryInterface.SetSelection(memInterface)
             self._getMemoryInterface()
-            self.m_choice_interfaceInstance.SetSelection((self.xmcdHeader & 0x000F0000) >> 16)
+            interfaceInstance = (self.xmcdHeader & 0x000F0000) >> 16
+            if interfaceInstance == 0:
+                interfaceInstance = 1
+            self.m_choice_interfaceInstance.SetSelection(interfaceInstance - 1)
             self.m_choice_cfgBlockType.SetSelection((self.xmcdHeader & 0x0000F000) >> 12)
             if memInterface == 0:   # FlexSPI
                 self.m_choice_deviceType.SetSelection((self.xmcdOption0 & 0x00F00000) >> 20)
@@ -152,7 +155,7 @@ class secBootUiCfgXmcd(bootDeviceWin_XMCD.bootDeviceWin_XMCD):
             pass
 
     def _getInterfaceInstance( self ):
-        val = self.m_choice_interfaceInstance.GetSelection()
+        val = self.m_choice_interfaceInstance.GetSelection() + 1
         self.xmcdHeader = (self.xmcdHeader & 0xFFF0FFFF) | (val << 16)
 
     def _getCfgBlockType( self ):
