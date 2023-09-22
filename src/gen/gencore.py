@@ -37,28 +37,37 @@ class secBootGen(uicore.secBootUi):
         if ((start >= self.tgt.memoryRange['itcm'].start) and (start + length <= self.tgt.memoryRange['itcm'].start + self.tgt.memoryRange['itcm'].length)) or \
            ((start >= self.tgt.memoryRange['dtcm'].start) and (start + length <= self.tgt.memoryRange['dtcm'].start + self.tgt.memoryRange['dtcm'].length)) or \
            ((start >= self.tgt.memoryRange['ocram'].start) and (start + length <= self.tgt.memoryRange['ocram'].start + self.tgt.memoryRange['ocram'].length)) or \
+           (('itcm_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['itcm_ns'].start) and (start + length <= self.tgt.memoryRange['itcm_ns'].start + self.tgt.memoryRange['itcm_ns'].length))) or \
+           (('dtcm_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['dtcm_ns'].start) and (start + length <= self.tgt.memoryRange['dtcm_ns'].start + self.tgt.memoryRange['dtcm_ns'].length))) or \
+           (('ocram_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['ocram_ns'].start) and (start + length <= self.tgt.memoryRange['ocram_ns'].start + self.tgt.memoryRange['ocram_ns'].length))) or \
            (('itcm_sec' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['itcm_sec'].start) and (start + length <= self.tgt.memoryRange['itcm_sec'].start + self.tgt.memoryRange['itcm_sec'].length))) or \
-           (('dtcm_sec' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['dtcm_sec'].start) and (start + length <= self.tgt.memoryRange['dtcm_sec'].start + self.tgt.memoryRange['dtcm_sec'].length))):
+           (('dtcm_sec' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['dtcm_sec'].start) and (start + length <= self.tgt.memoryRange['dtcm_sec'].start + self.tgt.memoryRange['dtcm_sec'].length))) or \
+           (('itcm_sec_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['itcm_sec_ns'].start) and (start + length <= self.tgt.memoryRange['itcm_sec_ns'].start + self.tgt.memoryRange['itcm_sec_ns'].length))) or \
+           (('dtcm_sec_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['dtcm_sec_ns'].start) and (start + length <= self.tgt.memoryRange['dtcm_sec_ns'].start + self.tgt.memoryRange['dtcm_sec_ns'].length))):
             return True
         else:
             return False
 
     def isInTheRangeOfFlexspiRam( self, start, length ):
         if (('flexspi1_ram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi1_ram'].start) and (start + length <= self.tgt.memoryRange['flexspi1_ram'].start + self.tgt.memoryRange['flexspi1_ram'].length))) or \
-           (('flexspi2_ram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi2_ram'].start) and (start + length <= self.tgt.memoryRange['flexspi2_ram'].start + self.tgt.memoryRange['flexspi2_ram'].length))):
+           (('flexspi1_ram_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi1_ram_ns'].start) and (start + length <= self.tgt.memoryRange['flexspi1_ram_ns'].start + self.tgt.memoryRange['flexspi1_ram_ns'].length))) or \
+           (('flexspi1_ram_a' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi1_ram_a'].start) and (start + length <= self.tgt.memoryRange['flexspi1_ram_a'].start + self.tgt.memoryRange['flexspi1_ram_a'].length))) or \
+           (('flexspi1_ram_a_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi1_ram_a_ns'].start) and (start + length <= self.tgt.memoryRange['flexspi1_ram_a_ns'].start + self.tgt.memoryRange['flexspi1_ram_a_ns'].length))) or \
+           (('flexspi2_ram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi2_ram'].start) and (start + length <= self.tgt.memoryRange['flexspi2_ram'].start + self.tgt.memoryRange['flexspi2_ram'].length))) or \
+           (('flexspi2_ram_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi2_ram_ns'].start) and (start + length <= self.tgt.memoryRange['flexspi2_ram_ns'].start + self.tgt.memoryRange['flexspi2_ram_ns'].length))) or \
+           (('flexspi2_ram_a' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi2_ram_a'].start) and (start + length <= self.tgt.memoryRange['flexspi2_ram_a'].start + self.tgt.memoryRange['flexspi2_ram_a'].length))) or \
+           (('flexspi2_ram_a_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['flexspi2_ram_a_ns'].start) and (start + length <= self.tgt.memoryRange['flexspi2_ram_a_ns'].start + self.tgt.memoryRange['flexspi2_ram_a_ns'].length))):
             return True
         else:
             return False
 
     def isInTheRangeOfSram( self, start, length ):
-        if ((start >= self.tgt.memoryRange['sram'].start) and (start + length <= self.tgt.memoryRange['sram'].start + self.tgt.memoryRange['sram'].length)):
-            return True
-        else:
-            return False
-
-    def isInTheRangeOfSramx( self, start, length ):
-        if ((start >= self.tgt.memoryRange['sram'].start) and (start + length <= self.tgt.memoryRange['sram'].start + self.tgt.memoryRange['sram'].length)) or \
-           ((start >= self.tgt.memoryRange['sramx'].start) and (start + length <= self.tgt.memoryRange['sramx'].start + self.tgt.memoryRange['sramx'].length)):
+        if (('sram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['sram'].start) and (start + length <= self.tgt.memoryRange['sram'].start + self.tgt.memoryRange['sram'].length))) or \
+           (('sramx' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['sramx'].start) and (start + length <= self.tgt.memoryRange['sramx'].start + self.tgt.memoryRange['sramx'].length))) or \
+           (('sramc' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['sramc'].start) and (start + length <= self.tgt.memoryRange['sramc'].start + self.tgt.memoryRange['sramc'].length))) or \
+           (('srams' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['srams'].start) and (start + length <= self.tgt.memoryRange['srams'].start + self.tgt.memoryRange['srams'].length))) or \
+           (('sramc_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['sramc_ns'].start) and (start + length <= self.tgt.memoryRange['sramc_ns'].start + self.tgt.memoryRange['sramc_ns'].length))) or \
+           (('srams_ns' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['srams_ns'].start) and (start + length <= self.tgt.memoryRange['srams_ns'].start + self.tgt.memoryRange['srams_ns'].length))):
             return True
         else:
             return False
@@ -253,27 +262,44 @@ class secBootGen(uicore.secBootUi):
         flexspiNorMemBase  = None
         flexspiNorMemBaseNs = None
         flexspiNorMemBaseAliased = None
+        flexspiNorMemBaseAliasedNs = None
+        flexspiNorMemMaxSize = None
+        flexspiNorMemAliasedMaxSize = None
         if self.flexspiBootInstance == 0:
             flexspiNorMemBase  = self.tgt.flexspiNorMemBase0
             flexspiNorMemBaseNs = self.tgt.flexspiNorMemBase0Ns
-            flexspiNorMemBase0Aliased = self.tgt.flexspiNorMemBase0Aliased
+            flexspiNorMemBaseAliased = self.tgt.flexspiNorMemBase0Aliased
+            flexspiNorMemBaseAliasedNs = self.tgt.flexspiNorMemBase0AliasedNs
+            flexspiNorMemMaxSize = self.tgt.flexspiNorMem0MaxSize
+            flexspiNorMemAliasedMaxSize = self.tgt.flexspiNorMem0AliasedMaxSize
         elif self.flexspiBootInstance == 1:
             flexspiNorMemBase  = self.tgt.flexspiNorMemBase1
             flexspiNorMemBaseNs = self.tgt.flexspiNorMemBase1Ns
-            flexspiNorMemBase1Aliased = self.tgt.flexspiNorMemBase1Aliased
+            flexspiNorMemBaseAliased = self.tgt.flexspiNorMemBase1Aliased
+            flexspiNorMemBaseAliasedNs = self.tgt.flexspiNorMemBase1AliasedNs
+            flexspiNorMemMaxSize = self.tgt.flexspiNorMem1MaxSize
+            flexspiNorMemAliasedMaxSize = self.tgt.flexspiNorMem1AliasedMaxSize
         else:
             pass
         if flexspiNorMemBase != None:
-            if ((imageStartAddr >= flexspiNorMemBase) and (imageStartAddr < flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+            if ((imageStartAddr >= flexspiNorMemBase) and (imageStartAddr < flexspiNorMemBase + flexspiNorMemMaxSize)):
                 self.tgt.flexspiNorMemBase = flexspiNorMemBase
+                self.tgt.flexspiNorMemMaxSize = flexspiNorMemMaxSize
                 return
         if flexspiNorMemBaseNs != None:
-            if ((imageStartAddr >= flexspiNorMemBaseNs) and (imageStartAddr < flexspiNorMemBaseNs + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+            if ((imageStartAddr >= flexspiNorMemBaseNs) and (imageStartAddr < flexspiNorMemBaseNs + flexspiNorMemMaxSize)):
                 self.tgt.flexspiNorMemBase = flexspiNorMemBaseNs
+                self.tgt.flexspiNorMemMaxSize = flexspiNorMemMaxSize
                 return
         if flexspiNorMemBaseAliased != None:
-            if ((imageStartAddr >= flexspiNorMemBaseAliased) and (imageStartAddr < flexspiNorMemBaseAliased + rundef.kBootDeviceMemXipSize_FlexspiNor)):
+            if ((imageStartAddr >= flexspiNorMemBaseAliased) and (imageStartAddr < flexspiNorMemBaseAliased + flexspiNorMemAliasedMaxSize)):
                 self.tgt.flexspiNorMemBase = flexspiNorMemBaseAliased
+                self.tgt.flexspiNorMemMaxSize = flexspiNorMemAliasedMaxSize
+                return
+        if flexspiNorMemBaseAliasedNs != None:
+            if ((imageStartAddr >= flexspiNorMemBaseAliasedNs) and (imageStartAddr < flexspiNorMemBaseAliasedNs + flexspiNorMemAliasedMaxSize)):
+                self.tgt.flexspiNorMemBase = flexspiNorMemBaseAliasedNs
+                self.tgt.flexspiNorMemMaxSize = flexspiNorMemAliasedMaxSize
                 return
 
     def bincopyFileToFile( self, destBinFile, srcBinFile, offset ):

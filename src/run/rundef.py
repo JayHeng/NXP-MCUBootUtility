@@ -38,3 +38,10 @@ kXspiNorDefaultMemInfo_SectorSize  = 0x1000
 kXspiNorDefaultMemInfo_BlockSize   = 0x20000
 
 kBootDeviceMemXipSize_FlexspiNor   = 0x10000000 #256MB
+kBootDeviceMemXipSize_FlexspiNor504MB   = 0x1F800000
+kBootDeviceMemXipSize_FlexspiNor256MB   = 0x10000000
+kBootDeviceMemXipSize_FlexspiNor240MB   = 0x0F000000
+kBootDeviceMemXipSize_FlexspiNor128MB   = 0x08000000
+kBootDeviceMemXipSize_FlexspiNor64MB    = 0x04000000
+kBootDeviceMemXipSize_FlexspiNor32MB    = 0x02000000
+kBootDeviceMemXipSize_FlexspiNor4MB     = 0x00400000

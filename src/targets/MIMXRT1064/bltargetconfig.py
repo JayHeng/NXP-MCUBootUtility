@@ -66,9 +66,15 @@ flexspiNorDevice = uidef.kFlexspiNorDevice_SipWinbond_W25Q32  # or 0xC0000007
 flexspiNorMemBase0 = 0x70000000
 flexspiNorMemBase0Ns = None
 flexspiNorMemBase0Aliased = None
+flexspiNorMemBase0AliasedNs =None
+flexspiNorMem0MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor4MB
+flexspiNorMem0AliasedMaxSize = None
 flexspiNorMemBase1 = None
 flexspiNorMemBase1Ns = None
 flexspiNorMemBase1Aliased = None
+flexspiNorMemBase1AliasedNs = None
+flexspiNorMem1MaxSize = None
+flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '75MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x0
 flexspiNorEfuseBootCfg0Bits = 12
@@ -262,8 +268,8 @@ memoryRange = {
 
     # FlexSPI1 RAM, 256MByte
     'flexspi1_ram' : MemoryRange(0x60000000, 0x10000000, 'state_flexspi1_mem.dat'),
-    # FlexSPI2 RAM, 256MByte
-    'flexspi2_ram' : MemoryRange(0x70000000, 0x10000000, 'state_flexspi2_mem.dat')
+    # FlexSPI2 RAM, 240MByte
+    'flexspi2_ram' : MemoryRange(0x70000000, 0x0F000000, 'state_flexspi2_mem.dat')
 }
 
 reservedRegionDict = {   # new

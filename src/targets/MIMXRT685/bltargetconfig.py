@@ -34,6 +34,7 @@ from boot.memoryrange import MemoryRange
 from ui import RTxxx_uidef
 from ui import RTxxx_uidef_otp
 from ui import uidef
+from run import RTxxx_rundef
 from gen import gendef
 
 cpu = 'MIMXRT685'
@@ -59,9 +60,12 @@ flexspiNorDevice = uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_2nd
 flexspiNorMemBase0   = 0x18000000 # CM33 Secure
 flexspiNorMemBase0Ns = 0x08000000 # CM33 Non-Secure
 flexspiNorMemBase0Aliased = None
+flexspiNorMemBase0AliasedNs =None
 flexspiNorMemBase1   = None
 flexspiNorMemBase1Ns = None
 flexspiNorMemBase1Aliased = None
+flexspiNorMemBase1AliasedNs =None
+flexspiNorMemMaxSize = RTxxx_rundef.kBootDeviceMemXipSize_FlexspiNor
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = None
@@ -103,11 +107,22 @@ sbLoaderVersion = gendef.kSbLoaderVersion_v2_0
 
 # memory map
 memoryRange = {
-    # SRAM, 3MByte
-    'sram' : MemoryRange(0x00000000, 0x480000, 'state_mem0.dat'),
+    # SRAM AHB-C bus, 4.5MByte
+    'sramc' : MemoryRange(0x00000000, 0x47D000, 'state_sramc_mem.dat'),
+    # SRAM AHB-C bus, 4.5MByte
+    'sramc_ns' : MemoryRange(0x10000000, 0x47D000, 'state_sramc_ns_mem.dat'),
+    # SRAM AHB-S bus, 4.5MByte
+    'srams' : MemoryRange(0x20000000, 0x47D000, 'state_srams_mem.dat'),
+    # SRAM AHB-S bus, 4.5MByte
+    'srams_ns' : MemoryRange(0x30000000, 0x47D000, 'state_srams_ns_mem.dat'),
 
     # FLASH, 64KByte / 512MByte
-    'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000)
+    'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000),
+
+    # FlexSPI0 RAM Secure, 128MByte
+    'flexspi1_ram' : MemoryRange(0x18000000, 0x08000000, 'state_flexspi1_mem.dat'),
+    # FlexSPI0 RAM Non-Secure, 128MByte
+    'flexspi1_ram_ns' : MemoryRange(0x08000000, 0x08000000, 'state_flexspi1_ns_mem.dat')
 }
 
 reservedRegionDict = {

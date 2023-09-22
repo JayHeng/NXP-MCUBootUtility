@@ -212,6 +212,8 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
     def _RTxxx_isValidNonXipAppImage( self, imageStartAddr ):
         if self.isInTheRangeOfSram(imageStartAddr, 1):
             return True
+        elif self.isInTheRangeOfFlexspiRam(imageStartAddr, 1):
+            return True
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_invalidNonXipRange'][self.languageIndex])
             return False
@@ -232,12 +234,12 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
         self.destAppVectorAddress = imageStartAddr
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
             self.adjustTgtFlexspiMemBaseAccordingToApp(imageStartAddr)
-            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor)):
-                if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + RTxxx_rundef.kBootDeviceMemXipSize_FlexspiNor):
+            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize)):
+                if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize):
                     self.isXipApp = True
                     self.destAppVectorOffset = imageStartAddr - self.tgt.flexspiNorMemBase
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(rundef.kBootDeviceMemXipSize_FlexspiNor))
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + u"0x%s !" %(self.tgt.flexspiNorMemMaxSize))
                     return False
             else:
                 #self.destAppVectorOffset = RTyyyy_gendef.kInitialLoadSize_NOR

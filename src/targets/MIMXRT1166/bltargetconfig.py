@@ -35,6 +35,7 @@ from ui import RTyyyy_uidef
 from ui import RTyyyy_uidef_efuse
 from ui import uidef
 from run import RTyyyy_rundef
+from run import rundef
 from gen import gendef
 
 cpu = 'MIMXRT1166'
@@ -70,9 +71,15 @@ flexspiNorDevice = uidef.kFlexspiNorDevice_ISSI_IS25LP064A
 flexspiNorMemBase0 = 0x30000000
 flexspiNorMemBase0Ns = None
 flexspiNorMemBase0Aliased = None
+flexspiNorMemBase0AliasedNs =None
+flexspiNorMem0MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor256MB
+flexspiNorMem0AliasedMaxSize = None
 flexspiNorMemBase1 = 0x60000000
 flexspiNorMemBase1Ns = None
 flexspiNorMemBase1Aliased = None
+flexspiNorMemBase1AliasedNs =None
+flexspiNorMem1MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor504MB
+flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = 12
@@ -131,8 +138,8 @@ memoryRange = {
 
     # FlexSPI1 RAM, 256MByte
     'flexspi1_ram' : MemoryRange(0x30000000, 0x10000000, 'state_flexspi1_mem.dat'),
-    # FlexSPI2 RAM, 256MByte
-    'flexspi2_ram' : MemoryRange(0x60000000, 0x10000000, 'state_flexspi2_mem.dat')
+    # FlexSPI2 RAM, 504MByte
+    'flexspi2_ram' : MemoryRange(0x60000000, 0x1F800000, 'state_flexspi2_mem.dat')
 }
 
 reservedRegionDict = {   # new

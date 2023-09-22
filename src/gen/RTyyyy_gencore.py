@@ -583,7 +583,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             executeBase = self.tgt.memoryRange['itcm_sec'].start
         elif (('dtcm_sec' in self.tgt.memoryRange) and ((vectorAddr >= self.tgt.memoryRange['dtcm_sec'].start) and (vectorAddr < self.tgt.memoryRange['dtcm_sec'].start + self.tgt.memoryRange['dtcm_sec'].length))):
             executeBase = self.tgt.memoryRange['dtcm_sec'].start
-        elif ((vectorAddr >= self.tgt.flexspiNorMemBase) and (vectorAddr < self.tgt.flexspiNorMemBase + RTyyyy_rundef.kBootDeviceMemXipSize_FlexspiNor)):
+        elif ((vectorAddr >= self.tgt.flexspiNorMemBase) and (vectorAddr < self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize)):
              executeBase = self.tgt.flexspiNorMemBase
         elif ((vectorAddr >= RTyyyy_rundef.kBootDeviceMemBase_SemcNor) and (vectorAddr < RTyyyy_rundef.kBootDeviceMemBase_SemcNor + RTyyyy_rundef.kBootDeviceMemXipSize_SemcNor)):
              executeBase = RTyyyy_rundef.kBootDeviceMemBase_SemcNor
@@ -986,7 +986,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         else:
             pass
 
-    def _RTyyyy_isValidNonXipAppImage( self, imageStartAddr ):
+    def _RTyyyy_isValidNonXipAppImage( self, imageStartAddr, showError=True ):
         if self.isInTheRangeOfFlexram(imageStartAddr, 1):
             return True
         elif self.isInTheRangeOfFlexspiRam(imageStartAddr, 1):
@@ -994,7 +994,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         elif ((imageStartAddr >= RTyyyy_rundef.kBootDeviceMemBase_SemcSdram) and (imageStartAddr < RTyyyy_rundef.kBootDeviceMemBase_SemcSdram + RTyyyy_rundef.kBootDeviceMemMaxSize_SemcSdram)):
             return True
         else:
-            self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_invalidNonXipRange'][self.languageIndex])
+            if showError:
+                self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_invalidNonXipRange'][self.languageIndex])
             return False
 
     def _RTyyyy_isValidAppImage( self, imageStartAddr ):
@@ -1047,8 +1048,8 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.destAppVectorAddress = imageStartAddr
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
             self.adjustTgtFlexspiMemBaseAccordingToApp(imageStartAddr)
-            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor)):
-                if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + rundef.kBootDeviceMemXipSize_FlexspiNor):
+            if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize)):
+                if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize):
                     self.isXipApp = True
                     self.destAppVectorOffset = imageStartAddr - self.tgt.flexspiNorMemBase
                     minReservedSize = 0
@@ -1063,7 +1064,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
 
                         return False
                 else:
-                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + str(hex(rundef.kBootDeviceMemXipSize_FlexspiNor)) + " !")
+                    self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_xipSizeTooLarge'][self.languageIndex] + str(hex(self.tgt.flexspiNorMemMaxSize)) + " !")
                     return False
             else:
                 if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
@@ -1352,6 +1353,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             finalBtAppData += edgelockFwBytes
         ##############################################################
         num = self.destAppVectorOffset - self.destAppInitialLoadSize
+        #self.printDeviceStatus("tgt.flexspiNorMemBase  = " + str(hex(self.tgt.flexspiNorMemBase)))
         #self.printDeviceStatus("destAppContainerOffset  = " + str(hex(self.destAppContainerOffset)))
         #self.printDeviceStatus("destAppVectorOffset  = " + str(hex(self.destAppVectorOffset)))
         #self.printDeviceStatus("destAppInitialLoadSize  = " + str(hex(self.destAppInitialLoadSize)))
@@ -1361,6 +1363,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         with open(self.destAppContainerFilename, 'wb') as fileObj:
             fileObj.write(finalBtAppData)
             fileObj.close()
+        self.printLog('Bootable image is generated: ' + self.destAppContainerFilename)
 
     def RTyyyy_genBootableImage( self ):
         if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:

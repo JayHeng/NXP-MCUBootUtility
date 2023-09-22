@@ -75,7 +75,7 @@ class secBootLpcGen(LPC_uicore.secBootLpcUi):
         return startAddress, entryPointAddress, lengthInByte
 
     def _LPC_isValidNonXipAppImage( self, imageStartAddr ):
-        if self.isInTheRangeOfSramx(imageStartAddr, 1):
+        if self.isInTheRangeOfSram(imageStartAddr, 1):
             return True
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_invalidNonXipRange2'][self.languageIndex])

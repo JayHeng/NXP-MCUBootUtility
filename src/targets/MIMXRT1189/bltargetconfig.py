@@ -35,6 +35,7 @@ from ui import RTyyyy_uidef
 from ui import RTyyyy_uidef_efuse
 from ui import uidef
 from run import RTyyyy_rundef
+from run import rundef
 from gen import gendef
 
 cpu = 'MIMXRT1189'
@@ -62,10 +63,16 @@ availableBootDevices = [RTyyyy_uidef.kBootDevice_FlexspiNor,
 flexspiNorDevice = uidef.kFlexspiNorDevice_ISSI_IS25LP064A
 flexspiNorMemBase0   = 0x38000000 # CM33 Secure
 flexspiNorMemBase0Ns = 0x28000000 # CM33 Non-Secure
-flexspiNorMemBase0Aliased = 0x12000000
+flexspiNorMemBase0Aliased   = 0x12000000
+flexspiNorMemBase0AliasedNs = 0x02000000
+flexspiNorMem0MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor128MB
+flexspiNorMem0AliasedMaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor32MB
 flexspiNorMemBase1   = 0x14000000 # CM33 Secure
 flexspiNorMemBase1Ns = 0x04000000 # CM33 Non-Secure
-flexspiNorMemBase1Aliased = 0x32000000
+flexspiNorMemBase1Aliased   = 0x32000000
+flexspiNorMemBase1AliasedNs = 0x22000000
+flexspiNorMem1MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor64MB
+flexspiNorMem1AliasedMaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor32MB
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x400
 flexspiNorEfuseBootCfg0Bits = 12
@@ -111,23 +118,46 @@ sbLoaderVersion = gendef.kSbLoaderVersion_v1_0
 # memory map
 memoryRange = {
     # Code TCM_CM33, 256KByte
-    'itcm' : MemoryRange(0x0FFC0000, 0x40000, 'state_mem0.dat'),
+    'itcm' : MemoryRange(0x1FFC0000, 0x40000, 'state_itcm_mem.dat'),
+    # Code TCM_CM33, 256KByte
+    'itcm_ns' : MemoryRange(0x0FFC0000, 0x40000, 'state_itcm_ns_mem.dat'),
     # Code TCM_CM7, 512KByte
-    'itcm_sec' : MemoryRange(0x30380000, 0x80000, 'state_mem0.dat'),
+    'itcm_sec' : MemoryRange(0x30380000, 0x80000, 'state_itcm_sec_mem.dat'),
+    # Code TCM_CM7, 512KByte
+    'itcm_sec_ns' : MemoryRange(0x20380000, 0x80000, 'state_itcm_sec_ns_mem.dat'),
     # System TCM_CM33, 256KByte
-    'dtcm' : MemoryRange(0x30000000, 0x40000, 'state_mem1.dat'),
+    'dtcm' : MemoryRange(0x30000000, 0x40000, 'state_dtcm_mem.dat'),
+    # System TCM_CM33, 256KByte
+    'dtcm_ns' : MemoryRange(0x20000000, 0x40000, 'state_dtcm_ns_mem.dat'),
     # System TCM_CM7, 512KByte
-    'dtcm_sec' : MemoryRange(0x30400000, 0x80000, 'state_mem1.dat'),
+    'dtcm_sec' : MemoryRange(0x30400000, 0x80000, 'state_dtcm_sec_mem.dat'),
+    # System TCM_CM7, 512KByte
+    'dtcm_sec_ns' : MemoryRange(0x20400000, 0x80000, 'state_dtcm_sec_ns_mem.dat'),
     # OCRAM, 768KByte
-    'ocram' : MemoryRange(0x30480000, 0xC0000, 'state_mem2.dat'),
+    'ocram' : MemoryRange(0x30480000, 0xC0000, 'state_ocram_mem.dat'),
+    # OCRAM, 768KByte
+    'ocram_ns' : MemoryRange(0x20480000, 0xC0000, 'state_ocram_ns_mem.dat'),
 
     # FLASH, 64KByte / 512MByte
     'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000),
 
     # FlexSPI1 RAM, 256MByte
-    'flexspi1_ram' : MemoryRange(0x38000000, 0x10000000, 'state_flexspi1_mem.dat'),
+    'flexspi1_ram' : MemoryRange(0x38000000, 0x08000000, 'state_flexspi1_mem.dat'),
+    # FlexSPI1 RAM, 256MByte
+    'flexspi1_ram_ns' : MemoryRange(0x28000000, 0x08000000, 'state_flexspi1_ns_mem.dat'),
+    # FlexSPI1 RAM, 256MByte
+    'flexspi1_ram_a' : MemoryRange(0x12000000, 0x02000000, 'state_flexspi1_a_mem.dat'),
+    # FlexSPI1 RAM, 256MByte
+    'flexspi1_ram_a_ns' : MemoryRange(0x02000000, 0x02000000, 'state_flexspi1_a_ns_mem.dat'),
+
     # FlexSPI2 RAM, 256MByte
-    'flexspi2_ram' : MemoryRange(0x14000000, 0x10000000, 'state_flexspi2_mem.dat')
+    'flexspi2_ram' : MemoryRange(0x14000000, 0x04000000, 'state_flexspi2_mem.dat'),
+    # FlexSPI2 RAM, 256MByte
+    'flexspi2_ram_ns' : MemoryRange(0x04000000, 0x04000000, 'state_flexspi2_ns_mem.dat'),
+    # FlexSPI2 RAM, 256MByte
+    'flexspi2_ram_a' : MemoryRange(0x32000000, 0x02000000, 'state_flexspi2_a_mem.dat'),
+    # FlexSPI2 RAM, 256MByte
+    'flexspi2_ram_a_ns' : MemoryRange(0x22000000, 0x02000000, 'state_flexspi2_a_ns_mem.dat')
 }
 
 reservedRegionDict = {   # new

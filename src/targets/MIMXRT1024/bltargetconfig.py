@@ -35,6 +35,7 @@ from ui import RTyyyy_uidef
 from ui import RTyyyy_uidef_efuse
 from ui import uidef
 from run import RTyyyy_rundef
+from run import rundef
 from gen import gendef
 
 cpu = 'MIMXRT1024'
@@ -68,9 +69,15 @@ flexspiNorDevice = uidef.kFlexspiNorDevice_SipWinbond_W25Q32  # or 0xC0000007
 flexspiNorMemBase0 = 0x60000000
 flexspiNorMemBase0Ns = None
 flexspiNorMemBase0Aliased = 0x08000000
+flexspiNorMemBase0AliasedNs =None
+flexspiNorMem0MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor4MB
+flexspiNorMem0AliasedMaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor4MB
 flexspiNorMemBase1 = None
 flexspiNorMemBase1Ns = None
 flexspiNorMemBase1Aliased = None
+flexspiNorMemBase1AliasedNs =None
+flexspiNorMem1MaxSize = None
+flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '75MHz', '80MHz', '100MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x0
 flexspiNorEfuseBootCfg0Bits = 10
@@ -230,8 +237,10 @@ memoryRange = {
     # FLASH, 64KByte / 512MByte
     'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000),
 
-    # FlexSPI1 RAM, 256MByte
-    'flexspi1_ram' : MemoryRange(0x60000000, 0x10000000, 'state_flexspi1_mem.dat')
+    # FlexSPI1 RAM, 504MByte
+    'flexspi1_ram' : MemoryRange(0x60000000, 0x1F800000, 'state_flexspi1_mem.dat'),
+    # FlexSPI1 RAM, 128MByte
+    'flexspi1_ram_a' : MemoryRange(0x08000000, 0x08000000, 'state_flexspi1_a_mem.dat')
 }
 
 reservedRegionDict = {   # new
