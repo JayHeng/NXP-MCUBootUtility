@@ -870,7 +870,7 @@ kRevision_5_3_0_zh = u"【v5.3.0】 - 2023.09\n" + \
                      u"     1. [RTyyyy] 无法识别IVT中复位函数地址相对向量表首地址偏移小于0xB00的可启动程序文件 \n\n"
 kRevision_5_3_1_en =  "【v5.3.1】 - 2023.09\n" + \
                       "  Improvement: \n" + \
-                      "     1. [RT] Can check the range of different FlexSPI xip region \n" + \
+                      "     1. [RT] Can validate the xip region range of different FlexSPI instance \n" + \
                       "     2. [RTxxx] Can recognize Non-XIP image which is linked in FlexSPI RAM region \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RT1180] Cannot generate bootable image for some Non-XIP images under FlexSPI NOR \n\n"
@@ -880,6 +880,12 @@ kRevision_5_3_1_zh = u"【v5.3.1】 - 2023.09\n" + \
                      u"     2. [RTxxx] 可以识别链接在FlexSPI RAM区域的程序 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RT1180] 在FlexSPI NOR启动设备下无法生成一些Non-XIP程序的可启动程序 \n\n"
+kRevision_5_3_2_en =  "【v5.3.2】 - 2023.10\n" + \
+                      "  Bugfix: \n" + \
+                      "     1. [RTyyyy] XMCD write dummy cycles setting doesn't take affect\n\n"
+kRevision_5_3_2_zh = u"【v5.3.2】 - 2023.10\n" + \
+                     u"  修复: \n" + \
+                     u"     1. [RTyyyy] XMCD配置界面里write dummy cycle设置不生效 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -922,6 +928,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v5_2_1':             [kRevision_5_2_1_en,                      kRevision_5_2_1_zh],
         'revisionHistory_v5_3_0':             [kRevision_5_3_0_en,                      kRevision_5_3_0_zh],
         'revisionHistory_v5_3_1':             [kRevision_5_3_1_en,                      kRevision_5_3_1_zh],
+        'revisionHistory_v5_3_2':             [kRevision_5_3_2_en,                      kRevision_5_3_2_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

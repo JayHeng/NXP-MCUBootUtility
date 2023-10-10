@@ -81,9 +81,9 @@ class secBootUiCfgXmcd(bootDeviceWin_XMCD.bootDeviceWin_XMCD):
                 self.m_choice_dqsPinmuxGroup.SetSelection((self.xmcdOption1 & 0x00F00000) >> 20)
                 self.m_choice_dataPinmuxGroup.SetSelection((self.xmcdOption1 & 0x000F0000) >> 16)
                 self.m_textCtrl_writeDummyCycles.Clear()
-                self.m_textCtrl_writeDummyCycles.write(str((self.xmcdOption1 & 0x0000FF00) >> 8))
+                self.m_textCtrl_writeDummyCycles.write(str((self.xmcdOption1 & 0x000000F0) >> 4))
                 self.m_textCtrl_readDummyCycles.Clear()
-                self.m_textCtrl_readDummyCycles.write(str((self.xmcdOption1 & 0x000000FF) >> 0))
+                self.m_textCtrl_readDummyCycles.write(str((self.xmcdOption1 & 0x0000000F) >> 0))
             elif memInterface == 1: # SEMC
                 self.m_textCtrl_clkFreq.Clear()
                 self.m_textCtrl_clkFreq.write(str((self.xmcdOption0 & 0xFF000000) >> 24))
@@ -196,18 +196,18 @@ class secBootUiCfgXmcd(bootDeviceWin_XMCD.bootDeviceWin_XMCD):
 
     def _getWriteDummyCycles( self ):
         val = int(self.m_textCtrl_writeDummyCycles.GetLineText(0))
-        if val > 255:
-            self.popupMsgBox('Write dummy cycle should not be more than 255')
+        if val > 15:
+            self.popupMsgBox('Write dummy cycle should not be more than 15')
             return False
-        self.xmcdOption1 = (self.xmcdOption1 & 0xFFFF00FF) | (val << 8)
+        self.xmcdOption1 = (self.xmcdOption1 & 0xFFFFFF0F) | (val << 4)
         return True
 
     def _getReadDummyCycles( self ):
         val = int(self.m_textCtrl_readDummyCycles.GetLineText(0))
-        if val > 255:
-            self.popupMsgBox('Read dummy cycle should not be more than 255')
+        if val > 15:
+            self.popupMsgBox('Read dummy cycle should not be more than 15')
             return False
-        self.xmcdOption1 = (self.xmcdOption1 & 0xFFFFFF00) | (val << 0)
+        self.xmcdOption1 = (self.xmcdOption1 & 0xFFFFFFF0) | (val << 0)
         return True
 
     def _getClkFreq( self ):

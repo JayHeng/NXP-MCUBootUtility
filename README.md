@@ -12,30 +12,25 @@ gantt
     v2.1.0           :a7, 2019-07-20, 2019-12-03
     v2.2.0           :a8, 2019-12-04, 2019-12-13
     v2.3.0           :a9, 2019-12-14, 2020-05-28
-    v2.3.1           :a10, 2020-05-29, 2020-08-19
-    v2.4.0           :a11, 2020-08-20, 2020-10-20
-    v3.0.0           :a12, 2020-10-21, 2021-01-10
-    v3.1.0           :a13, 2021-01-11, 2021-01-13
-    v3.1.1           :a14, 2021-01-14, 2021-01-15
-    v3.2.0           :a15, 2021-01-16, 2021-03-17
-    v3.3.0           :a16, 2021-03-18, 2021-05-20
-    v3.3.1           :a17, 2021-05-21, 2021-08-03
-    v3.4.0           :a18, 2021-08-03, 2021-09-27
-    v3.5.0           :a19, 2021-09-28, 2022-03-19
-    v4.0.0           :a20, 2022-03-20, 2023-01-06
-    v4.1.0           :a21, 2023-01-07, 2023-03-02
-    v4.1.1           :a22, 2023-03-02, 2023-04-06
-    v5.0.0           :a23, 2023-04-07, 2023-05-23
-    v5.1.0           :a24, 2023-05-24, 2023-05-25
-    v5.2.0           :a25, 2023-05-26, 2023-07-07
-    v5.2.1           :a26, 2023-07-08, 2023-07-14
-    v5.3.0           :a27, 2023-07-15, 2023-09-14
-    v5.4.0           :a28, 2023-09-15, 2023-11-15
+    v2.4.0           :a10, 2020-08-20, 2020-10-20
+    v3.0.0           :a11, 2020-10-21, 2021-01-10
+    v3.1.0           :a12, 2021-01-11, 2021-01-13
+    v3.2.0           :a13, 2021-01-16, 2021-03-17
+    v3.3.0           :a14, 2021-03-18, 2021-05-20
+    v3.4.0           :a15, 2021-08-03, 2021-09-27
+    v3.5.0           :a16, 2021-09-28, 2022-03-19
+    v4.0.0           :a17, 2022-03-20, 2023-01-06
+    v4.1.0           :a18, 2023-01-07, 2023-03-02
+    v5.0.0           :a19, 2023-04-07, 2023-05-23
+    v5.1.0           :a20, 2023-05-24, 2023-05-25
+    v5.2.0           :a21, 2023-05-26, 2023-07-07
+    v5.3.0           :a22, 2023-07-15, 2023-09-14
+    v5.4.0           :a23, 2023-09-15, 2023-11-15
 ```
 
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.3.1.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.3.1...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.3.2.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.3.2...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 English | [中文](./README-zh.md)
 
@@ -76,7 +71,7 @@ English | [中文](./README-zh.md)
 > * Support OTFAD encryption secure boot case (SNVS Key, User Keys)  
 > * Support common eFuse memory operation (eFuse Programmer)  
 > * Support common FlexRAM memory operation (ISP Boot)  
-> * Support for reading back and marking bootable image(NFCB/DBBT/FDCB/EKIB/EPRDB/IVT/Boot Data/DCD/Image/CSF/DEK KeyBlob) from boot device  
+> * Support for reading back and marking bootable image(NFCB/DBBT/FDCB/EKIB/EPRDB/IVT/Boot Data/DCD/XMCD/Image/CSF/DEK KeyBlob) from boot device  
 -------------------------------------------------------
 > * Support i.MXRT5xx, i.MXRT6xx  
 > * Support for loading bootable image into FlexSPI/QuadSPI NOR boot device  
