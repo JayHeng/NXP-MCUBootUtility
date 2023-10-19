@@ -60,6 +60,11 @@ kContainerOffset_RAM_FLASHLOADER = 0x400
 
 kContainerSize_Edgelock          = 0x400
 
+kXmcdOffset_EEPROM_RAM_FLASHLOADER = 0x0
+kXmcdOffset_NAND                   = None
+kXmcdOffset_SD                     = 0x400
+kXmcdOffset_NOR                    = 0x800
+
 kFirstLoadSize_NAND_EEPROM     = 0x2400
 kFirstLoadSize_SD              = 0x2800
 kFirstLoadSize_NOR             = 0x3000

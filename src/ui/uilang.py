@@ -881,9 +881,13 @@ kRevision_5_3_1_zh = u"【v5.3.1】 - 2023.09\n" + \
                      u"  修复: \n" + \
                      u"     1. [RT1180] 在FlexSPI NOR启动设备下无法生成一些Non-XIP程序的可启动程序 \n\n"
 kRevision_5_3_2_en =  "【v5.3.2】 - 2023.10\n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RTyyyy] Add XMCD support for RT1180 \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] XMCD write dummy cycles setting doesn't take affect\n\n"
 kRevision_5_3_2_zh = u"【v5.3.2】 - 2023.10\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTyyyy] 使能 RT1180 的 XMCD 支持 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] XMCD配置界面里write dummy cycle设置不生效 \n\n"
 

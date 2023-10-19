@@ -72,6 +72,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.xmcdModelFolder = os.path.join(self.exeTopRoot, 'src', 'targets', 'xmcd_model')
         self.isXmcdFromSrcApp = False
         self.destAppXmcdLength = 0
+        self.destAppXmcdOffset = 0
 
         self.srcAppFilename = None
         self.destAppFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'bt_application.bin')
@@ -688,8 +689,12 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
         if xmcdSettingsDict['isXmcdEnabled']:
             self.destAppXmcdLength = os.path.getsize(self.xmcdBinFilename)
-            self.bincopyFileToFile(self.destAppFilename, self.xmcdBinFilename, self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
-            self.bincopyFileToFile(self.destAppNoPaddingFilename, self.xmcdBinFilename, RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
+            if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+                #self.bincopyFileToFile(self.destAppContainerFilename, self.xmcdBinFilename, RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
+                pass
+            elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
+                self.bincopyFileToFile(self.destAppFilename, self.xmcdBinFilename, self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
+                self.bincopyFileToFile(self.destAppNoPaddingFilename, self.xmcdBinFilename, RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
 
     def _setDestAppInitialBootHeaderInfo( self, bootDevice ):
         if bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
@@ -702,6 +707,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NOR
                     self.destAppInitialLoadSize = RTyyyy_gendef.kContainerOffset_NOR + RTyyyy_memdef.kMemBlockSize_Container
                 self.minAppInitialLoadSize = self.destAppInitialLoadSize
+                self.destAppXmcdOffset = RTyyyy_gendef.kXmcdOffset_NOR
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NOR
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NOR
@@ -713,6 +719,10 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_NAND_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_NAND_EEPROM
                 self.minAppInitialLoadSize = self.destAppInitialLoadSize
+                if bootDevice == RTyyyy_uidef.kBootDevice_LpspiNor:
+                    self.destAppXmcdOffset = RTyyyy_gendef.kXmcdOffset_EEPROM_RAM_FLASHLOADER
+                else:
+                    self.destAppXmcdOffset = RTyyyy_gendef.kXmcdOffset_NAND
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
@@ -727,6 +737,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     self.destAppContainerOffset = RTyyyy_gendef.kContainerOffset_SD
                     self.destAppInitialLoadSize = RTyyyy_gendef.kFirstLoadSize_SD
                 self.minAppInitialLoadSize = self.destAppInitialLoadSize
+                self.destAppXmcdOffset = RTyyyy_gendef.kXmcdOffset_SD
             elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
                 self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_NAND_SD_EEPROM
                 self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_NAND_SD_EEPROM
@@ -735,6 +746,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             self.destAppIvtOffset = RTyyyy_gendef.kIvtOffset_RAM_FLASHLOADER
             self.destAppInitialLoadSize = RTyyyy_gendef.kInitialLoadSize_RAM_FLASHLOADER
             self.minAppInitialLoadSize = self.destAppInitialLoadSize
+            self.destAppXmcdOffset = RTyyyy_gendef.kXmcdOffset_EEPROM_RAM_FLASHLOADER
         else:
             pass
 
@@ -991,7 +1003,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             return True
         elif self.isInTheRangeOfFlexspiRam(imageStartAddr, 1):
             return True
-        elif ((imageStartAddr >= RTyyyy_rundef.kBootDeviceMemBase_SemcSdram) and (imageStartAddr < RTyyyy_rundef.kBootDeviceMemBase_SemcSdram + RTyyyy_rundef.kBootDeviceMemMaxSize_SemcSdram)):
+        elif self.isInTheRangeOfSemcSdram(imageStartAddr, 1):
             return True
         else:
             if showError:
@@ -1295,6 +1307,22 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                     fileObj.close()
         return True
 
+    def _adjustDestAppFilenameForContainer( self ):
+        srcAppName = os.path.splitext(os.path.split(self.srcAppFilename)[1])[0]
+        destAppPath, destAppFile = os.path.split(self.destAppFilename)
+        destAppName, destAppType = os.path.splitext(destAppFile)
+        destAppName ='container_' + srcAppName
+        if self.hasEdgelockFw:
+            destAppName += '_elefw'
+        xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+        if xmcdSettingsDict['isXmcdEnabled']:
+            destAppName += '_xmcd'
+        if self.secureBootType == RTyyyy_uidef.kSecureBootType_Development:
+            destAppName += '_unsigned'
+        else:
+            pass
+        self.destAppContainerFilename = os.path.join(destAppPath, destAppName + '_nopadding' + destAppType)
+
     def _genCompleteContainerData( self, imageData ):
         containerStruct = uiheader.containerStruct()
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
@@ -1305,13 +1333,6 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             containerStruct.set_members(0, self.destAppExecAddr, imageData, self.hasEdgelockFw)
             return containerStruct.out_bytes_str()
         return None
-
-    def _genPaddingByteArrayStr( self, num, pattern=0x00 ):
-        paddingBytes = [pattern] * num
-        paddingBytesStr = ''
-        for i in range(num):
-            paddingBytesStr += chr(paddingBytes[i])
-        return paddingBytesStr
 
     def _genCompleteAppWithContainer( self ):
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor:
@@ -1331,7 +1352,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 fileObj.close()
             num = RTyyyy_gendef.kContainerSize_Edgelock - len(edgelockCntrBytes)
             if num > 0:
-                edgelockCntrBytes += self._genPaddingByteArrayStr(num, 0x00)
+                edgelockCntrBytes += self.genPaddingByteArrayStr(num, 0x00)
             finalBtAppData = edgelockCntrBytes
         ##############################################################
         imageDataBytes = None
@@ -1349,7 +1370,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 fileObj.close()
             num = RTyyyy_memdef.kMemBlockSize_Edgelock - len(edgelockFwBytes)
             if num > 0:
-                edgelockFwBytes += self._genPaddingByteArrayStr(num, 0x00)
+                edgelockFwBytes += self.genPaddingByteArrayStr(num, 0x00)
             finalBtAppData += edgelockFwBytes
         ##############################################################
         num = self.destAppVectorOffset - self.destAppInitialLoadSize
@@ -1358,7 +1379,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         #self.printDeviceStatus("destAppVectorOffset  = " + str(hex(self.destAppVectorOffset)))
         #self.printDeviceStatus("destAppInitialLoadSize  = " + str(hex(self.destAppInitialLoadSize)))
         if num > 0:
-            finalBtAppData += self._genPaddingByteArrayStr(num, 0x00)
+            finalBtAppData += self.genPaddingByteArrayStr(num, 0x00)
         finalBtAppData += imageDataBytes
         with open(self.destAppContainerFilename, 'wb') as fileObj:
             fileObj.write(finalBtAppData)
@@ -1385,7 +1406,9 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             self._recoverXmcdBecauseOfSrcApp()
             return status
         elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
+            self._adjustDestAppFilenameForContainer()
             self._genCompleteAppWithContainer()
+            self._addXmcdContentIfAppliable()
             return True
 
     def showHabDekIfApplicable( self ):

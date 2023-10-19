@@ -55,7 +55,15 @@ class secBootUiCfgXmcd(bootDeviceWin_XMCD.bootDeviceWin_XMCD):
         self.m_button_ok.SetLabel(uilang.kSubLanguageContentDict['button_xmcd_ok'][langIndex])
         self.m_button_cancel.SetLabel(uilang.kSubLanguageContentDict['button_xmcd_cancel'][langIndex])
 
-    def setNecessaryInfo( self, binFilename ):
+    def setNecessaryInfo( self, binFilename, mcuDevice ):
+        if mcuDevice == uidef.kMcuDevice_iMXRT117x or mcuDevice == uidef.kMcuDevice_iMXRT116x:
+            #miscMode = ['1.8V', '3.3V']
+            pass
+        elif mcuDevice == uidef.kMcuDevice_iMXRT118x:
+            miscMode = ['Differential clock driven', 'Single-ended clock driven']
+            self.m_choice_miscMode.Clear()
+            self.m_choice_miscMode.SetItems(miscMode)
+            self.m_choice_miscMode.SetSelection(0)
         self.destBinFilename = binFilename
         self._recoverLastSettings()
 

@@ -72,6 +72,12 @@ class secBootGen(uicore.secBootUi):
         else:
             return False
 
+    def isInTheRangeOfSemcSdram( self, start, length ):
+        if (('semc0_sdram' in self.tgt.memoryRange) and ((start >= self.tgt.memoryRange['semc0_sdram'].start) and (start + length <= self.tgt.memoryRange['semc0_sdram'].start + self.tgt.memoryRange['semc0_sdram'].length))):
+            return True
+        else:
+            return False
+
     def _convertElfOrAxfToSrec( self, appFilename, destSrecAppFilename, appFormat):
         batContent = ''
         # below are conv results:
@@ -302,6 +308,13 @@ class secBootGen(uicore.secBootUi):
                 self.tgt.flexspiNorMemMaxSize = flexspiNorMemAliasedMaxSize
                 return
 
+    def genPaddingByteArrayStr( self, num, pattern=0xFF ):
+        paddingBytes = [pattern] * num
+        paddingBytesStr = ''
+        for i in range(num):
+            paddingBytesStr += chr(paddingBytes[i])
+        return paddingBytesStr
+
     def bincopyFileToFile( self, destBinFile, srcBinFile, offset ):
         destFileObj = open(destBinFile,'rb')
         destFileData = destFileObj.read()
@@ -309,7 +322,11 @@ class secBootGen(uicore.secBootUi):
         srcFileObj = open(srcBinFile,'rb')
         srcFileData = srcFileObj.read()
         srcFileObj.close()
-        finalFileData = destFileData[0:offset] + srcFileData + destFileData[offset+len(srcFileData):]
+        if offset >= 0:
+            finalFileData = destFileData[0:offset] + srcFileData + destFileData[offset+len(srcFileData):]
+        else:
+            offset = -offset
+            finalFileData = srcFileData + self.genPaddingByteArrayStr(offset - len(srcFileData), 0xFF) + destFileData
         with open(destBinFile, 'wb') as fileObj:
             fileObj.write(finalFileData)
             fileObj.close()

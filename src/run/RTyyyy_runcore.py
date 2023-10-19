@@ -1399,6 +1399,14 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             self.printLog(cmdStr)
         return status == boot.status.kStatus_Success
 
+    def RTyyyy_flashXmcdBinary ( self ):
+        xmcdSettingsDict = uivar.getBootDeviceConfiguration(RTyyyy_uidef.kBootDevice_Xmcd)
+        status = boot.status.kStatus_Success
+        if xmcdSettingsDict['isXmcdEnabled']:
+            status, results, cmdStr = self.blhost.writeMemory(self.bootDeviceMemBase + self.destAppXmcdOffset, self.xmcdBinFilename, self.bootDeviceMemId)
+            self.printLog(cmdStr)
+        return status
+
     def RTyyyy_flashBootableImage ( self ):
         self._RTyyyy_prepareForBootDeviceOperation()
         imageLen = 0
@@ -1500,6 +1508,9 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 elif self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
                     headerOffset = RTyyyy_gendef.kContainerOffset_NOR
                     destAppFileToLoad = self.destAppContainerFilename
+                    status = self.RTyyyy_flashXmcdBinary()
+                    if status != boot.status.kStatus_Success:
+                        return False
                 imageLoadAddr = self.bootDeviceMemBase + headerOffset
                 if self.isSbFileEnabledToGen:
                     self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
@@ -1574,6 +1585,9 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 headerOffset = RTyyyy_gendef.kContainerOffset_SD
                 destAppFileToLoad = self.destAppContainerFilename
                 imageLen = os.path.getsize(destAppFileToLoad) + headerOffset
+                status = self.RTyyyy_flashXmcdBinary()
+                if status != boot.status.kStatus_Success:
+                    return False
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
             imageLoadAddr = self.bootDeviceMemBase + headerOffset
             if self.isSbFileEnabledToGen:

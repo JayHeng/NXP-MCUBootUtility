@@ -304,6 +304,13 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
             else:
                 if addr >= self.bootDeviceMemBase + RTyyyy_memdef.kMemBlockSize_MBRDPT:
                     self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppXmcdOffset:
+            self.printMem(contentToShow)
+        elif addr <= imageMemBase + self.destAppXmcdOffset + misc.align_up(self.destAppXmcdLength, 16):
+            if self.needToShowXmcdIntr:
+                self.printMem('-----------------------------------XMCD-----------------------------------------------', RTyyyy_uidef.kMemBlockColor_XMCD)
+                self.needToShowXmcdIntr = False
+            self.printMem(contentToShow, RTyyyy_uidef.kMemBlockColor_XMCD)
         elif addr <= imageMemBase + self.destAppContainerOffset - RTyyyy_gendef.kContainerSize_Edgelock:
             self.printMem(contentToShow)
         elif addr <= imageMemBase + self.destAppContainerOffset:

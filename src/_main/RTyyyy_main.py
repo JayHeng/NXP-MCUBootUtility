@@ -98,7 +98,7 @@ class secBootRTyyyyMain(RTyyyy_memcore.secBootRTyyyyMem):
             return
         xmcdFrame = ui_cfg_xmcd.secBootUiCfgXmcd(None)
         xmcdFrame.SetTitle(uilang.kSubLanguageContentDict['xmcd_title'][self.languageIndex])
-        xmcdFrame.setNecessaryInfo(self.xmcdBinFilename)
+        xmcdFrame.setNecessaryInfo(self.xmcdBinFilename, self.mcuDevice)
         xmcdFrame.Show(True)
 
     def _RTyyyy_retryToPingBootloader( self, bootType ):
