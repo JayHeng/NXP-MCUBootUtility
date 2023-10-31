@@ -21,7 +21,7 @@ from utils import misc
 def Kinetis_createTarget(device, exeBinRoot):
     # Build path to target directory and config file.
     cpu = "MKxx"
-    if device in uidef.kMcuDevice_Kinetis:
+    if device in uidef.kMcuDevice_Kinetis or device in uidef.kMcuDevice_Kinetis_sub:
         cpu = "MKxx"
     else:
         pass
@@ -56,7 +56,7 @@ class secBootKinetisRun(Kinetis_gencore.secBootKinetisGen):
 
     def __init__(self, parent):
         Kinetis_gencore.secBootKinetisGen.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        if self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_initRun()
 
     def Kinetis_initRun( self ):

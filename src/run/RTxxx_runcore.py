@@ -26,6 +26,8 @@ def RTxxx_createTarget(device, exeBinRoot):
         cpu = "MIMXRT595"
     elif device == uidef.kMcuDevice_iMXRT600:
         cpu = "MIMXRT685"
+    elif device == uidef.kMcuDevice_RW612:
+        cpu = "RW612"
     else:
         pass
     targetBaseDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'targets', cpu)
@@ -59,7 +61,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
 
     def __init__(self, parent):
         RTxxx_gencore.secBootRTxxxGen.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_initRun()
 
     def RTxxx_initRun( self ):
@@ -72,6 +74,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         self.bootDeviceMemId = None
         self.bootDeviceMemBase = None
         self.isXspiNorErasedForImage = False
+        self.isFlexspiNandBlockAddr = None
 
         self.comMemWriteUnit = 0x1
         self.comMemEraseUnit = 0x1

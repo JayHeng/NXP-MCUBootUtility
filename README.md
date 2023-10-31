@@ -25,12 +25,12 @@ gantt
     v5.1.0           :a20, 2023-05-24, 2023-05-25
     v5.2.0           :a21, 2023-05-26, 2023-07-07
     v5.3.0           :a22, 2023-07-15, 2023-09-14
-    v5.4.0           :a23, 2023-09-15, 2023-11-15
+    v6.0.0           :a23, 2023-09-15, 2023-11-01
 ```
 
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v5.3.2.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v5.3.2...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v6.0.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v6.0.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 English | [中文](./README-zh.md)
 
@@ -73,7 +73,7 @@ English | [中文](./README-zh.md)
 > * Support common FlexRAM memory operation (ISP Boot)  
 > * Support for reading back and marking bootable image(NFCB/DBBT/FDCB/EKIB/EPRDB/IVT/Boot Data/DCD/XMCD/Image/CSF/DEK KeyBlob) from boot device  
 -------------------------------------------------------
-> * Support i.MXRT5xx, i.MXRT6xx  
+> * Support i.MXRT5xx, i.MXRT6xx, RW61x  
 > * Support for loading bootable image into FlexSPI/QuadSPI NOR boot device  
 > * Support for loading bootable image into uSDHC SD/eMMC boot device  
 > * Support for loading bootable image into Flexcomm SPI NOR recovery boot device  

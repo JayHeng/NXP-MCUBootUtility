@@ -20,7 +20,7 @@ class secBootKinetisMain(Kinetis_memcore.secBootKinetisMem):
     def __init__(self, parent):
         Kinetis_memcore.secBootKinetisMem.__init__(self, parent)
         self.Kinetis_isAllInOneActionTaskPending = False
-        if self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        if self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self._Kinetis_initMain()
 
     def _Kinetis_initMain( self ):

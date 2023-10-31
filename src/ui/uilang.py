@@ -884,12 +884,26 @@ kRevision_5_3_2_en =  "【v5.3.2】 - 2023.10\n" + \
                       "  Improvement: \n" + \
                       "     1. [RTyyyy] Add XMCD support for RT1180 \n" + \
                       "  Bugfix: \n" + \
-                      "     1. [RTyyyy] XMCD write dummy cycles setting doesn't take affect\n\n"
+                      "     1. [RTyyyy] XMCD write dummy cycles setting doesn't take affect \n\n"
 kRevision_5_3_2_zh = u"【v5.3.2】 - 2023.10\n" + \
-                     u"  特性: \n" + \
+                     u"  改进: \n" + \
                      u"     1. [RTyyyy] 使能 RT1180 的 XMCD 支持 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] XMCD配置界面里write dummy cycle设置不生效 \n\n"
+kRevision_6_0_0_en =  "【v6.0.0】 - 2023.11\n" + \
+                      "  Feature: \n" + \
+                      "     1. [Wireless] Support K32W0x1 \n" + \
+                      "     2. [Wireless] Support RW61x \n" + \
+                      "     3. [RW61x] Support FlexSPI NOR boot device \n" + \
+                      "  Bugfix: \n" + \
+                      "     1. [RTxxx] Fix support for FlexSPI device \n\n"
+kRevision_6_0_0_zh = u"【v6.0.0】 - 2023.11\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [Wireless] 支持K32W0x1 \n" + \
+                     u"     2. [Wireless] 支持RW61x \n" + \
+                     u"     3. [RW61x] 支持FlexSPI NOR启动设备 \n" + \
+                     u"  修复: \n" + \
+                     u"     1. [RTxxx] 修复对FlexSPI设备的下载支持 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -933,6 +947,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v5_3_0':             [kRevision_5_3_0_en,                      kRevision_5_3_0_zh],
         'revisionHistory_v5_3_1':             [kRevision_5_3_1_en,                      kRevision_5_3_1_zh],
         'revisionHistory_v5_3_2':             [kRevision_5_3_2_en,                      kRevision_5_3_2_zh],
+        'revisionHistory_v6_0_0':             [kRevision_6_0_0_en,                      kRevision_6_0_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

@@ -301,9 +301,9 @@ class secBootMem(runcore.secBootRun):
         status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
         if status:
             if (self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy and self.isInTheRangeOfFlexram(memStart, memLength)) or \
-                (self.mcuSeries == uidef.kMcuSeries_iMXRTxxx and self.isInTheRangeOfSram(memStart, memLength)) or \
+                (self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f and self.isInTheRangeOfSram(memStart, memLength)) or \
                 (self.mcuSeries == uidef.kMcuSeries_LPC and self.isInTheRangeOfSramx(memStart, memLength)) or \
-                (self.mcuSeries == uidef.kMcuSeries_Kinetis and self.isInTheRangeOfSram(memStart, memLength)) or \
+                (self.mcuSeries in uidef.kMcuSeries_Kinetis_f and self.isInTheRangeOfSram(memStart, memLength)) or \
                 (self.mcuSeries == uidef.kMcuSeries_MCX and self.isInTheRangeOfSram(memStart, memLength)):
                 alignedMemStart = misc.align_down(memStart, 0x10)
                 alignedMemLength = misc.align_up(memLength, 0x10)
@@ -358,9 +358,9 @@ class secBootMem(runcore.secBootRun):
             else:
                 memLength = os.path.getsize(memBinFile)
                 if (self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy and self.isInTheRangeOfFlexram(memStart, memLength)) or \
-                    (self.mcuSeries == uidef.kMcuSeries_iMXRTxxx and self.isInTheRangeOfSram(memStart, memLength)) or \
+                    (self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f and self.isInTheRangeOfSram(memStart, memLength)) or \
                     (self.mcuSeries == uidef.kMcuSeries_LPC and self.isInTheRangeOfSramx(memStart, memLength)) or \
-                    (self.mcuSeries == uidef.kMcuSeries_Kinetis and self.isInTheRangeOfSram(memStart, memLength)) or \
+                    (self.mcuSeries in uidef.kMcuSeries_Kinetis_f and self.isInTheRangeOfSram(memStart, memLength)) or \
                     (self.mcuSeries == uidef.kMcuSeries_MCX and self.isInTheRangeOfSram(memStart, memLength)):
                     shutil.copy(memBinFile, self.userFilename)
                     status, results, cmdStr = self.blhost.writeMemory(memStart, self.userFilename)
@@ -383,9 +383,9 @@ class secBootMem(runcore.secBootRun):
         status, memStart, memBinFile, dummyArg = self._getUserComMemParameters(False)
         if status:
             if (self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy and self.isInTheRangeOfFlexram(memStart, 1)) or \
-                (self.mcuSeries == uidef.kMcuSeries_iMXRTxxx and self.isInTheRangeOfSram(memStart, 1)) or \
+                (self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f and self.isInTheRangeOfSram(memStart, 1)) or \
                 (self.mcuSeries == uidef.kMcuSeries_LPC and self.isInTheRangeOfSramx(memStart, 1)) or \
-                (self.mcuSeries == uidef.kMcuSeries_Kinetis and self.isInTheRangeOfSram(memStart, 1)) or \
+                (self.mcuSeries in uidef.kMcuSeries_Kinetis_f and self.isInTheRangeOfSram(memStart, 1)) or \
                 (self.mcuSeries == uidef.kMcuSeries_MCX and self.isInTheRangeOfSram(memStart, 1)):
                 vectorFilename = 'vectorDataFromRam.dat'
                 vectorFilepath = os.path.join(self.blhostVectorsDir, vectorFilename)

@@ -80,11 +80,11 @@ class secBootMain(MCX_main.secBootMcxMain):
         if self.isMcuSeriesChanged:
             if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
                 self.RTyyyy_callbackSetMcuSeries()
-            elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+            elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
                 self.RTxxx_callbackSetMcuSeries()
             elif self.mcuSeries == uidef.kMcuSeries_LPC:
                 self.LPC_callbackSetMcuSeries()
-            elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+            elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
                 self.Kinetis_callbackSetMcuSeries()
             elif self.mcuSeries == uidef.kMcuSeries_MCX:
                 self.MCX_callbackSetMcuSeries()
@@ -93,11 +93,11 @@ class secBootMain(MCX_main.secBootMcxMain):
             self.isMcuSeriesChanged = False
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackSetMcuDevice()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackSetMcuDevice()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackSetMcuDevice()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackSetMcuDevice()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackSetMcuDevice()
@@ -113,11 +113,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackSetBootDevice( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackSetBootDevice()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackSetBootDevice()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackSetBootDevice()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackSetBootDevice()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackSetBootDevice()
@@ -188,11 +188,11 @@ class secBootMain(MCX_main.secBootMcxMain):
         usbIdList = []
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             usbIdList = self.RTyyyy_getUsbid()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             usbIdList = self.RTxxx_getUsbid()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             usbIdList = self.LPC_getUsbid()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             usbIdList = self.Kinetis_getUsbid()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             usbIdList = self.MCX_getUsbid()
@@ -218,11 +218,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackConnectToDevice( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackConnectToDevice()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackConnectToDevice()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackConnectToDevice()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackConnectToDevice()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackConnectToDevice()
@@ -232,11 +232,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackSetSecureBootType( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackSetSecureBootType()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackSetSecureBootType()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackSetSecureBootType()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackSetSecureBootType()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackSetSecureBootType()
@@ -246,11 +246,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackAllInOneAction( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackAllInOneAction()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackAllInOneAction()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackAllInOneAction()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackAllInOneAction()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackAllInOneAction()
@@ -262,11 +262,11 @@ class secBootMain(MCX_main.secBootMcxMain):
         self.setCostTime(0)
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_setSecureBootButtonColor()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_setSecureBootButtonColor()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_setSecureBootButtonColor()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_setSecureBootButtonColor()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_setSecureBootButtonColor()
@@ -279,11 +279,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackGenImage( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackGenImage()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackGenImage()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackGenImage()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackGenImage()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackGenImage()
@@ -293,11 +293,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackFlashImage( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackFlashImage()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackFlashImage()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackFlashImage()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackFlashImage()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackFlashImage()
@@ -312,7 +312,7 @@ class secBootMain(MCX_main.secBootMcxMain):
                         self.RTyyyy_scanAllFuseRegions()
                         if self.isSbFileEnabledToGen:
                             self.RTyyyy_initSbEfuseBdfileContent()
-                    elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+                    elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
                         self.RTxxx_scanAllOtpRegions()
                     else:
                         pass
@@ -321,7 +321,7 @@ class secBootMain(MCX_main.secBootMcxMain):
                         self.RTyyyy_burnAllFuseRegions()
                         if self.isSbFileEnabledToGen:
                             self.RTyyyy_genSbEfuseImage()
-                    elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+                    elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
                         self.RTxxx_burnAllOtpRegions()
                     else:
                         pass
@@ -397,11 +397,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackViewMem( self, event ):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_callbackViewMem()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_callbackViewMem()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_callbackViewMem()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_callbackViewMem()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_callbackViewMem()
@@ -541,11 +541,11 @@ class secBootMain(MCX_main.secBootMcxMain):
             self._setupMcuTargets()
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_switchToolRunMode()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_switchToolRunMode()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_switchToolRunMode()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_switchToolRunMode()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_switchToolRunMode()
@@ -612,12 +612,12 @@ class secBootMain(MCX_main.secBootMcxMain):
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_updateFuseGroupText()
             self.RTyyyy_updateFuseRegionField()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_updateOtpGroupText()
             self.RTxxx_updateOtpRegionField()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             pass
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             pass
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             pass
@@ -667,11 +667,11 @@ class secBootMain(MCX_main.secBootMcxMain):
         self.setLanguage()
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_setLanguage()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_setLanguage()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             self.LPC_setLanguage()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_setLanguage()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             self.MCX_setLanguage()
@@ -732,14 +732,15 @@ class secBootMain(MCX_main.secBootMcxMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_2_1'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_1'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_2'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_2'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_0_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v5.3.2")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.0.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

@@ -470,6 +470,8 @@ class secBootUi(secBootWin.secBootWin):
             self.m_choice_mcuDevice.SetItems(uidef.kMcuDevice_LPC_Latest)
         elif mcuSeries == uidef.kMcuSeries_iMXRT:
             self.m_choice_mcuDevice.SetItems(uidef.kMcuDevice_iMXRT_Latest)
+        elif mcuSeries == uidef.kMcuSeries_Wireless:
+            self.m_choice_mcuDevice.SetItems(uidef.kMcuDevice_Wireless_Latest)
         else:
             pass
 
@@ -488,6 +490,19 @@ class secBootUi(secBootWin.secBootWin):
             self.isMcuSeriesChanged = True
         self.mcuSeries = mcuSeries
 
+    def _detectWirelessSeries( self ):
+        mcuDevice = self.m_choice_mcuDevice.GetString(self.m_choice_mcuDevice.GetSelection())
+        mcuSeries = uidef.kMcuSeries_iMXRTxxx
+        if mcuDevice in uidef.kMcuDevice_iMXRTxxx_sub:
+            mcuSeries = uidef.kMcuSeries_iMXRTxxx_sub
+        elif mcuDevice in uidef.kMcuDevice_Kinetis_sub:
+            mcuSeries = uidef.kMcuSeries_Kinetis_sub
+        else:
+            pass
+        if self.mcuSeries != None and self.mcuSeries != mcuSeries:
+            self.isMcuSeriesChanged = True
+        self.mcuSeries = mcuSeries
+
     def _initTargetSetupValue( self ):
         self.m_choice_mcuSeries.Clear()
         self.m_choice_mcuSeries.SetItems(uidef.kMcuSeries_Latest)
@@ -498,6 +513,8 @@ class secBootUi(secBootWin.secBootWin):
         self.m_choice_mcuDevice.SetSelection(self.toolCommDict['mcuDevice'])
         if mcuSeries == uidef.kMcuSeries_iMXRT:
             self._detectImxrtSeries()
+        elif mcuSeries == uidef.kMcuSeries_Wireless:
+            self._detectWirelessSeries()
         else:
             self.mcuSeries = mcuSeries
 
@@ -585,12 +602,29 @@ class secBootUi(secBootWin.secBootWin):
         mcuSeries = self.m_choice_mcuSeries.GetString(self.m_choice_mcuSeries.GetSelection())
         if mcuSeries != self.mcuSeries:
             self.toolCommDict['mcuSeries'] = self.m_choice_mcuSeries.GetSelection()
+            # from Wireless to Wireless
+            if mcuSeries == uidef.kMcuSeries_Wireless and (self.mcuSeries == uidef.kMcuSeries_Kinetis_sub or self.mcuSeries == uidef.kMcuSeries_iMXRTxxx_sub):
+                self._detectWirelessSeries()
+            # from i.MXRT/LPC/MCX/Kinetis to Wireless
+            elif mcuSeries == uidef.kMcuSeries_Wireless:
+                self._refreshMcuDeviceList(mcuSeries)
+                self.m_choice_mcuDevice.SetSelection(0)
+                self._detectWirelessSeries()
+            # from Wireless to i.MXRT/LPC/MCX/Kinetis
+            elif self.mcuSeries == uidef.kMcuSeries_Kinetis_sub or self.mcuSeries == uidef.kMcuSeries_iMXRTxxx_sub:
+                self._refreshMcuDeviceList(mcuSeries)
+                self.m_choice_mcuDevice.SetSelection(0)
+                if mcuSeries == uidef.kMcuSeries_iMXRT:
+                    self._detectImxrtSeries()
+                else:
+                    self.mcuSeries = mcuSeries
+                    self.isMcuSeriesChanged = True
             # from i.MXRT/LPC/MCX     to Kinetis
             # from i.MXRT/Kinetis/MCX to LPC
             # from i.MXRT/LPC/Kinetis to MCX
-            if mcuSeries == uidef.kMcuSeries_MCX or \
-               mcuSeries == uidef.kMcuSeries_Kinetis or \
-               mcuSeries == uidef.kMcuSeries_LPC:
+            elif mcuSeries == uidef.kMcuSeries_MCX or \
+                 mcuSeries == uidef.kMcuSeries_Kinetis or \
+                 mcuSeries == uidef.kMcuSeries_LPC:
                 self.mcuSeries = mcuSeries
                 self.isMcuSeriesChanged = True
                 self._refreshMcuDeviceList(mcuSeries)
@@ -640,11 +674,11 @@ class secBootUi(secBootWin.secBootWin):
         usbIdList = []
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             usbIdList = self.RTyyyy_getUsbid()
-        elif self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             usbIdList = self.RTxxx_getUsbid()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             usbIdList = self.LPC_getUsbid()
-        elif self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             usbIdList = self.Kinetis_getUsbid()
         elif self.mcuSeries == uidef.kMcuSeries_MCX:
             usbIdList = self.MCX_getUsbid()

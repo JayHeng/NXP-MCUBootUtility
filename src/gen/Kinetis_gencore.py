@@ -24,7 +24,7 @@ class secBootKinetisGen(Kinetis_uicore.secBootKinetisUi):
 
     def __init__(self, parent):
         Kinetis_uicore.secBootKinetisUi.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        if self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_initGen()
 
     def Kinetis_initGen( self ):

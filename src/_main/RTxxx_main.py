@@ -20,7 +20,7 @@ class secBootRTxxxMain(RTxxx_memcore.secBootRTxxxMem):
     def __init__(self, parent):
         RTxxx_memcore.secBootRTxxxMem.__init__(self, parent)
         self.RTxxx_isAllInOneActionTaskPending = False
-        if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self._RTxxx_initMain()
 
     def _RTxxx_initMain( self ):

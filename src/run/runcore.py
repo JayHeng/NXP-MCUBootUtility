@@ -31,6 +31,8 @@ class secBootRun(gencore.secBootGen):
         self.comMemEraseUnit = 0x1
         self.comMemReadUnit = 0x1
 
+        self.isFlexspiNandBlockAddr = None
+
     def showAsOptimalMemoryUnit( self, memSizeBytes ):
         strMemSize = ''
         if memSizeBytes >= 0x40000000:

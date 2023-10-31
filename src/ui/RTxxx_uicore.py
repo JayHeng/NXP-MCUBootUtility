@@ -16,7 +16,7 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
 
     def __init__(self, parent):
         RTyyyy_main.secBootRTyyyyMain.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_initUi()
 
     def RTxxx_initUi( self ):
@@ -160,7 +160,7 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
 
     def RTxxx_updateOtpGroupText( self ):
         self.clearUserFuses()
-        if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             if self.efuseGroupSel == 0:
                 self.m_button_fuse400.SetLabel('000H')
                 self.m_staticText_fuse410.SetLabel('0x004')
@@ -657,7 +657,7 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
         color = None
         if self.toolRunMode == uidef.kToolRunMode_Entry:
             color = wx.SYS_COLOUR_GRAYTEXT
-            if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+            if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
                 if self.efuseGroupSel == 0:
                     self.m_textCtrl_fuse400.SetBackgroundColour( wx.SystemSettings.GetColour( color ) )
                     self.m_textCtrl_fuse410.SetBackgroundColour( wx.SystemSettings.GetColour( color ) )

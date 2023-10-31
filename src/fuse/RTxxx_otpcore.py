@@ -27,7 +27,7 @@ class secBootRTxxxOtp(RTxxx_runcore.secBootRTxxxRun):
         self.toBeBurnnedOtpList = [None] * RTxxx_otpdef.kTotalOtpWords
         self.runModeOtpFlagList = [None] * RTxxx_otpdef.kTotalOtpWords
         self.toBeRefreshedOtpList = [False] * RTxxx_otpdef.kTotalOtpWords
-        if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_initOtp()
 
     def RTxxx_initOtp( self ):

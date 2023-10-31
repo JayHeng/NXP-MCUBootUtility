@@ -16,7 +16,7 @@ class secBootKinetisUi(LPC_main.secBootLpcMain):
 
     def __init__(self, parent):
         LPC_main.secBootLpcMain.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        if self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_initUi()
 
     def Kinetis_initUi( self ):

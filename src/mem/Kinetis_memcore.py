@@ -19,7 +19,7 @@ class secBootKinetisMem(Kinetis_runcore.secBootKinetisRun):
 
     def __init__(self, parent):
         Kinetis_runcore.secBootKinetisRun.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_Kinetis:
+        if self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
             self.Kinetis_initMem()
 
     def Kinetis_initMem( self ):

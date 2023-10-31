@@ -19,7 +19,7 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
 
     def __init__(self, parent):
         RTxxx_otpcore.secBootRTxxxOtp.__init__(self, parent)
-        if self.mcuSeries == uidef.kMcuSeries_iMXRTxxx:
+        if self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
             self.RTxxx_initMem()
 
     def RTxxx_initMem( self ):
