@@ -452,7 +452,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             sipBit = self.RTyyyy_readMcuDeviceFuseByBlhost(self.tgt.efusemapIndexDict['kEfuseIndex_MISC_CONF0'], '', False)
             if sipBit != None:
                 self.flexspiBootInstanceFromFuse = (sipBit & 0x100000) >> 20
-                self.setFlexspiBootInstance()
+                self.getFlexspiBootInstance()
 
     def _genOtpmkDekFile( self, otpmk4, otpmk5, otpmk6, otpmk7 ):
         try:
@@ -935,7 +935,6 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             pass
 
     def RTyyyy_configureBootDevice ( self ):
-        self._RTyyyy_prepareForBootDeviceOperation()
         flexspiNorDeviceModel = None
         configOptList = []
         if self.bootDevice == RTyyyy_uidef.kBootDevice_SemcNand:
@@ -980,6 +979,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             configOptList.extend([usdhcMmcOpt0, usdhcMmcOpt1])
         else:
             pass
+        self._RTyyyy_prepareForBootDeviceOperation()
         status = boot.status.kStatus_Success
         if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_FDCB:
             if self.RTyyyy_isDeviceEnabledToOperate:

@@ -896,14 +896,16 @@ kRevision_6_0_0_en =  "【v6.0.0】 - 2023.11\n" + \
                       "     2. [Wireless] Support RW61x \n" + \
                       "     3. [RW61x] Support FlexSPI NOR boot device \n" + \
                       "  Bugfix: \n" + \
-                      "     1. [RTxxx] Fix support for FlexSPI device \n\n"
+                      "     1. [RTyyyy] Fix support for 2nd FlexSPI NOR instance \n" + \
+                      "     2. [RTxxx] Fix support for FlexSPI NOR device \n\n"
 kRevision_6_0_0_zh = u"【v6.0.0】 - 2023.11\n" + \
                      u"  特性: \n" + \
                      u"     1. [Wireless] 支持K32W0x1 \n" + \
                      u"     2. [Wireless] 支持RW61x \n" + \
                      u"     3. [RW61x] 支持FlexSPI NOR启动设备 \n" + \
                      u"  修复: \n" + \
-                     u"     1. [RTxxx] 修复对FlexSPI设备的下载支持 \n\n"
+                     u"     1. [RTyyyy] 修复对第二个FlexSPI NOR设备的下载支持 \n" + \
+                     u"     2. [RTxxx] 修复对FlexSPI NOR设备的下载支持 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
