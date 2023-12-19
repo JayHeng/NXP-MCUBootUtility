@@ -7,6 +7,7 @@ kBootDeviceMemId_QuadspiNor   = 0x1
 kBootDeviceMemId_SemcNor      = 0x8
 kBootDeviceMemId_FlexspiNor   = 0x9
 kBootDeviceMemId_SpifiNor     = 0xa
+kBootDeviceMemId_XspiNor      = 0xb
 kBootDeviceMemId_SemcNand     = 0x100
 kBootDeviceMemId_FlexspiNand  = 0x101
 kBootDeviceMemId_SpiNor       = 0x110
@@ -15,23 +16,23 @@ kBootDeviceMemId_UsdhcMmc     = 0x121
 
 #----------------FlexSPI NOR---------------------
 kFlexspiNorContent_Blank8 = 0xFF
-kFlexspiNorCfgTag_Flexspi = 0x42464346  # 'FCFB'
 kFlexspiNorContent_Blank32 = 0xFFFFFFFF
 
 #kFlexspiNorCfgInfo_StartAddr = 0x0/0x400
-kFlexspiNorCfgInfo_Length    = 0x400
 kFlexspiNorCfgInfo_Notify    = 0xF000000F
-
 kFlexspiDevCfgInfo_Instance  = 0xCF900001
 
-#kXspiNorCfgInfo_StartAddr    = 0x400
-kXspiNorCfgInfo_Length       = 0x400
-
+kFlexspiNorCfgTag_Flexspi = 0x42464346  # 'FCFB'
 kFlexspiNorCfgOffset_FlexspiTag     = 0x000
 kFlexspiNorCfgOffset_PageByteSize   = 0x1c0
 kFlexspiNorCfgOffset_SectorByteSize = 0x1c4
 kFlexspiNorCfgOffset_BlockByteSize  = 0x1d0
 
+kXspiNorCfgTag_Xspi       = 0x42464346  # 'FCFB'
+kXspiNorCfgOffset_XspiTag           = 0x000
+kXspiNorCfgOffset_PageByteSize      = 0x200
+kXspiNorCfgOffset_SectorByteSize    = 0x204
+kXspiNorCfgOffset_BlockByteSize     = 0x210
 
 kXspiNorDefaultMemInfo_PageSize    = 0x100
 kXspiNorDefaultMemInfo_SectorSize  = 0x1000

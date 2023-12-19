@@ -25,12 +25,13 @@ gantt
     v5.1.0           :a20, 2023-05-24, 2023-05-25
     v5.2.0           :a21, 2023-05-26, 2023-07-07
     v5.3.0           :a22, 2023-07-15, 2023-09-14
-    v6.0.0           :a23, 2023-09-15, 2023-11-01
+    v6.0.0           :a23, 2023-09-15, 2023-11-03
+    v6.1.0           :a24, 2023-11-04, 2023-12-19
 ```
 
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v6.0.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v6.0.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v6.1.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v6.1.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 [English](./README.md) | 中文
 
@@ -71,7 +72,7 @@ gantt
 > * 支持MCU芯片内部FlexRAM的读/写/执行操作（即专用FlexRAM编程器，可用于ISP启动）  
 > * 支持从外部启动设备回读Bootable image，并对其组成部分（NFCB/DBBT/FDCB/EKIB/EPRDB/IVT/Boot Data/DCD/XMCD/Image/CSF/DEK KeyBlob）进行标注  
 -------------------------------------------------------
-> * 支持i.MXRTxxx全系列MCU，包含i.MXRT5xx、i.MXRT6xx、RW61x   
+> * 支持i.MXRTxxx全系列MCU，包含i.MXRT5xx、i.MXRT6xx、RW61x、i.MXRT7xx  
 > * 支持下载Bootable image进主动启动设备 - FlexSPI/QuadSPI接口NOR Flash  
 > * 支持下载Bootable image进主动启动设备 - uSDHC接口SD/eMMC卡  
 > * 支持下载Bootable image进备份启动设备 - Flexcomm SPI接口NOR Flash  

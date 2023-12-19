@@ -25,10 +25,11 @@ kBootImageTypeVal_PlainCrc             = 0x0002
 kBootImageTypeVal_CryptoSigned         = 0x0003
 kBootImageTypeVal_PlainSignedXip       = 0x0004
 kBootImageTypeVal_PlainCrcXip          = 0x0005
+kBootImageTypeVal_Sb3Manifest          = 0x0006
 kBootImageTypeVal_PlainSignedKeyStore  = 0x8001
 kBootImageTypeVal_CryptoSignedKeyStore = 0x8003
 
-kBootImageOffset_NOR_SD_EEPROM = 0x1000
+kBootImageOffset_SD_EEPROM = 0x1000
 
 kSbFileType_All   = 0x0
 kSbFileType_Flash = 0x1

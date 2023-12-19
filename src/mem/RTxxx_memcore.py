@@ -72,6 +72,7 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
         imageFileLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
             imageMemBase = self.bootDeviceMemBase
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd or \
@@ -80,7 +81,7 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
             imageMemBase = self.bootDeviceMemBase
         else:
             pass
-        readoutMemLen += imageFileLen + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+        readoutMemLen += imageFileLen + self.destAppInitialLoadSize
 
         memFilename = 'bootableImageFromBootDevice.dat'
         memFilepath = os.path.join(self.blhostVectorsDir, memFilename)
@@ -97,11 +98,12 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
                 contentToShow, memContent = self.getOneLineContentToShow(addr, memLeft, fileObj)
                 memLeft -= len(memContent)
                 addr += len(memContent)
-                if addr <= imageMemBase + RTxxx_memdef.kMemBlockOffset_FDCB:
+                if addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset:
                     self.printMem(contentToShow)
-                elif addr <= imageMemBase + RTxxx_memdef.kMemBlockOffset_FDCB + memdef.kMemBlockSize_FDCB:
+                elif addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen:
                     if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-                       self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+                       self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+                       self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
                         if self.needToShowCfgIntr:
                             self.printMem('------------------------------------FDCB----------------------------------------------', RTxxx_uidef.kMemBlockColor_FDCB)
                             self.needToShowCfgIntr = False
@@ -118,9 +120,9 @@ class secBootRTxxxMem(RTxxx_otpcore.secBootRTxxxOtp):
                         self.printMem(contentToShow[(14 + memdef.kMemBlockSize_ImageVersion * 3):len(contentToShow)])
                     else:
                         self.printMem(contentToShow)
-                elif addr <= imageMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM:
+                elif addr <= imageMemBase + self.destAppInitialLoadSize:
                     self.printMem(contentToShow)
-                elif addr <= imageMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM + self.destAppBinaryBytes:
+                elif addr <= imageMemBase + self.destAppInitialLoadSize + self.destAppBinaryBytes:
                     if self.needToShowImageIntr:
                         self.printMem('-----------------------------------Image----------------------------------------------', RTxxx_uidef.kMemBlockColor_Image)
                         self.needToShowImageIntr = False

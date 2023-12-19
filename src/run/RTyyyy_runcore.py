@@ -714,7 +714,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             return True
         filename = 'flexspiNorCfg.dat'
         filepath = os.path.join(self.blhostVectorsDir, filename)
-        status, results, cmdStr = self.blhost.readMemory(self.bootDeviceMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kFlexspiNorCfgInfo_Length, filename, self.bootDeviceMemId)
+        status, results, cmdStr = self.blhost.readMemory(self.bootDeviceMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, filename, self.bootDeviceMemId)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False
@@ -853,11 +853,11 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
     def _isFlexspiNorConfigBlockRegionBlank( self ):
         filename = 'flexspiNorCfg.dat'
         filepath = os.path.join(self.blhostVectorsDir, filename)
-        status, results, cmdStr = self.blhost.readMemory(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kFlexspiNorCfgInfo_Length, filename, rundef.kBootDeviceMemId_FlexspiNor)
+        status, results, cmdStr = self.blhost.readMemory(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, filename, rundef.kBootDeviceMemId_FlexspiNor)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False
-        for offset in range(rundef.kFlexspiNorCfgInfo_Length):
+        for offset in range(self.tgt.xspiNorCfgInfoLen):
             value = self.getVal8FromBinFile(filepath, offset)
             if value != rundef.kFlexspiNorContent_Blank8:
                 return False
@@ -871,10 +871,10 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         status = boot.status.kStatus_Success
         if self.RTyyyy_isDeviceEnabledToOperate:
             if not self._isFlexspiNorConfigBlockRegionBlank():
-                status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kFlexspiNorCfgInfo_Length, rundef.kBootDeviceMemId_FlexspiNor)
+                status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, rundef.kBootDeviceMemId_FlexspiNor)
                 self.printLog(cmdStr)
         if self.isSbFileEnabledToGen:
-            self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset + rundef.kFlexspiNorCfgInfo_Length))) + ";\n")
+            self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen))) + ";\n")
         return (status == boot.status.kStatus_Success)
 
     def _programFlexspiNorConfigBlock ( self ):
@@ -1353,8 +1353,8 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         imageData = None
         with open(self.destEncAppFilename, 'rb') as fileObj:
             imageData = fileObj.read(imageLen)
-            if len(imageData) > rundef.kFlexspiNorCfgInfo_Length:
-                imageData = imageData[rundef.kFlexspiNorCfgInfo_Length:len(imageData)]
+            if len(imageData) > self.tgt.xspiNorCfgInfoLen:
+                imageData = imageData[self.tgt.xspiNorCfgInfoLen:len(imageData)]
             fileObj.close()
         with open(self.destEncAppNoCfgBlockFilename, 'wb') as fileObj:
             fileObj.write(imageData)
@@ -1369,8 +1369,8 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
         imageData = None
         with open(self.destEncAppFilename, 'rb') as fileObj:
             imageData = fileObj.read(imageLen)
-            if len(imageData) > self.tgt.xspiNorCfgInfoOffset + rundef.kFlexspiNorCfgInfo_Length:
-                imageData = imageData[self.tgt.xspiNorCfgInfoOffset + rundef.kFlexspiNorCfgInfo_Length:len(imageData)]
+            if len(imageData) > self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen:
+                imageData = imageData[self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen:len(imageData)]
             fileObj.close()
         with open(self.destEncAppNoKeyblobAndCfgBlockFilename, 'wb') as fileObj:
             fileObj.write(imageData)
@@ -1483,7 +1483,7 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                     destEncAppFilename = self.destEncAppNoKeyblobAndCfgBlockFilename
                 else:
                     pass
-                imageLoadAddr = self.bootDeviceMemBase + self.tgt.xspiNorCfgInfoOffset + rundef.kFlexspiNorCfgInfo_Length
+                imageLoadAddr = self.bootDeviceMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen
                 if self.isSbFileEnabledToGen:
                     self._RTyyyy_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
                     status = boot.status.kStatus_Success

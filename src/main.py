@@ -130,7 +130,8 @@ class secBootMain(MCX_main.secBootMcxMain):
     def callbackBootDeviceConfiguration( self, event ):
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             if self.tgt.isSipFlexspiNorDevice:
                 self.popupMsgBox(uilang.kMsgLanguageContentDict['bootDeviceInfo_hasOnchipSerialNor'][self.languageIndex])
                 return
@@ -138,7 +139,8 @@ class secBootMain(MCX_main.secBootMcxMain):
             return
         if self.bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             flexspiNorFrame = ui_cfg_flexspinor.secBootUiCfgFlexspiNor(None)
             if self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
                 flexspiNorFrame.SetTitle(uilang.kSubLanguageContentDict['quadspinor_title'][self.languageIndex])
@@ -733,14 +735,15 @@ class secBootMain(MCX_main.secBootMcxMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_1'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_2'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_0_0'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_0_0'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_1_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.0.0")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.1.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

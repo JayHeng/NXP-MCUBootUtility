@@ -696,7 +696,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
                 self.bincopyFileToFile(self.destAppFilename, self.xmcdBinFilename, self.destAppIvtOffset + RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
                 self.bincopyFileToFile(self.destAppNoPaddingFilename, self.xmcdBinFilename, RTyyyy_memdef.kMemBlockOffsetToIvt_XMCD)
 
-    def _setDestAppInitialBootHeaderInfo( self, bootDevice ):
+    def _RTyyyy_setDestAppInitialBootHeaderInfo( self, bootDevice ):
         if bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
             if self.tgt.bootHeaderType == gendef.kBootHeaderType_Container:
@@ -751,7 +751,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             pass
 
     def _setDestAppFinalBootHeaderInfo( self, bootDevice ):
-        self._setDestAppInitialBootHeaderInfo(bootDevice)
+        self._RTyyyy_setDestAppInitialBootHeaderInfo(bootDevice)
         if bootDevice == RTyyyy_uidef.kBootDevice_FlexspiNor or \
            bootDevice == RTyyyy_uidef.kBootDevice_SemcNor:
             if self.isXipApp:
@@ -1051,7 +1051,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.srcAppFilename = self.getUserAppFilePath()
         if not self._validateEdgelockFwFiles():
             return False
-        self._setDestAppInitialBootHeaderInfo(self.bootDevice)
+        self._RTyyyy_setDestAppInitialBootHeaderInfo(self.bootDevice)
         imageStartAddr, imageEntryAddr, imageLength = self._RTyyyy_getImageInfo(self.srcAppFilename, ideRetryType)
         if imageStartAddr == None or imageEntryAddr == None:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_notFound'][self.languageIndex])
@@ -1550,7 +1550,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             pass
 
     def _createSignedFlBdfile( self, srcFlFilename):
-        self._setDestAppInitialBootHeaderInfo(RTyyyy_uidef.kBootDevice_RamFlashloader)
+        self._RTyyyy_setDestAppInitialBootHeaderInfo(RTyyyy_uidef.kBootDevice_RamFlashloader)
         imageStartAddr, imageEntryAddr, imageLength = self._RTyyyy_getImageInfo(srcFlFilename)
         if imageStartAddr == None or imageEntryAddr == None:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_invalidFl'][self.languageIndex])
@@ -1581,7 +1581,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             return None
 
     def _createUserFlBdfile( self, srcFlFilename):
-        self._setDestAppInitialBootHeaderInfo(RTyyyy_uidef.kBootDevice_RamFlashloader)
+        self._RTyyyy_setDestAppInitialBootHeaderInfo(RTyyyy_uidef.kBootDevice_RamFlashloader)
         imageStartAddr, imageEntryAddr, imageLength = self._RTyyyy_getImageInfo(srcFlFilename)
         return self._updateBdfileContent(RTyyyy_uidef.kSecureBootType_Development, RTyyyy_uidef.kBootDevice_RamFlashloader, imageStartAddr, imageEntryAddr), imageStartAddr
 

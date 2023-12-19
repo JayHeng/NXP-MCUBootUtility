@@ -35,3 +35,22 @@ otpmapDefnDict_RTxxx    = {
                             'kOtpShift_FlexspiNorImage1Offset'  :22,
                             }
 
+otpmapIndexDict_RT700    = {'kOtpIndex_START' :0x0,
+
+                            'kOtpIndex_BOOT_CFG0' :0x88,
+                            'kOtpIndex_BOOT_CFG1' :0x89,
+                            'kOtpIndex_BOOT_CFG2' :0x8a,
+                            'kOtpIndex_BOOT_CFG3' :0x8b,
+
+                            'kOtpEntryModeRegion0IndexStart' :0x00,
+                            'kOtpEntryModeRegion0IndexEnd'   :0x00,
+                            'kOtpEntryModeRegion1IndexStart' :0x00,
+                            'kOtpEntryModeRegion1IndexEnd'   :0x00,
+                            'kOtpEntryModeRegion2IndexStart' :0x00,
+                            'kOtpEntryModeRegion2IndexEnd'   :0x00,
+                            'kOtpEntryModeRegion3IndexStart' :0x00,
+                            'kOtpEntryModeRegion3IndexEnd'   :0x00,
+                            'kOtpEntryModeRegion4IndexStart' :0x00,
+                            'kOtpEntryModeRegion4IndexEnd'   :0x00,
+                            }
+

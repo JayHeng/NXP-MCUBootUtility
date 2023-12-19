@@ -10,6 +10,7 @@ kBootDeviceMemBase_UsdhcMmc       = 0x0
 
 kBootDeviceMemXipSize_FlexspiNor   = 0x08000000 #128MB
 kBootDeviceMemXipSize_QuadspiNor   = 0x08000000 #128MB
+kBootDeviceMemXipSize_XspiNor      = 0x08000000 #128MB
 
 kRamFreeSpaceStart_LoadCommOpt        = 0x0010c000
 kRamFreeSpaceStart_LoadCfgBlock       = 0x0010d000

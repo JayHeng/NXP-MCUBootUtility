@@ -73,6 +73,8 @@ flexspiNorMem1MaxSize = None
 flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
 xspiNorCfgInfoOffset = 0x400
+xspiNorCfgInfoLen    = 0x200
+xspiNorImgHdrOffset = 0x1000
 flexspiNorEfuseBootCfg0Bits = None
 isSipFlexspiNorDevice = False
 isNonXipImageAppliableForXipableDeviceUnderClosedHab = None
@@ -136,6 +138,6 @@ memoryRange = {
 }
 
 reservedRegionDict = {
-    # SRAM, 512KB
-    'sram' : [0x20203800, 0x20207EF8]
+    # SRAM, 48KB
+    'sram' : [0x00010000, 0x0001BFFF]
 }

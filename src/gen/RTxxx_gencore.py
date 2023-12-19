@@ -42,7 +42,7 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
         self.isConvertedAppUsed = False
         self.isFdcbFromSrcApp = False
 
-        self.destAppInitialLoadSize = RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+        self.destAppInitialLoadSize = 0
         self.destAppVectorAddress = 0
         self.destAppVectorOffset = None
         self.destAppBinaryBytes = 0
@@ -50,6 +50,18 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
 
         self.flexspiNorImage0Version = None
         self.flexspiNorImage1Version = None
+
+    def _RTxxx_setDestAppInitialBootHeaderInfo( self, bootDevice ):
+        if bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+           bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
+            self.destAppInitialLoadSize = self.tgt.xspiNorImgHdrOffset
+        elif bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor or \
+             bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd or \
+             bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
+            self.destAppInitialLoadSize = RTxxx_gendef.kBootImageOffset_SD_EEPROM
+        else:
+            pass
 
     def _RTxxx_generatePlainImageBinary( self, binaryArray, appName, startAddress, lengthInByte ):
         destBinAppFilename = os.path.join(self.userFileFolder, appName + gendef.kAppImageFileExtensionList_Bin[0])
@@ -99,15 +111,17 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
                     srecObj = bincopy.BinFile(str(srcAppFilename))
                     startAddress = srecObj.minimum_address
                     initialLoadAppBytes = srecObj.as_binary(startAddress, startAddress + self.destAppInitialLoadSize)
-                    if (self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor):
+                    if (self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+                        self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+                        self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor):
                         isSrcAppBootableImage, fdcbOffsetInApp = self._RTxxx_isSrcAppBootableImage(initialLoadAppBytes)
                         if isSrcAppBootableImage:
                             self.extractFdcbDataFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
                             if self.tgt.hasFlexspiNorDualImageBoot:
                                 self.flexspiNorImage0Version = self.getImageVersionValueFromSrcApp(initialLoadAppBytes, fdcbOffsetInApp)
-                            startAddress += RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM - (self.tgt.xspiNorCfgInfoOffset - fdcbOffsetInApp)
+                            startAddress += self.tgt.xspiNorImgHdrOffset - (self.tgt.xspiNorCfgInfoOffset - fdcbOffsetInApp)
                             entryPointAddress = self.getVal32FromByteArray(srecObj.as_binary(startAddress + 0x4, startAddress  + 0x8))
-                            lengthInByte = len(srecObj.as_binary()) - (memdef.kMemBlockSize_FDCB + fdcbOffsetInApp)
+                            lengthInByte = len(srecObj.as_binary()) - (self.tgt.xspiNorCfgInfoLen + fdcbOffsetInApp)
                             self._RTxxx_generatePlainImageBinary(srecObj.as_binary(startAddress, startAddress + lengthInByte), appName, startAddress, lengthInByte)
                             isConvSuccessed = True
                         else:
@@ -226,13 +240,15 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
 
     def RTxxx_createMatchedAppJsonfile( self ):
         self.srcAppFilename = self.getUserAppFilePath()
+        self._RTxxx_setDestAppInitialBootHeaderInfo(self.bootDevice)
         imageStartAddr, imageEntryAddr, imageLength = self._RTxxx_getImageInfo(self.srcAppFilename)
         if imageStartAddr == None or imageEntryAddr == None:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['srcImgError_notFound'][self.languageIndex])
             return False
         self.isXipApp = False
         self.destAppVectorAddress = imageStartAddr
-        if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+        if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             self.adjustTgtFlexspiMemBaseAccordingToApp(imageStartAddr)
             if ((imageStartAddr >= self.tgt.flexspiNorMemBase) and (imageStartAddr < self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize)):
                 if (imageStartAddr + imageLength <= self.tgt.flexspiNorMemBase + self.tgt.flexspiNorMemMaxSize):
@@ -393,7 +409,8 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
             else:
                 pass
             destSbAppName += '_' + self.sbEnableBootDeviceMagic
-            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+               self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
                 flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
                 if flexspiNorDeviceModel == 'No':
                     destSbAppName += '_' + self.convertLongIntHexText(str(hex(flexspiNorOpt0))) + '_' + self.convertLongIntHexText(str(hex(flexspiNorOpt1)))
@@ -433,7 +450,8 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
         else:
             pass
         if sbType == RTxxx_gendef.kSbFileType_All or sbType == RTxxx_gendef.kSbFileType_Flash:
-            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+               self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
                 destAppFilename = self.destAppFilename
             elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
                 pass
@@ -455,7 +473,8 @@ class secBootRTxxxGen(RTxxx_uicore.secBootRTxxxUi):
         sbBatContent = "\"" + self.elftosbPath + "\""
         sbBatContent += " -d -V -f " + familyStr + " -c " + "\"" + sbAppBdFilename + "\"" + ' -o ' + "\"" + destSbAppFilename + "\"" + destAppFilename
         if sbType == RTxxx_gendef.kSbFileType_All or sbType == RTxxx_gendef.kSbFileType_Flash:
-            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+               self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
                 flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
                 if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_FDCB:
                     sbBatContent += ' ' + "\"" + self.cfgFdcbBinFilename + "\""

@@ -26,6 +26,8 @@ def RTxxx_createTarget(device, exeBinRoot):
         cpu = "MIMXRT595"
     elif device == uidef.kMcuDevice_iMXRT600:
         cpu = "MIMXRT685"
+    elif device == uidef.kMcuDevice_iMXRT700:
+        cpu = "MIMXRT798"
     elif device == uidef.kMcuDevice_RW612:
         cpu = "RW612"
     else:
@@ -142,10 +144,10 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
             return None
 
     def _RTxxx_readMcuDeviceOtpBootCfg( self ):
-        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG0'], '(0x60) BOOT_CFG0')
-        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG1'], '(0x61) BOOT_CFG1')
-        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG2'], '(0x62) BOOT_CFG2')
-        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG3'], '(0x63) BOOT_CFG3')
+        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG0'], '(otp) BOOT_CFG0')
+        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG1'], '(otp) BOOT_CFG1')
+        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG2'], '(otp) BOOT_CFG2')
+        self.RTxxx_readMcuDeviceOtpByBlhost(self.tgt.otpmapIndexDict['kOtpIndex_BOOT_CFG3'], '(otp) BOOT_CFG3')
 
     def RTxxx_getMcuDeviceInfoViaRom( self ):
         self.printDeviceStatus("----------MCU ROM info-----------")
@@ -158,15 +160,28 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
             return True
         filename = 'xspiNorCfg.dat'
         filepath = os.path.join(self.blhostVectorsDir, filename)
-        status, results, cmdStr = self.blhost.readMemory(self.bootDeviceMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kXspiNorCfgInfo_Length, filename, self.bootDeviceMemId)
+        status, results, cmdStr = self.blhost.readMemory(self.bootDeviceMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, filename, self.bootDeviceMemId)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False
         flexspiTag = self.getVal32FromBinFile(filepath, rundef.kFlexspiNorCfgOffset_FlexspiTag)
-        if flexspiTag == rundef.kFlexspiNorCfgTag_Flexspi:
-            pageByteSize = self.getVal32FromBinFile(filepath, rundef.kFlexspiNorCfgOffset_PageByteSize)
-            sectorByteSize = self.getVal32FromBinFile(filepath, rundef.kFlexspiNorCfgOffset_SectorByteSize)
-            blockByteSize = self.getVal32FromBinFile(filepath, rundef.kFlexspiNorCfgOffset_BlockByteSize)
+        xspiTag = self.getVal32FromBinFile(filepath, rundef.kXspiNorCfgOffset_XspiTag)
+        if flexspiTag == rundef.kFlexspiNorCfgTag_Flexspi or \
+           xspiTag == rundef.kXspiNorCfgTag_Xspi:
+            xspiNorCfgOffset_PageByteSize = 0
+            xspiNorCfgOffset_SectorByteSize = 0
+            xspiNorCfgOffset_BlockByteSize = 0
+            if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+                xspiNorCfgOffset_PageByteSize = rundef.kFlexspiNorCfgOffset_PageByteSize
+                xspiNorCfgOffset_SectorByteSize = rundef.kFlexspiNorCfgOffset_SectorByteSize
+                xspiNorCfgOffset_BlockByteSize = rundef.kFlexspiNorCfgOffset_BlockByteSize
+            elif self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
+                xspiNorCfgOffset_PageByteSize = rundef.kXspiNorCfgOffset_PageByteSize
+                xspiNorCfgOffset_SectorByteSize = rundef.kXspiNorCfgOffset_SectorByteSize
+                xspiNorCfgOffset_BlockByteSize = rundef.kXspiNorCfgOffset_BlockByteSize
+            pageByteSize = self.getVal32FromBinFile(filepath, xspiNorCfgOffset_PageByteSize)
+            sectorByteSize = self.getVal32FromBinFile(filepath, xspiNorCfgOffset_SectorByteSize)
+            blockByteSize = self.getVal32FromBinFile(filepath, xspiNorCfgOffset_BlockByteSize)
             self.printDeviceStatus("Page Size   = " + self.showAsOptimalMemoryUnit(pageByteSize))
             self.printDeviceStatus("Sector Size = " + self.showAsOptimalMemoryUnit(sectorByteSize))
             self.printDeviceStatus("Block Size  = " + self.showAsOptimalMemoryUnit(blockByteSize))
@@ -230,11 +245,14 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         if self.toolRunMode == uidef.kToolRunMode_SblOta:
             self._RTxxx_prepareForBootDeviceOperation()
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
                 self.printDeviceStatus("--------FlexSPI NOR memory--------")
             elif self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
                 self.printDeviceStatus("--------QuadSPI NOR memory--------")
+            elif self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
+                self.printDeviceStatus("----------XSPI NOR memory---------")
             else:
                 pass
             if not self._getXspiNorDeviceInfo(False):
@@ -262,6 +280,9 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         elif self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
             self.bootDeviceMemId = rundef.kBootDeviceMemId_QuadspiNor
             self.bootDeviceMemBase = self.tgt.quadspiNorMemBase
+        elif self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
+            self.bootDeviceMemId = rundef.kBootDeviceMemId_XspiNor
+            self.bootDeviceMemBase = self.tgt.flexspiNorMemBase
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd:
             self.bootDeviceMemId = rundef.kBootDeviceMemId_UsdhcSd
             self.bootDeviceMemBase = RTxxx_rundef.kBootDeviceMemBase_UsdhcSd
@@ -280,11 +301,11 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
     def _isXspiNorConfigBlockRegionBlank( self ):
         filename = 'xspiNorCfg.dat'
         filepath = os.path.join(self.blhostVectorsDir, filename)
-        status, results, cmdStr = self.blhost.readMemory(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kFlexspiNorCfgInfo_Length, filename, rundef.kBootDeviceMemId_FlexspiNor)
+        status, results, cmdStr = self.blhost.readMemory(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, filename, rundef.kBootDeviceMemId_FlexspiNor)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False
-        for offset in range(rundef.kFlexspiNorCfgInfo_Length):
+        for offset in range(self.tgt.xspiNorCfgInfoLen):
             value = self.getVal8FromBinFile(filepath, offset)
             if value != rundef.kFlexspiNorContent_Blank8:
                 return False
@@ -299,14 +320,14 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         if self.RTxxx_isDeviceEnabledToOperate:
             if not self._isXspiNorConfigBlockRegionBlank():
                 if self.bootDeviceMemId == rundef.kBootDeviceMemId_FlexspiNor:
-                    status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kXspiNorCfgInfo_Length, rundef.kBootDeviceMemId_FlexspiNor)
+                    status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, rundef.kBootDeviceMemId_FlexspiNor)
                 elif self.bootDeviceMemId == rundef.kBootDeviceMemId_QuadspiNor:
-                    status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.quadspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, rundef.kXspiNorCfgInfo_Length, rundef.kBootDeviceMemId_QuadspiNor)
+                    status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.quadspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, rundef.kBootDeviceMemId_QuadspiNor)
                 else:
                     pass
                 self.printLog(cmdStr)
         if self.isSbFileEnabledToGen:
-            self._RTxxx_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset + rundef.kFlexspiNorCfgInfo_Length))) + ";\n")
+            self._RTxxx_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen))) + ";\n")
         return (status == boot.status.kStatus_Success)
 
     def _programXspiNorConfigBlock ( self ):
@@ -339,7 +360,8 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         flexspiNorDeviceModel = None
         configOptList = []
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
             configOptList.extend([flexspiNorOpt0, flexspiNorOpt1])
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
@@ -382,14 +404,15 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
 
     def _eraseXspiNorForImageLoading( self ):
         imageLen = os.path.getsize(self.destAppFilename)
-        imageLen += RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+        imageLen += self.tgt.xspiNorImgHdrOffset
         memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
         status = None
         cmdStr = ''
         if self.isSbFileEnabledToGen:
             self._RTxxx_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + memEraseLen))) + ";\n")
         else:
-            if self.bootDeviceMemId == rundef.kBootDeviceMemId_FlexspiNor:
+            if self.bootDeviceMemId == rundef.kBootDeviceMemId_FlexspiNor or \
+               self.bootDeviceMemId == rundef.kBootDeviceMemId_XspiNor:
                 status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase, memEraseLen, self.bootDeviceMemId)
             elif self.bootDeviceMemId == rundef.kBootDeviceMemId_QuadspiNor:
                 status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.quadspiNorMemBase, memEraseLen, self.bootDeviceMemId)
@@ -421,7 +444,8 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         self._RTxxx_prepareForBootDeviceOperation()
         imageLen = os.path.getsize(self.destAppFilename)
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
-           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor:
+           self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             image0Size = 0
             if not self.isXspiNorErasedForImage:
                 if not self._eraseXspiNorForImageLoading():
@@ -446,7 +470,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                 else:
                     status, results, cmdStr = self.blhost.fillMemory(versionLoadAddr, 0x4, self.flexspiNorImage0Version)
                     self.printLog(cmdStr)
-            imageLoadAddr = self.bootDeviceMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+            imageLoadAddr = self.bootDeviceMemBase + self.tgt.xspiNorImgHdrOffset
             if self.isSbFileEnabledToGen:
                 self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
                 status = boot.status.kStatus_Success
@@ -471,7 +495,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                         return False
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
-            imageLoadAddr = self.bootDeviceMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+            imageLoadAddr = self.bootDeviceMemBase + self.destAppInitialLoadSize
             if self.isSbFileEnabledToGen:
                 self._RTxxx_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ".." + self.convertLongIntHexText(str(hex(imageLoadAddr + memEraseLen))) + ";\n")
                 self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
@@ -487,7 +511,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         elif self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcSd or \
              self.bootDevice == RTxxx_uidef.kBootDevice_UsdhcMmc:
             memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
-            imageLoadAddr = self.bootDeviceMemBase + RTxxx_gendef.kBootImageOffset_NOR_SD_EEPROM
+            imageLoadAddr = self.bootDeviceMemBase + self.destAppInitialLoadSize
             if self.isSbFileEnabledToGen:
                 self._RTxxx_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ".." + self.convertLongIntHexText(str(hex(imageLoadAddr + memEraseLen))) + ";\n")
                 self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.sbAccessBootDeviceMagic + " myBinFile > " + self.convertLongIntHexText(str(hex(imageLoadAddr))) + ";\n")
@@ -527,7 +551,8 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                 return True
 
     def RTxxx_burnBootDeviceOtps( self ):
-        if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor:
+        if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
+           self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
             if self.tgt.hasFlexspiNorDualImageBoot:
                 flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(self.bootDevice)
                 flexspiNorImage1Offset = (flexspiNorDualImageInfoList[2] & 0xFFFF)

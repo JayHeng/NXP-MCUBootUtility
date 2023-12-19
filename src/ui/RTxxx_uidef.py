@@ -6,6 +6,7 @@ kConnectStep_Normal = 1
 
 kBootDevice_FlexspiNor     = 'FLEXSPI NOR'
 kBootDevice_QuadspiNor     = 'QUADSPI NOR'
+kBootDevice_XspiNor        = 'XSPI NOR'
 kBootDevice_UsdhcSd        = 'uSDHC SD'
 kBootDevice_UsdhcMmc       = 'uSDHC (e)MMC'
 kBootDevice_FlexcommSpiNor = 'FLEXCOMM SPI NOR'

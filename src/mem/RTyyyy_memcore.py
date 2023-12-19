@@ -186,7 +186,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
                     self.printMem(contentToShow)
             else:
                 self.printMem(contentToShow)
-        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB):
+        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen):
             if not self.isSdmmcCard:
                 if self.needToShowCfgIntr:
                     self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)
@@ -295,7 +295,7 @@ class secBootRTyyyyMem(RTyyyy_fusecore.secBootRTyyyyFuse):
     def _showOneLineContentForContainerType( self, addr, imageMemBase, contentToShow, memContent ):
         if (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset):
             self.printMem(contentToShow)
-        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + RTyyyy_memdef.kMemBlockSize_FDCB) or (addr <= imageMemBase + RTyyyy_memdef.kMemBlockSize_FDCB):
+        elif (self.isXipableDevice and addr <= imageMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen) or (addr <= imageMemBase + self.tgt.xspiNorCfgInfoLen):
             if not self.isSdmmcCard:
                 if self.needToShowCfgIntr:
                     self.printMem('------------------------------------FDCB----------------------------------------------', RTyyyy_uidef.kMemBlockColor_FDCB)

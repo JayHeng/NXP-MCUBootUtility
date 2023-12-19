@@ -814,14 +814,18 @@ kRevision_5_0_0_en =  "【v5.0.0】 - 2023.05\n" + \
                       "  Feature: \n" + \
                       "     1. [RTyyyy] Support i.MXRT118x A0 \n" + \
                       "     2. [RT1180] Support raw app file(not bootable app) as source image \n" + \
-                      "     3. [RT1180] Support FlexSPI NOR boot device \n" + \
-                      "     4. [RT1180] Support uSDHC SD&MMC boot device \n\n"
+                      "     3. [RT1180] Support both UART and USB-HID download modes \n" + \
+                      "     4. [RT1180] Support development boot case (Unsigned) \n" + \
+                      "     5. [RT1180] Support FlexSPI NOR boot device \n" + \
+                      "     6. [RT1180] Support uSDHC SD&MMC boot device \n\n"
 kRevision_5_0_0_zh = u"【v5.0.0】 - 2023.05\n" + \
                      u"  特性: \n" + \
                      u"     1. [RTyyyy] 支持i.MXRT118x A0 \n" + \
                      u"     2. [RT1180] 支持裸应用程序文件作为输入源文件 \n" + \
-                     u"     3. [RT1180] 支持FlexSPI NOR启动设备 \n" + \
-                     u"     4. [RT1180] 支持uSDHC SD&MMC启动设备 \n\n"
+                     u"     3. [RT1180] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
+                     u"     4. [RT1180] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
+                     u"     5. [RT1180] 支持FlexSPI NOR启动设备 \n" + \
+                     u"     6. [RT1180] 支持uSDHC SD&MMC启动设备 \n\n"
 kRevision_5_1_0_en =  "【v5.1.0】 - 2023.05\n" + \
                       "  Feature: \n" + \
                       "     1. [RT1180] Support edgelock FW \n\n"
@@ -894,7 +898,10 @@ kRevision_6_0_0_en =  "【v6.0.0】 - 2023.11\n" + \
                       "  Feature: \n" + \
                       "     1. [Wireless] Support K32W0x1 \n" + \
                       "     2. [Wireless] Support RW61x \n" + \
-                      "     3. [RW61x] Support FlexSPI NOR boot device \n" + \
+                      "     3. [RW61x] Support raw app file(not bootable app) as source image \n" + \
+                      "     4. [RW61x] Support both UART and USB-HID download modes \n" + \
+                      "     5. [RW61x] Support development boot case (Unsigned) \n" + \
+                      "     6. [RW61x] Support FlexSPI NOR boot device \n" + \
                       "  Bugfix: \n" + \
                       "     1. [RTyyyy] Fix support for 2nd FlexSPI NOR instance \n" + \
                       "     2. [RTxxx] Fix support for FlexSPI NOR device \n\n"
@@ -902,10 +909,27 @@ kRevision_6_0_0_zh = u"【v6.0.0】 - 2023.11\n" + \
                      u"  特性: \n" + \
                      u"     1. [Wireless] 支持K32W0x1 \n" + \
                      u"     2. [Wireless] 支持RW61x \n" + \
-                     u"     3. [RW61x] 支持FlexSPI NOR启动设备 \n" + \
+                     u"     3. [RW61x] 支持裸应用程序文件作为输入源文件 \n" + \
+                     u"     4. [RW61x] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
+                     u"     5. [RW61x] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
+                     u"     6. [RW61x] 支持FlexSPI NOR启动设备 \n" + \
                      u"  修复: \n" + \
                      u"     1. [RTyyyy] 修复对第二个FlexSPI NOR设备的下载支持 \n" + \
                      u"     2. [RTxxx] 修复对FlexSPI NOR设备的下载支持 \n\n"
+kRevision_6_1_0_en =  "【v6.1.0】 - 2023.12\n" + \
+                      "  Feature: \n" + \
+                      "     1. [RTxxx] Support i.MXRT700 A0 \n" + \
+                      "     2. [RT700] Support raw app file(not bootable app) as source image \n" + \
+                      "     3. [RT700] Support both UART and USB-HID download modes \n" + \
+                      "     4. [RT700] Support development boot case (Unsigned) \n" + \
+                      "     5. [RT700] Support XSPI NOR boot device \n\n"
+kRevision_6_1_0_zh = u"【v6.1.0】 - 2023.12\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTxxx] 支持i.MXRT700 A0 \n" + \
+                     u"     2. [RT700] 支持裸应用程序文件作为输入源文件 \n" + \
+                     u"     3. [RT700] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
+                     u"     4. [RT700] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
+                     u"     5. [RT700] 支持XSPI NOR启动设备 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -950,6 +974,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v5_3_1':             [kRevision_5_3_1_en,                      kRevision_5_3_1_zh],
         'revisionHistory_v5_3_2':             [kRevision_5_3_2_en,                      kRevision_5_3_2_zh],
         'revisionHistory_v6_0_0':             [kRevision_6_0_0_en,                      kRevision_6_0_0_zh],
+        'revisionHistory_v6_1_0':             [kRevision_6_1_0_en,                      kRevision_6_1_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

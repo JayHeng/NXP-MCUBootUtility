@@ -78,6 +78,8 @@ class Target(object):
         self.flexspiNorMem1AliasedMaxSize = misc.get_dict_default(kwargs, 'flexspiNorMem1AliasedMaxSize', None)
         self.flexspiFreqs = misc.get_dict_default(kwargs, 'flexspiFreqs', None)
         self.xspiNorCfgInfoOffset = misc.get_dict_default(kwargs, 'xspiNorCfgInfoOffset', None)
+        self.xspiNorCfgInfoLen = misc.get_dict_default(kwargs, 'xspiNorCfgInfoLen', None)
+        self.xspiNorImgHdrOffset = misc.get_dict_default(kwargs, 'xspiNorImgHdrOffset', None)
         self.flexspiNorEfuseBootCfg0Bits = misc.get_dict_default(kwargs, 'flexspiNorEfuseBootCfg0Bits', None)
         self.isNonXipImageAppliableForXipableDeviceUnderClosedHab = misc.get_dict_default(kwargs, 'isNonXipImageAppliableForXipableDeviceUnderClosedHab', None)
         self.isSipFlexspiNorDevice = misc.get_dict_default(kwargs, 'isSipFlexspiNorDevice', None)
