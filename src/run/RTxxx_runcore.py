@@ -87,6 +87,15 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
     def RTxxx_createMcuTarget( self ):
         self.tgt, self.cpuDir = RTxxx_createTarget(self.mcuDevice, self.exeBinRoot)
 
+    def RTxxx_updateFlexspiNorMemBase( self ):
+        # Set main flexspi nor XIP region
+        if self.flexspiBootInstance == 0:
+            self.tgt.flexspiNorMemBase = self.tgt.flexspiNorMemBase0
+        elif self.flexspiBootInstance == 1:
+            self.tgt.flexspiNorMemBase = self.tgt.flexspiNorMemBase1
+        else:
+            pass
+
     def RTxxx_getUsbid( self ):
         self.RTxxx_createMcuTarget()
         return [self.tgt.romUsbVid, self.tgt.romUsbPid, self.tgt.flashloaderUsbVid, self.tgt.flashloaderUsbPid]
@@ -301,7 +310,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
     def _isXspiNorConfigBlockRegionBlank( self ):
         filename = 'xspiNorCfg.dat'
         filepath = os.path.join(self.blhostVectorsDir, filename)
-        status, results, cmdStr = self.blhost.readMemory(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, filename, rundef.kBootDeviceMemId_FlexspiNor)
+        status, results, cmdStr = self.blhost.readMemory(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, filename, self.bootDeviceMemId)
         self.printLog(cmdStr)
         if status != boot.status.kStatus_Success:
             return False
@@ -319,8 +328,9 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         status = boot.status.kStatus_Success
         if self.RTxxx_isDeviceEnabledToOperate:
             if not self._isXspiNorConfigBlockRegionBlank():
-                if self.bootDeviceMemId == rundef.kBootDeviceMemId_FlexspiNor:
-                    status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, rundef.kBootDeviceMemId_FlexspiNor)
+                if self.bootDeviceMemId == rundef.kBootDeviceMemId_FlexspiNor or \
+                   self.bootDeviceMemId == rundef.kBootDeviceMemId_XspiNor:
+                    status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, self.bootDeviceMemId)
                 elif self.bootDeviceMemId == rundef.kBootDeviceMemId_QuadspiNor:
                     status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.quadspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, rundef.kBootDeviceMemId_QuadspiNor)
                 else:
@@ -355,6 +365,30 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         else:
             return (status == boot.status.kStatus_Success)
 
+    def RTxxx_setFlexspiInstance( self ):
+        if self.mcuDevice == uidef.kMcuDevice_iMXRT700:
+            # In RT700 flashloader, 0xFC900000/0xFC900001 is used to switch XSPI0/1 instance
+            #  0xFC900000 -> Primary instance
+            #  0xFC900001 -> Secondary instance
+            configOpt = rundef.kXspiDevCfgInfo_Instance + self.flexspiBootInstance
+            status = boot.status.kStatus_Success
+            if self.RTxxx_isDeviceEnabledToOperate:
+                status, results, cmdStr = self.blhost.fillMemory(self.tgt.ramFreeSpaceStart_LoadCommOpt, 0x4, configOpt)
+                self.printLog(cmdStr)
+            if self.isSbFileEnabledToGen:
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    load " + self.convertLongIntHexText(str(hex(configOpt))) + " > " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
+            if status != boot.status.kStatus_Success:
+                return False
+            if self.RTxxx_isDeviceEnabledToOperate:
+                status, results, cmdStr = self.blhost.configureMemory(self.bootDeviceMemId, self.tgt.ramFreeSpaceStart_LoadCommOpt)
+                self.printLog(cmdStr)
+            if self.isSbFileEnabledToGen:
+                self._RTxxx_addFlashActionIntoSbAppBdContent("    enable " + self.sbEnableBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.ramFreeSpaceStart_LoadCommOpt))) + ";\n")
+            if status != boot.status.kStatus_Success:
+                return False
+        else:
+            pass
+
     def RTxxx_configureBootDevice ( self ):
         self._RTxxx_prepareForBootDeviceOperation()
         flexspiNorDeviceModel = None
@@ -362,8 +396,11 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
         if self.bootDevice == RTxxx_uidef.kBootDevice_FlexspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_QuadspiNor or \
            self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
+            self.getFlexspiBootInstance()
+            self.RTxxx_updateFlexspiNorMemBase()
             flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
             configOptList.extend([flexspiNorOpt0, flexspiNorOpt1])
+            self.RTxxx_setFlexspiInstance()
         elif self.bootDevice == RTxxx_uidef.kBootDevice_FlexcommSpiNor:
             flexcommSpiNorOpt0, flexcommSpiNorOpt1 = uivar.getBootDeviceConfiguration(self.bootDevice)
             configOptList.extend([flexcommSpiNorOpt0, flexcommSpiNorOpt1])
@@ -375,6 +412,7 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
             configOptList.extend([usdhcMmcOpt0, usdhcMmcOpt1])
         else:
             pass
+        self._RTxxx_prepareForBootDeviceOperation()
         status = boot.status.kStatus_Success
         if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_FDCB:
             if self.RTxxx_isDeviceEnabledToOperate:

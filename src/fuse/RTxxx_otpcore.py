@@ -53,6 +53,7 @@ class secBootRTxxxOtp(RTxxx_runcore.secBootRTxxxRun):
     def applyOtpOperToRunMode( self ):
         self._initEntryModeOtpFlag()
         self.RTxxx_updateOtpRegionField()
+        self.RTxxx_updateOtpGroupText()
         self.needToScanOtp = True
 
     def RTxxx_scanAllOtpRegions( self, needShow=True, isRefreshOpt=False ):

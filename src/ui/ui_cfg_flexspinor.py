@@ -413,6 +413,8 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51245G
         elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G
+        elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_OPI:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_OPI
         elif txt == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_2nd:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_2nd
             self.flexspiNorOpt1 = uidef.kFlexspiNorOpt1_MXIC_MX25UM51345G_2nd

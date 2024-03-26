@@ -930,6 +930,18 @@ kRevision_6_1_0_zh = u"【v6.1.0】 - 2023.12\n" + \
                      u"     3. [RT700] 支持UART和USB-HID两种下载方式（COM端口/USB设备自动识别） \n" + \
                      u"     4. [RT700] 支持用于开发阶段的非安全加密启动（未签名） \n" + \
                      u"     5. [RT700] 支持XSPI NOR启动设备 \n\n"
+kRevision_6_2_0_en =  "【v6.2.0】 - 2024.03\n" + \
+                      "  Feature: \n" + \
+                      "     1. [RT700] Support boot device connected to secondary XSPI \n" + \
+                      "  Bugfix: \n" + \
+                      "     1. [RT700] Fix download error when FDCB area in NOR flash is not blank \n" + \
+                      "     2. [RT700] Fix support for Non-XIP image when it is linked in secure SRAM  \n\n"
+kRevision_6_2_0_zh = u"【v6.2.0】 - 2024.03\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RT700] 支持下载程序进第二个XSPI上连接的启动设备 \n" + \
+                     u"  修复: \n" + \
+                     u"     1. [RT700] 当NOR Flash的FDCB区域非空时，下载可能报错 \n" + \
+                     u"     2. [RT700] 当待下载程序链接在安全SRAM地址时，下载会报错 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -975,6 +987,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v5_3_2':             [kRevision_5_3_2_en,                      kRevision_5_3_2_zh],
         'revisionHistory_v6_0_0':             [kRevision_6_0_0_en,                      kRevision_6_0_0_zh],
         'revisionHistory_v6_1_0':             [kRevision_6_1_0_en,                      kRevision_6_1_0_zh],
+        'revisionHistory_v6_2_0':             [kRevision_6_2_0_en,                      kRevision_6_2_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

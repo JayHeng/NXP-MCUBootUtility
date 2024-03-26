@@ -15,7 +15,7 @@
 
 　　首先需要从NXP官网下载 [HAB CST工具](https://www.nxp.com/webapp/sps/download/license.jsp?colCode=IMX_CST_TOOL&appType=file2&location=null&DOWNLOAD_ID=null&lang_cd=en)，下载前会弹出如下界面，点击'I Accept'后便可以下载到cst-3.1.0.tgz（下载于2018.12，随着时间推移，版本会有所变化）。  
 
-![agreementToDownloadCST](http://henjay724.com/image/cnblogs/nxpSecBoot_agreementToDownloadCST.PNG)
+![agreementToDownloadCST](https://raw.githubusercontent.com/JayHeng/pzhmcu-picture/master/cnblogs/nxpSecBoot_agreementToDownloadCST.PNG)
 
 　　This Agreement clause must be read through and agreed, This step must be done. This is one of the reasons why CST tool can not be directly put into NXP-MCUBootUtility package.  
 
@@ -26,7 +26,7 @@
 
 　　下载到cst-3.1.0.tgz包后将其解压（需要2次解压才能看到\cst-3.1.0\cst-3.1.0\release里的内容）放在\NXP-MCUBootUtility\tools\cst\目录下即可，如下图所示：  
 
-![putCstIntoFolder](http://henjay724.com/image/cnblogs/nxpSecBoot_putCstIntoFolder.PNG)
+![putCstIntoFolder](https://raw.githubusercontent.com/JayHeng/pzhmcu-picture/master/cnblogs/nxpSecBoot_putCstIntoFolder.PNG)
 
 ### 4 Change the hab4_pki_tree.bat script 改动hab4_pki_tree.bat脚本
 　　The HAB signature certificate generation function in NXP-MCUBootUtility is implemented by calling the \NXP-MCUBootUtility\tools\cst\keys\hab4_pki_tree.bat script. You need to make the following minor changes to this script to use it for NXP-MCUBootUtility.  
@@ -71,4 +71,4 @@ set srk_ca=%5
 
 　　至此NXP-MCUBootUtility的HAB签名功能便被激活了，打开NXP-MCUBootUtility软件，在Secure Boot Type里选择"HAB Signed Image Boot"模式试试吧。如果要继续激活NXP-MCUBootUtility软件的HAB加密功能，请继续参考 [《开启NXP-MCUBootUtility工具的HAB加密功能 - CST》](https://www.cnblogs.com/henjay724/p/10219459.html)  
 
-![enableHabSignFunc](http://henjay724.com/image/cnblogs/nxpSecBoot_enableHabSignFunc.PNG)
+![](https://raw.githubusercontent.com/JayHeng/pzhmcu-picture/master/cnblogs/nxpSecBoot_enableHabSignFunc.PNG)

@@ -25,7 +25,7 @@
 
 　　首先在网站 [http://www.msys2.org/](http://www.msys2.org/) 下载msys2的安装包，根据你的系统选择合适的安装包（x86_64适用于64bit系统，i686适用于32bit系统），这里选择的是msys2-x86_64-20180531.exe，安装完成后从开始菜单里打开MSYS2 MSYS控制台。  
 
-![msys2StartMenuMysy](http://henjay724.com/image/cnblogs/nxpSecBoot_msys2StartMenuMysy.PNG)
+![msys2StartMenuMysy](https://raw.githubusercontent.com/JayHeng/pzhmcu-picture/master/cnblogs/nxpSecBoot_msys2StartMenuMysy.PNG)
 
 　　Execute the following four commands in sequence, and just input y when encountering ":: Proceed with installation? [Y/n]" questions. Note that you may need to close the console and reopen after the first command is executed. After successful execution of all commands, the basic configuration of MSYS2 and the installation of standard packages and gcc for compilation are completed.  
 
@@ -42,7 +42,7 @@
 
 　　然后在网站 [https://www.openssl.org/](https://www.openssl.org/) 下载openssl的源码包，推荐选择1.0.x版本（1.1.x版本经测试有问题），这里选择的是openssl-1.0.2q.tar.gz，下载完成后将其解压放置到\NXP-MCUBootUtility\tools\openssl\目录下，从开始菜单里打开MSYS2 MinGW 32-bit控制台。  
 
-![msys2StartMenuMingw32](http://henjay724.com/image/cnblogs/nxpSecBoot_msys2StartMenuMingw32.PNG)
+![msys2StartMenuMingw32](https://raw.githubusercontent.com/JayHeng/pzhmcu-picture/master/cnblogs/nxpSecBoot_msys2StartMenuMingw32.PNG)
 
 　　Use the cd command to checkout to the \NXP-MCUBootUtility\tools\openssl\openssl-1.0.2q directory and execute the following three commands in sequence. Note that the second command takes a little longer time (about 10 minutes). Please be patient.  
 
@@ -66,4 +66,4 @@
 
 　　至此NXP-MCUBootUtility的HAB加密功能也被激活了，打开NXP-MCUBootUtility软件，在Secure Boot Type里选择"HAB Encrypted Image Boot"模式试试吧。  
 
-![enableHabEncryptFunc](http://henjay724.com/image/cnblogs/nxpSecBoot_enableHabEncryptFunc.PNG)
+![enableHabEncryptFunc](https://raw.githubusercontent.com/JayHeng/pzhmcu-picture/master/cnblogs/nxpSecBoot_enableHabEncryptFunc.PNG)

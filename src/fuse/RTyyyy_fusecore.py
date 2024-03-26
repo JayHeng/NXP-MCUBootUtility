@@ -57,6 +57,7 @@ class secBootRTyyyyFuse(RTyyyy_runcore.secBootRTyyyyRun):
     def applyFuseOperToRunMode( self ):
         self._initEntryModeFuseFlag()
         self.RTyyyy_updateFuseRegionField()
+        self.RTyyyy_updateFuseGroupText()
         self.isRunModeFuseFlagRemapped = False
         self.needToScanFuse = True
 

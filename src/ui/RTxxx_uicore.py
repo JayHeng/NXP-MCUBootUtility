@@ -43,6 +43,7 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
             self.m_choice_bootDevice.SetSelection(0)
 
     def RTxxx_setTargetSetupValue( self ):
+        self.showPageInMainBootSeqWin(uidef.kPageIndex_ImageGenerationSequence)
         self.bootDevice = self.m_choice_bootDevice.GetString(self.m_choice_bootDevice.GetSelection())
         self.RTxxx_createMcuTarget()
         self.refreshBootDeviceList()
@@ -135,6 +136,7 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
 
     def RTxxx_setSecureBootSeqColor( self , needToPlaySound=True ):
         self.hasDynamicLableBeenInit = True
+        self.showPageInMainBootSeqWin(uidef.kPageIndex_ImageGenerationSequence)
         self.secureBootType = self.m_choice_secureBootType.GetString(self.m_choice_secureBootType.GetSelection())
         self.refreshSecureBootTypeList()
         self.toolCommDict['secBootType'] = self.m_choice_secureBootType.GetSelection()
@@ -226,12 +228,19 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
                     self.m_staticText_fuse740.SetLabel('ImgKe')
                     self.m_staticText_fuse750.SetLabel('DCFG_C')
                     self.m_staticText_fuse780.SetLabel('Cfg0')
+                    self.m_textCtrl_fuse780.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse790.SetLabel('Cfg1')
+                    self.m_textCtrl_fuse790.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse7a0.SetLabel('Cfg2')
+                    self.m_textCtrl_fuse7a0.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse7b0.SetLabel('Cfg3')
+                    self.m_textCtrl_fuse7b0.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse7c0.SetLabel('Cfg4')
+                    self.m_textCtrl_fuse7c0.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse7d0.SetLabel('Cfg5')
+                    self.m_textCtrl_fuse7d0.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse7e0.SetLabel('Cfg6')
+                    self.m_textCtrl_fuse7e0.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse800.SetLabel('Xip0C0')
                     self.m_staticText_fuse810.SetLabel('Xip0C1')
                     self.m_staticText_fuse820.SetLabel('Xip0C2')
@@ -281,9 +290,13 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
                 elif self.efuseGroupSel == 1:
                     self.setInitialFuseGroupText(self.efuseGroupSel, 'W')
                     self.m_staticText_fuse500.SetLabel('Cfg0')
+                    self.m_textCtrl_fuse500.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse510.SetLabel('Cfg1')
+                    self.m_textCtrl_fuse510.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse520.SetLabel('Cfg2')
+                    self.m_textCtrl_fuse520.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse530.SetLabel('Cfg3')
+                    self.m_textCtrl_fuse530.SetBackgroundColour( uidef.kFuseFieldColor_BootCfg )
                     self.m_staticText_fuse550.SetLabel('SCfg5')
                     self.m_staticText_fuse570.SetLabel('SCfg7')
                     self.m_staticText_fuse590.SetLabel('UsbId')
@@ -395,6 +408,7 @@ class secBootRTxxxUi(RTyyyy_main.secBootRTyyyyMain):
                     pass
         else:
             pass
+        self.Refresh()
 
     def RTxxx_updateOtpRegionField( self ):
         self.resetFuseOtpRegionField()

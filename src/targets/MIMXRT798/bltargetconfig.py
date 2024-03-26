@@ -114,9 +114,13 @@ sbLoaderVersion = gendef.kSbLoaderVersion_v3_1
 memoryRange = {
     # SRAM AHB-C bus, 7MByte
     'sramc' : MemoryRange(0x00000000, 0x780000, 'state_sramc_mem.dat'),
+    # SRAM AHB-C bus, 4.5MByte
+    'sramc_ns' : MemoryRange(0x10000000, 0x780000, 'state_sramc_ns_mem.dat'),
 
     # SRAM AHB-S bus, 7MByte
     'srams' : MemoryRange(0x20000000, 0x780000, 'state_srams_mem.dat'),
+    # SRAM AHB-S bus, 4.5MByte
+    'srams_ns' : MemoryRange(0x30000000, 0x780000, 'state_srams_ns_mem.dat'),
 
     # FLASH, 64KByte / 512MByte
     'flash': MemoryRange(0x00000000, 0x20000000, 'state_flash_mem.dat', True, 0x10000),

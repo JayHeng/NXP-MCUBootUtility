@@ -612,11 +612,11 @@ class secBootMain(MCX_main.secBootMcxMain):
     def _switchEfuseGroup( self ):
         self.setEfuseGroup()
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
-            self.RTyyyy_updateFuseGroupText()
             self.RTyyyy_updateFuseRegionField()
+            self.RTyyyy_updateFuseGroupText()
         elif self.mcuSeries in uidef.kMcuSeries_iMXRTxxx_f:
-            self.RTxxx_updateOtpGroupText()
             self.RTxxx_updateOtpRegionField()
+            self.RTxxx_updateOtpGroupText()
         elif self.mcuSeries == uidef.kMcuSeries_LPC:
             pass
         elif self.mcuSeries in uidef.kMcuSeries_Kinetis_f:
@@ -736,14 +736,15 @@ class secBootMain(MCX_main.secBootMcxMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_1'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_2'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v6_0_0'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_1_0'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_1_0'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_2_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.1.0")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.2.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)

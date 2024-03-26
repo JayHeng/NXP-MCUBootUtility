@@ -351,6 +351,10 @@ class secBootUi(secBootWin.secBootWin):
             else:
                 pass
         elif self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
+            if self.isMcuDeviceChanged:
+                self.toolCommDict['efuseGroupSel'] = 0
+                self._initEfuseGroup()
+                self.isMcuDeviceChanged = False
             if self.m_menuItem_efuseGroup0.IsChecked():
                 self.efuseGroupSel = 0
             elif self.m_menuItem_efuseGroup1.IsChecked():
@@ -400,7 +404,8 @@ class secBootUi(secBootWin.secBootWin):
 
     def getFlexspiBootInstance( self ):
         if self.mcuSeries == uidef.kMcuSeries_iMXRT11yy or \
-           self.mcuDevice == uidef.kMcuDevice_iMXRT1060X:
+           self.mcuDevice == uidef.kMcuDevice_iMXRT1060X or \
+           self.mcuDevice == uidef.kMcuDevice_iMXRT700:
             if self.flexspiBootInstanceFromFuse == uidef.kFlexspiInstance_Max:
                 toolCommDict = uivar.getAdvancedSettings(uidef.kAdvancedSettings_Tool)
                 self.flexspiBootInstance = toolCommDict['flexspiBootInstance']
@@ -542,6 +547,8 @@ class secBootUi(secBootWin.secBootWin):
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51245G
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_OPI:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_OPI
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_MXIC_MX25UM51345G_2nd:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_MXIC_MX25UM51345G_2nd
                 flexspiNorOpt1 = uidef.kFlexspiNorOpt1_MXIC_MX25UM51345G_2nd
