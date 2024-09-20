@@ -74,6 +74,7 @@ flexspiNorMemBase1AliasedNs = 0x22000000
 flexspiNorMem1MaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor64MB
 flexspiNorMem1AliasedMaxSize = rundef.kBootDeviceMemXipSize_FlexspiNor32MB
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
+xspiNorEraseAlignment = 0x1 # in byte
 xspiNorCfgInfoOffset = 0x400
 xspiNorCfgInfoLen    = 0x200
 xspiNorImgHdrOffset = 0x1000
@@ -169,4 +170,7 @@ reservedRegionDict = {   # new
     # OCRAM, 2MB
     'ram' : [0x30480000, 0x3048BFFF]
 }
+
+bootLogStart = 0x3048a000 # ROM 2.0 RC3
+bootLogLength = 0x108
 

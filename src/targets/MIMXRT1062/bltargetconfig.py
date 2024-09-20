@@ -74,6 +74,7 @@ flexspiNorMemBase1AliasedNs =None
 flexspiNorMem1MaxSize = None
 flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '75MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
+xspiNorEraseAlignment = 0x1 # in byte
 xspiNorCfgInfoOffset = 0x0
 xspiNorCfgInfoLen    = 0x200
 xspiNorImgHdrOffset = 0x1000
@@ -279,4 +280,7 @@ reservedRegionDict = {   # new
     # OCRAM, 32KB
     'ram' : [0x20200000, 0x20207FFF]
 }
+
+bootLogStart = 0x2020523c # ROM 1.0 RC3
+bootLogLength = 0x100
 

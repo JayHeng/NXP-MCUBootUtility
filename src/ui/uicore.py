@@ -46,8 +46,8 @@ class secBootUi(secBootWin.secBootWin):
 
         self.fuseSettingFilename = os.path.join(self.exeTopRoot, 'bin', 'fuse_settings.json')
 
-        self.logFolder = os.path.join(self.exeTopRoot, 'gen', 'log_file')
-        self.logFilename = os.path.join(self.exeTopRoot, 'gen', 'log_file', 'log.txt')
+        self.logFolder = os.path.join(self.exeTopRoot, 'gen', 'cmdlog_file')
+        self.logFilename = os.path.join(self.exeTopRoot, 'gen', 'cmdlog_file', 'log.txt')
 
         self.connectStatusColor = None
         self.hasDynamicLableBeenInit = False
@@ -127,6 +127,8 @@ class secBootUi(secBootWin.secBootWin):
 
         self.isOneStepConnectMode = None
         self.initOneStepConnectMode()
+
+        self.setBootLogInfo()
 
     def _initToolRunMode( self ):
         if self.toolCommDict['toolRunMode'] == uidef.kToolRunMode_Entry:
@@ -576,8 +578,12 @@ class secBootUi(secBootWin.secBootWin):
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_AT25SF128A
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Adesto_ATXP032:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_ATXP032
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Cypress_S25FL064L:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL064L
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Cypress_S25FL128S:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL128S
+            elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Cypress_S28HS512T:
+                flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S28HS512T
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
                 flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S26KS512S
             elif flexspiDeviceModel == uidef.kFlexspiNorDevice_Microchip_SST26VF064B:
@@ -990,16 +996,16 @@ class secBootUi(secBootWin.secBootWin):
 
     def printLog( self, logStr ):
         try:
-            self.m_textCtrl_log.write(logStr + "\n")
+            self.m_textCtrl_cmdLog.write(logStr + "\n")
         except:
             pass
 
-    def clearLog( self ):
-        self.m_textCtrl_log.Clear()
+    def clearCmdLog( self ):
+        self.m_textCtrl_cmdLog.Clear()
 
-    def saveLog( self ):
-        self.m_textCtrl_log.SaveFile(self.logFilename)
-        msgText = (('Log is saved in file: ' + self.logFilename + ' \n').encode('utf-8'))
+    def saveCmdLog( self ):
+        self.m_textCtrl_cmdLog.SaveFile(self.logFilename)
+        msgText = (('Command Log is saved in file: ' + self.logFilename + ' \n').encode('utf-8'))
         wx.MessageBox(msgText, "Log Info", wx.OK | wx.ICON_INFORMATION)
 
     def task_doIncreaseGauge( self ):
@@ -1572,6 +1578,26 @@ class secBootUi(secBootWin.secBootWin):
     def showImageLayout( self , imgPath ):
         self.m_bitmap_bootableImage.SetBitmap(wx.Bitmap( imgPath, wx.BITMAP_TYPE_ANY ))
 
+    def getBootLogBinFile( self ):
+        logBinFile = self.m_filePicker_bootLogBinFile.GetPath()
+        return logBinFile.encode('utf-8').encode("gbk")
+
+    def needToSaveBootLogContext( self ):
+        return self.m_checkBox_saveBootLog.GetValue()
+
+    def getBootLogFolderToSave( self ):
+        savedLogFolder = self.m_dirPicker_savedBootLogFolder.GetPath()
+        return savedLogFolder.encode('utf-8').encode("gbk")
+
+    def printBootLog( self , logStr, feedEol = True ):
+        if feedEol:
+            self.m_textCtrl_bootLogContext.AppendText(logStr + "\n")
+        else:
+            self.m_textCtrl_bootLogContext.AppendText(logStr)
+
+    def clearBootLog( self ):
+        self.m_textCtrl_bootLogContext.Clear()
+
     def _initLanguage( self ):
         if self.toolCommDict['isEnglishLanguage']:
             self.m_menuItem_english.Check(True)
@@ -1674,9 +1700,9 @@ class secBootUi(secBootWin.secBootWin):
         self.m_staticText_secureBootType.SetLabel(uilang.kMainLanguageContentDict['sText_secureBootType'][langIndex])
         self.m_button_allInOneAction.SetLabel(uilang.kMainLanguageContentDict['button_allInOneAction'][langIndex])
 
-        self.m_notebook_bootLog.SetPageText(0, uilang.kMainLanguageContentDict['panel_log'][langIndex])
-        self.m_button_clearLog.SetLabel(uilang.kMainLanguageContentDict['button_clearLog'][langIndex])
-        self.m_button_saveLog.SetLabel(uilang.kMainLanguageContentDict['button_SaveLog'][langIndex])
+        self.m_notebook_cmdLog.SetPageText(0, uilang.kMainLanguageContentDict['panel_cmdLog'][langIndex])
+        self.m_button_clearCmdLog.SetLabel(uilang.kMainLanguageContentDict['button_clearCmdLog'][langIndex])
+        self.m_button_saveCmdLog.SetLabel(uilang.kMainLanguageContentDict['button_SaveCmdLog'][langIndex])
 
     def setCostTime( self, costTimeSec ):
         minValueStr = '00'
@@ -1708,3 +1734,12 @@ class secBootUi(secBootWin.secBootWin):
     def updateCostTime( self ):
         curTime = time.time()
         self.setCostTime(curTime - self.lastTime)
+
+    def setBootLogInfo( self ):
+        self.m_textCtrl_logStart.Enable( False )
+        self.m_textCtrl_logStart.Clear()
+        self.m_textCtrl_logLength.Enable( False )
+        self.m_textCtrl_logLength.Clear()
+        if self.tgt.bootLogStart != None:
+            self.m_textCtrl_logStart.write(str(hex(self.tgt.bootLogStart)))
+            self.m_textCtrl_logLength.write(str(self.tgt.bootLogLength))

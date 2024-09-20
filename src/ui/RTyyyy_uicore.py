@@ -11,16 +11,16 @@ import uidef
 import uivar
 import uilang
 sys.path.append(os.path.abspath(".."))
-from mem import memcore
+from btlog import btlogcore
 from run import RTyyyy_rundef
 from run import rundef
 from gen import gendef
 from fuse import RTyyyy_fusedef
 
-class secBootRTyyyyUi(memcore.secBootMem):
+class secBootRTyyyyUi(btlogcore.secBootLog):
 
     def __init__(self, parent):
-        memcore.secBootMem.__init__(self, parent)
+        btlogcore.secBootLog.__init__(self, parent)
         if self.mcuSeries in uidef.kMcuSeries_iMXRTyyyy:
             self.RTyyyy_initUi()
 
@@ -1381,7 +1381,16 @@ class secBootRTyyyyUi(memcore.secBootMem):
         self.m_button_eraseMem.SetLabel(uilang.kMainLanguageContentDict['button_eraseMem'][langIndex])
         self.m_button_massEraseMem.SetLabel(uilang.kMainLanguageContentDict['button_massEraseMem'][langIndex])
         self.m_button_writeMem.SetLabel(uilang.kMainLanguageContentDict['button_writeMem'][langIndex])
+        self.m_button_eccWriteMem.SetLabel(uilang.kMainLanguageContentDict['button_eccWriteMem'][langIndex])
         self.m_button_executeApp.SetLabel(uilang.kMainLanguageContentDict['button_executeApp'][langIndex])
         self.m_button_viewMem.SetLabel(uilang.kMainLanguageContentDict['button_viewMem'][langIndex])
         self.m_button_clearMem.SetLabel(uilang.kMainLanguageContentDict['button_clearMem'][langIndex])
         self.m_checkBox_saveImageData.SetLabel(uilang.kMainLanguageContentDict['checkBox_saveImageData'][langIndex])
+
+        self.m_notebook_imageSeq.SetPageText(uilang.kPanelIndex_LogView, uilang.kMainLanguageContentDict['panel_logView'][langIndex])
+        self.m_staticText_logStart.SetLabel(uilang.kMainLanguageContentDict['sText_logStart'][langIndex])
+        self.m_staticText_logLength.SetLabel(uilang.kMainLanguageContentDict['sText_logLength'][langIndex])
+        self.m_staticText_bootLogBinFile.SetLabel(uilang.kMainLanguageContentDict['sText_bootLogBinFile'][langIndex])
+        self.m_button_viewBootLog.SetLabel(uilang.kMainLanguageContentDict['button_viewBootLog'][langIndex])
+        self.m_button_clearBootLog.SetLabel(uilang.kMainLanguageContentDict['button_clearBootLog'][langIndex])
+        self.m_checkBox_saveBootLog.SetLabel(uilang.kMainLanguageContentDict['checkBox_saveBootLog'][langIndex])

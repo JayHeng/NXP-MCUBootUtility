@@ -226,6 +226,10 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             val = 0x8
         elif txt == 'Adesto EcoXIP SDR':
             val = 0x9
+        elif txt == 'Infineon Octal DDR':
+            val = 0xa
+        elif txt == 'Infineon Octal SDR':
+            val = 0xb
         else:
             pass
         self.flexspiNorOpt0 = (self.flexspiNorOpt0 & 0xFF0FFFFF) | (val << 20)
@@ -442,8 +446,12 @@ class secBootUiCfgFlexspiNor(bootDeviceWin_FlexspiNor.bootDeviceWin_FlexspiNor):
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_AT25SF128A
         elif txt == uidef.kFlexspiNorDevice_Adesto_ATXP032:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Adesto_ATXP032
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S25FL064L:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL064L
         elif txt == uidef.kFlexspiNorDevice_Cypress_S25FL128S:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S25FL128S
+        elif txt == uidef.kFlexspiNorDevice_Cypress_S28HS512T:
+            self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S28HS512T
         elif txt == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
             self.flexspiNorOpt0 = uidef.kFlexspiNorOpt0_Cypress_S26KS512S
         elif txt == uidef.kFlexspiNorDevice_Microchip_SST26VF064B:

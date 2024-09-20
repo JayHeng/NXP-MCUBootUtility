@@ -17,6 +17,7 @@ kPanelIndex_GenSeq   = 0x0
 kPanelIndex_LoadSeq  = 0x1
 kPanelIndex_fuseUtil = 0x2
 kPanelIndex_memView  = 0x3
+kPanelIndex_LogView  = 0x4
 
 kMainLanguageContentDict = {
         'menu_file':                          ['File',                                  u"文件"],
@@ -142,14 +143,23 @@ kMainLanguageContentDict = {
         'button_eraseMem':                    ['Range Erase',                           u"区域擦除"],
         'button_massEraseMem':                ['Chip Erase',                            u"芯片全擦"],
         'button_writeMem':                    ['Write (Auto Erase)',                    u"下载（含自动擦除）"],
+        'button_eccWriteMem':                 ['ECC Write',                             u"下载（含ECC）"],
         'button_executeApp':                  ['Execute From Start',                    u"从首地址处执行"],
         'button_viewMem':                     ['View Bootable Image',                   u"回读查看标注的程序"],
         'button_clearMem':                    ['Clear The Screen',                      u"清除屏幕显示"],
         'checkBox_saveImageData':             ['Save image/data file to',               u"将程序/数据保存到"],
 
-        'panel_log':                          ['Log',                                   u"操作日志"],
-        'button_clearLog':                    ['Clear',                                 u"清除"],
-        'button_SaveLog':                     ['Save',                                  u"保存"],
+        'panel_logView':                      ['Boot Log Analyzer',                     u"       启动日志解析       "],
+        'sText_logStart':                     ['Log Start:',                            u"日志首地址："],
+        'sText_logLength':                    ['Log Length (Byte):',                    u"日志长度（字节）："],
+        'sText_bootLogBinFile':               ['Log Data (.bin):',                       u"日志数据文件："],
+        'button_viewBootLog':                 ['View Boot Log',                         u"解析启动日志"],
+        'button_clearBootLog':                ['Clear The Screen',                      u"清除屏幕显示"],
+        'checkBox_saveBootLog':               ['Save log context file to',              u"将解析后日志保存到"],
+
+        'panel_cmdLog':                       ['Command Log',                           u"命令日志"],
+        'button_clearCmdLog':                 ['Clear',                                 u"清除"],
+        'button_SaveCmdLog':                  ['Save',                                  u"保存"],
 
 }
 
@@ -942,6 +952,18 @@ kRevision_6_2_0_zh = u"【v6.2.0】 - 2024.03\n" + \
                      u"  修复: \n" + \
                      u"     1. [RT700] 当NOR Flash的FDCB区域非空时，下载可能报错 \n" + \
                      u"     2. [RT700] 当待下载程序链接在安全SRAM地址时，下载会报错 \n\n"
+kRevision_6_3_0_en =  "【v6.3.0】 - 2024.09\n" + \
+                      "  Feature: \n" + \
+                      "     1. [RT] Can support parsing ROM boot log\n" + \
+                      "  Improvement: \n" + \
+                      "     1. [RT] Can set range erase alignment for FlexSPI NOR device \n" + \
+                      "     2. [RT1170] Add support for Infineon octal flash S28H \n\n"
+kRevision_6_3_0_zh = u"【v6.3.0】 - 2024.09\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RT] 可以支持获取并解析ROM启动日志 \n" + \
+                     u"  改进: \n" + \
+                     u"     1. [RT] 对FlexSPI NOR设备做擦除时，可自定义对齐长度 \n" + \
+                     u"     2. [RT1170] 增加对英飞凌S28H系列Octal Flash支持 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -988,6 +1010,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v6_0_0':             [kRevision_6_0_0_en,                      kRevision_6_0_0_zh],
         'revisionHistory_v6_1_0':             [kRevision_6_1_0_en,                      kRevision_6_1_0_zh],
         'revisionHistory_v6_2_0':             [kRevision_6_2_0_en,                      kRevision_6_2_0_zh],
+        'revisionHistory_v6_3_0':             [kRevision_6_3_0_en,                      kRevision_6_3_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

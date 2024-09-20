@@ -98,6 +98,20 @@ class secBootMem(runcore.secBootRun):
             memStart += self.bootDeviceMemBase
         return memStart
 
+    def convertComMemEraseUnit( self, memEraseUnit ):
+        eraseUnit = 1
+        if self.bootDeviceMemId == rundef.kBootDeviceMemId_QuadspiNor or \
+           self.bootDeviceMemId == rundef.kBootDeviceMemId_FlexspiNor or \
+           self.bootDeviceMemId == rundef.kBootDeviceMemId_SpifiNor or \
+           self.bootDeviceMemId == rundef.kBootDeviceMemId_XspiNor:
+            eraseUnit = self.tgt.xspiNorEraseAlignment
+        if eraseUnit != None:
+            if eraseUnit < memEraseUnit:
+                eraseUnit = memEraseUnit
+        else:
+            eraseUnit = memEraseUnit
+        return eraseUnit
+
     def readBootDeviceMemory( self ):
         status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
         if status:
@@ -139,13 +153,14 @@ class secBootMem(runcore.secBootRun):
         status, memStart, memLength, dummyArg = self._getUserComMemParameters(False)
         if status:
             memStart = self._convertComMemStart(memStart)
+            memEraseUnit = self.convertComMemEraseUnit(self.comMemEraseUnit)
             if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
                 alignedMemStart = memStart
             else:
-                alignedMemStart = misc.align_down(memStart, self.comMemEraseUnit)
-            alignedMemLength = misc.align_up(memLength, self.comMemEraseUnit)
+                alignedMemStart = misc.align_down(memStart, memEraseUnit)
+            alignedMemLength = misc.align_up(memLength, memEraseUnit)
             if memLength + memStart > alignedMemStart + alignedMemLength:
-                alignedMemLength += self.comMemEraseUnit
+                alignedMemLength += memEraseUnit
             status, results, cmdStr = self.blhost.flashEraseRegion(alignedMemStart, alignedMemLength, self.bootDeviceMemId)
             self.printLog(cmdStr)
             if status != boot.status.kStatus_Success:
@@ -189,6 +204,7 @@ class secBootMem(runcore.secBootRun):
                         pass
             else:
                 memStart = self._convertComMemStart(memStart)
+                memEraseUnit = self.convertComMemEraseUnit(self.comMemEraseUnit)
                 if ((self.isFlexspiNandBlockAddr != None) and self.isFlexspiNandBlockAddr):
                     alignedMemStart = memStart
                 else:
@@ -200,8 +216,8 @@ class secBootMem(runcore.secBootRun):
                         else:
                             pass
                         return
-                    eraseMemStart = misc.align_down(memStart, self.comMemEraseUnit)
-                eraseMemEnd = misc.align_up(memStart + os.path.getsize(memBinFile), self.comMemEraseUnit)
+                    eraseMemStart = misc.align_down(memStart, memEraseUnit)
+                eraseMemEnd = misc.align_up(memStart + os.path.getsize(memBinFile), memEraseUnit)
                 status, results, cmdStr = self.blhost.flashEraseRegion(eraseMemStart, eraseMemEnd - eraseMemStart, self.bootDeviceMemId)
                 self.printLog(cmdStr)
                 if status != boot.status.kStatus_Success:

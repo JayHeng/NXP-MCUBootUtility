@@ -1750,7 +1750,7 @@ class secBootWin ( wx.Frame ):
 		self.m_button_writeMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Write (Auto Erase)", wx.DefaultPosition, wx.Size( 130,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_writeMem, 0, wx.ALL, 5 )
 
-		self.m_button_eccWriteMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"ECC Write", wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
+		self.m_button_eccWriteMem = wx.Button( self.m_panel_memView, wx.ID_ANY, u"ECC Write", wx.DefaultPosition, wx.Size( 100,-1 ), 0 )
 		wSizer_memView.Add( self.m_button_eccWriteMem, 0, wx.ALL, 5 )
 
 		self.m_button_executeApp = wx.Button( self.m_panel_memView, wx.ID_ANY, u"Execute From Start", wx.DefaultPosition, wx.Size( 130,-1 ), 0 )
@@ -1799,64 +1799,141 @@ class secBootWin ( wx.Frame ):
 		self.m_panel_memView.Layout()
 		wSizer_memView.Fit( self.m_panel_memView )
 		self.m_notebook_imageSeq.AddPage( self.m_panel_memView, u"Boot Device Memory", False )
+		self.m_panel_logView = wx.Panel( self.m_notebook_imageSeq, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel_logView.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+
+		wSizer_logView = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
+
+		self.m_staticText_logStart = wx.StaticText( self.m_panel_logView, wx.ID_ANY, u"Log Start:", wx.DefaultPosition, wx.Size( 65,-1 ), 0 )
+		self.m_staticText_logStart.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_logStart, 0, wx.ALL, 5 )
+
+		self.m_textCtrl_logStart = wx.TextCtrl( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
+		wSizer_logView.Add( self.m_textCtrl_logStart, 0, wx.ALL, 5 )
+
+		self.m_staticText_logLength = wx.StaticText( self.m_panel_logView, wx.ID_ANY, u"Log Length (Byte):", wx.DefaultPosition, wx.Size( 110,-1 ), 0 )
+		self.m_staticText_logLength.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_logLength, 0, wx.ALL, 5 )
+
+		self.m_textCtrl_logLength = wx.TextCtrl( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 90,-1 ), 0 )
+		wSizer_logView.Add( self.m_textCtrl_logLength, 0, wx.ALL, 5 )
+
+		self.m_staticText_bootLogBinFile = wx.StaticText( self.m_panel_logView, wx.ID_ANY, u"Log Data(.bin):", wx.DefaultPosition, wx.Size( 95,-1 ), 0 )
+		self.m_staticText_bootLogBinFile.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_bootLogBinFile, 0, wx.ALL, 5 )
+
+		self.m_filePicker_bootLogBinFile = wx.FilePickerCtrl( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, u"Select a file", u"*.*", wx.DefaultPosition, wx.Size( 210,-1 ), wx.FLP_DEFAULT_STYLE )
+		wSizer_logView.Add( self.m_filePicker_bootLogBinFile, 0, wx.ALL, 5 )
+
+		self.m_staticText_null0LogView = wx.StaticText( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 60,-1 ), 0 )
+		self.m_staticText_null0LogView.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_null0LogView, 0, wx.ALL, 5 )
+
+		self.m_textCtrl_bootLogContext = wx.TextCtrl( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 740,325 ), wx.TE_MULTILINE|wx.TE_RICH2 )
+		self.m_textCtrl_bootLogContext.SetFont( wx.Font( 10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, wx.EmptyString ) )
+		self.m_textCtrl_bootLogContext.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+
+		wSizer_logView.Add( self.m_textCtrl_bootLogContext, 0, wx.ALL, 5 )
+
+		self.m_staticText_null1LogView = wx.StaticText( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 25,-1 ), 0 )
+		self.m_staticText_null1LogView.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_null1LogView, 0, wx.ALL, 5 )
+
+		self.m_staticText_null2LogView = wx.StaticText( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 25,-1 ), 0 )
+		self.m_staticText_null2LogView.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_null2LogView, 0, wx.ALL, 5 )
+
+		self.m_button_viewBootLog = wx.Button( self.m_panel_logView, wx.ID_ANY, u"View Boot Log", wx.DefaultPosition, wx.Size( 150,-1 ), 0 )
+		wSizer_logView.Add( self.m_button_viewBootLog, 0, wx.ALL, 5 )
+
+		self.m_staticText_null3LogView = wx.StaticText( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
+		self.m_staticText_null3LogView.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_null3LogView, 0, wx.ALL, 5 )
+
+		self.m_button_clearBootLog = wx.Button( self.m_panel_logView, wx.ID_ANY, u"Clear The Screen", wx.DefaultPosition, wx.Size( 115,-1 ), 0 )
+		wSizer_logView.Add( self.m_button_clearBootLog, 0, wx.ALL, 5 )
+
+		self.m_staticText_null4LogView = wx.StaticText( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 10,-1 ), 0 )
+		self.m_staticText_null4LogView.Wrap( -1 )
+
+		wSizer_logView.Add( self.m_staticText_null4LogView, 0, wx.ALL, 5 )
+
+		self.m_checkBox_saveBootLog = wx.CheckBox( self.m_panel_logView, wx.ID_ANY, u"Save log context file to", wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		wSizer_logView.Add( self.m_checkBox_saveBootLog, 0, wx.ALL, 5 )
+
+		self.m_dirPicker_savedBootLogFolder = wx.DirPickerCtrl( self.m_panel_logView, wx.ID_ANY, wx.EmptyString, u"Select a folder", wx.DefaultPosition, wx.Size( 210,-1 ), wx.DIRP_DEFAULT_STYLE )
+		wSizer_logView.Add( self.m_dirPicker_savedBootLogFolder, 0, wx.ALL, 5 )
+
+
+		self.m_panel_logView.SetSizer( wSizer_logView )
+		self.m_panel_logView.Layout()
+		wSizer_logView.Fit( self.m_panel_logView )
+		self.m_notebook_imageSeq.AddPage( self.m_panel_logView, u"Boot Log Analyzer", False )
 
 		bSizer_boot.Add( self.m_notebook_imageSeq, 1, wx.EXPAND |wx.ALL, 5 )
 
-		self.m_notebook_bootLog = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
-		self.m_panel_log = wx.Panel( self.m_notebook_bootLog, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-		self.m_panel_log.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+		self.m_notebook_cmdLog = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( -1,-1 ), 0 )
+		self.m_panel_cmdLog = wx.Panel( self.m_notebook_cmdLog, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
+		self.m_panel_cmdLog.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 
-		wSizer_log = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
+		wSizer_cmdLog = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
 
-		bSizer_showLog = wx.BoxSizer( wx.VERTICAL )
+		bSizer_showCmdLog = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_textCtrl_log = wx.TextCtrl( self.m_panel_log, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 650,68 ), wx.TE_MULTILINE )
-		bSizer_showLog.Add( self.m_textCtrl_log, 0, wx.ALL, 5 )
+		self.m_textCtrl_cmdLog = wx.TextCtrl( self.m_panel_cmdLog, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 650,68 ), wx.TE_MULTILINE )
+		bSizer_showCmdLog.Add( self.m_textCtrl_cmdLog, 0, wx.ALL, 5 )
 
 
-		wSizer_log.Add( bSizer_showLog, 1, wx.EXPAND, 5 )
+		wSizer_cmdLog.Add( bSizer_showCmdLog, 1, wx.EXPAND, 5 )
 
 		bSizer_logAction = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_button_clearLog = wx.Button( self.m_panel_log, wx.ID_ANY, u"Clear", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_button_clearLog.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+		self.m_button_clearCmdLog = wx.Button( self.m_panel_cmdLog, wx.ID_ANY, u"Clear", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button_clearCmdLog.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 
-		bSizer_logAction.Add( self.m_button_clearLog, 0, wx.ALL, 5 )
+		bSizer_logAction.Add( self.m_button_clearCmdLog, 0, wx.ALL, 5 )
 
-		self.m_button_saveLog = wx.Button( self.m_panel_log, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.m_button_saveLog.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
+		self.m_button_saveCmdLog = wx.Button( self.m_panel_cmdLog, wx.ID_ANY, u"Save", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button_saveCmdLog.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
 
-		bSizer_logAction.Add( self.m_button_saveLog, 0, wx.ALL, 5 )
+		bSizer_logAction.Add( self.m_button_saveCmdLog, 0, wx.ALL, 5 )
 
 
-		wSizer_log.Add( bSizer_logAction, 1, wx.EXPAND, 5 )
+		wSizer_cmdLog.Add( bSizer_logAction, 1, wx.EXPAND, 5 )
 
 		wSizer_actionGauge = wx.WrapSizer( wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS )
 
-		self.m_staticText_costTime = wx.StaticText( self.m_panel_log, wx.ID_ANY, u" 00:00.000", wx.DefaultPosition, wx.Size( 55,-1 ), 0 )
+		self.m_staticText_costTime = wx.StaticText( self.m_panel_cmdLog, wx.ID_ANY, u" 00:00.000", wx.DefaultPosition, wx.Size( 55,-1 ), 0 )
 		self.m_staticText_costTime.Wrap( -1 )
 
 		wSizer_actionGauge.Add( self.m_staticText_costTime, 0, wx.ALL, 5 )
 
-		self.m_gauge_action = wx.Gauge( self.m_panel_log, wx.ID_ANY, 100, wx.DefaultPosition, wx.Size( 680,-1 ), wx.GA_HORIZONTAL )
+		self.m_gauge_action = wx.Gauge( self.m_panel_cmdLog, wx.ID_ANY, 100, wx.DefaultPosition, wx.Size( 680,-1 ), wx.GA_HORIZONTAL )
 		self.m_gauge_action.SetValue( 100 )
 		wSizer_actionGauge.Add( self.m_gauge_action, 0, wx.ALL, 5 )
 
-		self.m_staticText_null1ActionGauge = wx.StaticText( self.m_panel_log, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 750,1 ), 0 )
+		self.m_staticText_null1ActionGauge = wx.StaticText( self.m_panel_cmdLog, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 750,1 ), 0 )
 		self.m_staticText_null1ActionGauge.Wrap( -1 )
 
 		wSizer_actionGauge.Add( self.m_staticText_null1ActionGauge, 0, wx.ALL, 5 )
 
 
-		wSizer_log.Add( wSizer_actionGauge, 1, wx.EXPAND, 5 )
+		wSizer_cmdLog.Add( wSizer_actionGauge, 1, wx.EXPAND, 5 )
 
 
-		self.m_panel_log.SetSizer( wSizer_log )
-		self.m_panel_log.Layout()
-		wSizer_log.Fit( self.m_panel_log )
-		self.m_notebook_bootLog.AddPage( self.m_panel_log, u"Log", False )
+		self.m_panel_cmdLog.SetSizer( wSizer_cmdLog )
+		self.m_panel_cmdLog.Layout()
+		wSizer_cmdLog.Fit( self.m_panel_cmdLog )
+		self.m_notebook_cmdLog.AddPage( self.m_panel_cmdLog, u"Command Log", False )
 
-		bSizer_boot.Add( self.m_notebook_bootLog, 1, wx.EXPAND |wx.ALL, 5 )
+		bSizer_boot.Add( self.m_notebook_cmdLog, 1, wx.EXPAND |wx.ALL, 5 )
 
 
 		wSizer_func.Add( bSizer_boot, 1, wx.EXPAND, 5 )
@@ -1960,8 +2037,10 @@ class secBootWin ( wx.Frame ):
 		self.m_button_executeApp.Bind( wx.EVT_BUTTON, self.callbackExecuteApp )
 		self.m_button_viewMem.Bind( wx.EVT_BUTTON, self.callbackViewMem )
 		self.m_button_clearMem.Bind( wx.EVT_BUTTON, self.callbackClearMem )
-		self.m_button_clearLog.Bind( wx.EVT_BUTTON, self.callbackClearLog )
-		self.m_button_saveLog.Bind( wx.EVT_BUTTON, self.callbackSaveLog )
+		self.m_button_viewBootLog.Bind( wx.EVT_BUTTON, self.callbackViewBootLog )
+		self.m_button_clearBootLog.Bind( wx.EVT_BUTTON, self.callbackClearBootLog )
+		self.m_button_clearCmdLog.Bind( wx.EVT_BUTTON, self.callbackClearCmdLog )
+		self.m_button_saveCmdLog.Bind( wx.EVT_BUTTON, self.callbackSaveCmdLog )
 
 	def __del__( self ):
 		pass
@@ -2232,10 +2311,16 @@ class secBootWin ( wx.Frame ):
 	def callbackClearMem( self, event ):
 		event.Skip()
 
-	def callbackClearLog( self, event ):
+	def callbackViewBootLog( self, event ):
 		event.Skip()
 
-	def callbackSaveLog( self, event ):
+	def callbackClearBootLog( self, event ):
+		event.Skip()
+
+	def callbackClearCmdLog( self, event ):
+		event.Skip()
+
+	def callbackSaveCmdLog( self, event ):
 		event.Skip()
 
 

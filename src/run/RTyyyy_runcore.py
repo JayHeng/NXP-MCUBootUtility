@@ -731,6 +731,9 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 self.comMemReadUnit = pageByteSize
             if sectorByteSize != 0 and sectorByteSize != 0xffffffff:
                 self.comMemEraseUnit = sectorByteSize
+            if blockByteSize != 0 and blockByteSize != 0xffffffff:
+                if self.isInfineonMirrorBitDevice():
+                    self.comMemEraseUnit = blockByteSize
         else:
             if not useDefault:
                 self.printDeviceStatus("Page Size   = --------")
@@ -867,14 +870,21 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             pass
         return True
 
+    def _getAlignedFlexspiNorEraseRange( self, addr, length ):
+        memEraseUnit = self.convertComMemEraseUnit(self.comMemEraseUnit)
+        alignedMemStart = misc.align_down(addr, memEraseUnit)
+        alignedMemLength = misc.align_up(length, memEraseUnit)
+        return alignedMemStart, alignedMemLength
+
     def _eraseFlexspiNorForConfigBlockLoading( self ):
         status = boot.status.kStatus_Success
+        rangeStart, rangeLen = self._getAlignedFlexspiNorEraseRange(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen)
         if self.RTyyyy_isDeviceEnabledToOperate:
             if not self._isFlexspiNorConfigBlockRegionBlank():
-                status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset, self.tgt.xspiNorCfgInfoLen, rundef.kBootDeviceMemId_FlexspiNor)
+                status, results, cmdStr = self.blhost.flashEraseRegion(rangeStart, rangeLen, rundef.kBootDeviceMemId_FlexspiNor)
                 self.printLog(cmdStr)
         if self.isSbFileEnabledToGen:
-            self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + self.tgt.xspiNorCfgInfoOffset + self.tgt.xspiNorCfgInfoLen))) + ";\n")
+            self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(rangeStart))) + ".." + self.convertLongIntHexText(str(hex(rangeStart + rangeLen))) + ";\n")
         return (status == boot.status.kStatus_Success)
 
     def _programFlexspiNorConfigBlock ( self ):
@@ -1021,11 +1031,11 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
             imageLen = RTyyyy_gendef.kContainerOffset_NOR + os.path.getsize(self.destAppContainerFilename)
         elif self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:
             imageLen = os.path.getsize(self.destAppFilename)
-        memEraseLen = misc.align_up(imageLen, self.comMemEraseUnit)
+        rangeStart, rangeLen = self._getAlignedFlexspiNorEraseRange(self.tgt.flexspiNorMemBase, imageLen)
         if self.isSbFileEnabledToGen:
-            self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase))) + ".." + self.convertLongIntHexText(str(hex(self.tgt.flexspiNorMemBase + memEraseLen))) + ";\n")
+            self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(rangeStart))) + ".." + self.convertLongIntHexText(str(hex(rangeStart + rangeLen))) + ";\n")
         else:
-            status, results, cmdStr = self.blhost.flashEraseRegion(self.tgt.flexspiNorMemBase, memEraseLen, rundef.kBootDeviceMemId_FlexspiNor)
+            status, results, cmdStr = self.blhost.flashEraseRegion(rangeStart, rangeLen, rundef.kBootDeviceMemId_FlexspiNor)
             self.printLog(cmdStr)
             if status != boot.status.kStatus_Success:
                 return False
@@ -1968,10 +1978,11 @@ class secBootRTyyyyRun(RTyyyy_gencore.secBootRTyyyyGen):
                 if alignedErasedSize < needToBeErasedSize:
                     memEraseLen = needToBeErasedSize - alignedErasedSize
                     alignedMemEraseAddr = imageLoadAddr + alignedErasedSize
+                    rangeStart, rangeLen = self._getAlignedFlexspiNorEraseRange(alignedMemEraseAddr, memEraseLen)
                     if self.isSbFileEnabledToGen:
-                        self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(alignedMemEraseAddr))) + ".." + self.convertLongIntHexText(str(hex(alignedMemEraseAddr + memEraseLen))) + ";\n")
+                        self._RTyyyy_addFlashActionIntoSbAppBdContent("    erase " + self.sbAccessBootDeviceMagic + " " + self.convertLongIntHexText(str(hex(rangeStart))) + ".." + self.convertLongIntHexText(str(hex(rangeStart + rangeLen))) + ";\n")
                     else:
-                        status, results, cmdStr = self.blhost.flashEraseRegion(alignedMemEraseAddr, memEraseLen, self.bootDeviceMemId)
+                        status, results, cmdStr = self.blhost.flashEraseRegion(rangeStart, rangeLen, self.bootDeviceMemId)
                         self.printLog(cmdStr)
                         if status != boot.status.kStatus_Success:
                             return False

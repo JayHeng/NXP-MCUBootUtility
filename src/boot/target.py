@@ -77,6 +77,7 @@ class Target(object):
         self.flexspiNorMem1MaxSize = misc.get_dict_default(kwargs, 'flexspiNorMem1MaxSize', None)
         self.flexspiNorMem1AliasedMaxSize = misc.get_dict_default(kwargs, 'flexspiNorMem1AliasedMaxSize', None)
         self.flexspiFreqs = misc.get_dict_default(kwargs, 'flexspiFreqs', None)
+        self.xspiNorEraseAlignment = misc.get_dict_default(kwargs, 'xspiNorEraseAlignment', None)
         self.xspiNorCfgInfoOffset = misc.get_dict_default(kwargs, 'xspiNorCfgInfoOffset', None)
         self.xspiNorCfgInfoLen = misc.get_dict_default(kwargs, 'xspiNorCfgInfoLen', None)
         self.xspiNorImgHdrOffset = misc.get_dict_default(kwargs, 'xspiNorImgHdrOffset', None)
@@ -114,6 +115,10 @@ class Target(object):
         self.c040hdNorMemBase = misc.get_dict_default(kwargs, 'c040hdNorMemBase', None)
 
         self.sbLoaderVersion = misc.get_dict_default(kwargs, 'sbLoaderVersion', None)
+
+        self.bootLogStart = misc.get_dict_default(kwargs, 'bootLogStart', None)
+        self.bootLogLength = misc.get_dict_default(kwargs, 'bootLogLength', None)
+
 
     ##
     # @brief Check if a command is supported by the target.

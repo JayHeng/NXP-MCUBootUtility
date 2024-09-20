@@ -155,3 +155,12 @@ class secBootRun(gencore.secBootGen):
             return False
         return True
 
+    def isInfineonMirrorBitDevice( self ):
+        flexspiNorOpt0, flexspiNorOpt1, flexspiNorDeviceModel, isFdcbKept, flexspiNorDualImageInfoList = uivar.getBootDeviceConfiguration(uidef.kBootDevice_XspiNor)
+        if flexspiNorDeviceModel == uidef.kFlexspiNorDevice_ISSI_IS26KS512S or \
+           flexspiNorDeviceModel == uidef.kFlexspiNorDevice_Cypress_S25FL128S or \
+           flexspiNorDeviceModel == uidef.kFlexspiNorDevice_Cypress_S28HS512T or \
+           flexspiNorDeviceModel == uidef.kFlexspiNorDevice_Cypress_S26KS512S:
+            return True
+        else:
+            return False

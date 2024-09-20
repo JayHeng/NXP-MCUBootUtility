@@ -68,6 +68,7 @@ flexspiNorMemBase1AliasedNs =None
 flexspiNorMem1MaxSize = None
 flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = None
+xspiNorEraseAlignment = None # in byte
 xspiNorCfgInfoOffset = None
 xspiNorCfgInfoLen    = None
 xspiNorImgHdrOffset = None
@@ -121,3 +122,7 @@ reservedRegionDict = {
     # SRAM
     'sram' : [0x1fff0000, 0x1fff1d90]
 }
+
+bootLogStart = None
+bootLogLength = None
+

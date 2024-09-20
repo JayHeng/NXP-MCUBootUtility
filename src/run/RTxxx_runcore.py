@@ -199,6 +199,9 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                 self.comMemReadUnit = pageByteSize
             if sectorByteSize != 0 and sectorByteSize != 0xffffffff:
                 self.comMemEraseUnit = sectorByteSize
+            if blockByteSize != 0 and blockByteSize != 0xffffffff:
+                if self.isInfineonMirrorBitDevice():
+                    self.comMemEraseUnit = blockByteSize
         else:
             if not useDefault:
                 self.printDeviceStatus("Page Size   = --------")

@@ -27,14 +27,15 @@ gantt
     v5.3.0           :a22, 2023-07-15, 2023-09-14
     v6.0.0           :a23, 2023-09-15, 2023-11-03
     v6.1.0           :a24, 2023-11-04, 2023-12-19
-    v6.2.0           :a24, 2023-12-20, 2024-03-26
+    v6.2.0           :a25, 2023-12-20, 2024-03-26
+    v6.3.0           :a26, 2024-03-27, 2024-09-20
 ```
 
 ![star-history](https://api.star-history.com/svg?repos=JayHeng/NXP-MCUBootUtility&type=Date)
 
 # NXP MCU Boot Utility
 
-[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v6.2.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v6.2.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/releases/latest) [![GitHub commits](https://img.shields.io/github/commits-since/JayHeng/NXP-MCUBootUtility/v6.3.0.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/compare/v6.3.0...master) ![GitHub All Releases](https://img.shields.io/github/downloads/JayHeng/NXP-MCUBootUtility/total.svg) [![GitHub license](https://img.shields.io/github/license/JayHeng/NXP-MCUBootUtility.svg)](https://github.com/JayHeng/NXP-MCUBootUtility/blob/master/LICENSE)
 
 English | [中文](./README-zh.md)
 
@@ -56,6 +57,7 @@ English | [中文](./README-zh.md)
 > * Support for converting bare image into bootable image  
 > * Support for loading bootable image into external boot devices  
 > * Support common boot device memory operation (Flash Programmer)  
+> * Support for parsing ROM boot log 
 -------------------------------------------------------
 > * Support i.MXRT1011, i.MXRT1015, i.MXRT1021, i.MXRT1024 SIP, i.MXRT1042, i.MXRT105x, i.MXRT106x, i.MXRT1064 SIP, i.MXRT116x, i.MXRT117x, i.MXRT118x  
 > * User image file can be either bare image file or bootable image file 
@@ -137,7 +139,8 @@ English | [中文](./README-zh.md)
                       \hab_cert           -- Generated HAB signature related files
                       \hab_crypto         -- Generated HAB encryption related files
                       \json_file          -- Generated JSON files based on configuration
-                      \log_file           -- Saved software operation log
+                      \cmdlog_file        -- Saved software operation log
+                      \btlog_file         -- Temporary ROM boot log
                       \otfad_crypto       -- Generated OTFAD encryption related files
                       \sb_image           -- Generated .sb file
                       \user_file          -- Temporary files

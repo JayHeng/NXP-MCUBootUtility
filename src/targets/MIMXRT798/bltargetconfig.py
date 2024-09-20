@@ -70,6 +70,7 @@ flexspiNorMemBase1AliasedNs =None
 flexspiNorMem1MaxSize = RTxxx_rundef.kBootDeviceMemXipSize_XspiNor
 flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
+xspiNorEraseAlignment = None # in byte
 xspiNorCfgInfoOffset = 0x0
 xspiNorCfgInfoLen    = 0x300
 xspiNorImgHdrOffset  = 0x4000
@@ -139,3 +140,7 @@ reservedRegionDict = {
     # SRAM, 80KB
     'sram' : [0x00000000, 0x00013FFF]
 }
+
+bootLogStart = None
+bootLogLength = None
+

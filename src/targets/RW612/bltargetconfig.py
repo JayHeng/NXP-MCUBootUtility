@@ -70,6 +70,7 @@ flexspiNorMemBase1AliasedNs =None
 flexspiNorMem1MaxSize = None
 flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
+xspiNorEraseAlignment = None # in byte
 xspiNorCfgInfoOffset = 0x400
 xspiNorCfgInfoLen    = 0x200
 xspiNorImgHdrOffset = 0x1000
@@ -134,3 +135,6 @@ reservedRegionDict = {
     # SRAM, 512KB
     'sram' : [0x20203800, 0x20207EF8]
 }
+
+bootLogStart = None
+bootLogLength = None

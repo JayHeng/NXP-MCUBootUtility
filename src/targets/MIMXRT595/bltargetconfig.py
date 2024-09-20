@@ -72,6 +72,7 @@ flexspiNorMemBase1AliasedNs =None
 flexspiNorMem1MaxSize = None
 flexspiNorMem1AliasedMaxSize = None
 flexspiFreqs = ['30MHz', '50MHz', '60MHz', '80MHz', '100MHz', '120MHz', '133MHz', '166MHz', '200MHz']
+xspiNorEraseAlignment = None # in byte
 xspiNorCfgInfoOffset = 0x400
 xspiNorCfgInfoLen    = 0x200
 xspiNorImgHdrOffset = 0x1000
@@ -141,3 +142,7 @@ reservedRegionDict = {
     # SRAM, 48KB
     'sram' : [0x00010000, 0x0001BFFF]
 }
+
+
+bootLogStart = 0x10017ef8 #ROM 2.0 rc4
+bootLogLength = 0x108

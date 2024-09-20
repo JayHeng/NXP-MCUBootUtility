@@ -103,6 +103,7 @@ class secBootMain(MCX_main.secBootMcxMain):
             self.MCX_callbackSetMcuDevice()
         else:
             pass
+        self.setBootLogInfo()
 
     def callbackSetMcuSeries( self, event ):
         self._setupMcuTargets()
@@ -498,11 +499,22 @@ class secBootMain(MCX_main.secBootMcxMain):
         else:
             self.popupMsgBox(uilang.kMsgLanguageContentDict['operMemError_notAvailUnderEntry'][self.languageIndex])
 
-    def callbackClearLog( self, event ):
-        self.clearLog()
+    def callbackViewBootLog( self, event ):
+        if self.mcuSeries == uidef.kMcuSeries_iMXRT10yy or \
+           self.mcuSeries == uidef.kMcuSeries_iMXRTxxx or \
+           self.mcuSeries == uidef.kMcuSeries_iMXRT11yy:
+            self.viewRtBootLog()
+        else:
+            pass
 
-    def callbackSaveLog( self, event ):
-        self.saveLog()
+    def callbackClearBootLog( self, event ):
+        self.clearBootLog()
+
+    def callbackClearCmdLog( self, event ):
+        self.clearCmdLog()
+
+    def callbackSaveCmdLog( self, event ):
+        self.saveCmdLog()
 
     def _stopTask( self, thread ):
         _async_raise(thread.ident, SystemExit)
@@ -737,14 +749,15 @@ class secBootMain(MCX_main.secBootMcxMain):
                    (uilang.kMsgLanguageContentDict['revisionHistory_v5_3_2'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v6_0_0'][self.languageIndex]) +
                    (uilang.kMsgLanguageContentDict['revisionHistory_v6_1_0'][self.languageIndex]) +
-                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_2_0'][self.languageIndex]))
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_2_0'][self.languageIndex]) +
+                   (uilang.kMsgLanguageContentDict['revisionHistory_v6_3_0'][self.languageIndex]))
         wx.MessageBox(msgText, uilang.kMsgLanguageContentDict['revisionHistory_title'][self.languageIndex], wx.OK | wx.ICON_INFORMATION)
 
 if __name__ == '__main__':
     app = wx.App()
 
     g_main_win = secBootMain(None)
-    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.2.0")
+    g_main_win.SetTitle(u"NXP MCU Boot Utility v6.3.0")
     g_main_win.Show()
 
     g_task_detectUsbhid = threading.Thread(target=g_main_win.task_doDetectUsbhid)
