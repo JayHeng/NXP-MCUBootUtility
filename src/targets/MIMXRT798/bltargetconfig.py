@@ -35,6 +35,7 @@ from ui import RTxxx_uidef
 from ui import RTxxx_uidef_otp
 from ui import uidef
 from run import RTxxx_rundef
+from run import rundef
 from gen import gendef
 
 cpu = 'MIMXRT798'
@@ -43,6 +44,7 @@ compiler = 'iar'
 build = 'Release'
 
 availablePeripherals = 0x11
+romTargetVersion = rundef.kRomTargetVersionT100
 romUsbVid = '0x1FC9'
 romUsbPid = '0x0025'
 hasSdpReadRegisterCmd = None

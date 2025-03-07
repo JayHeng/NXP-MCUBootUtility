@@ -964,6 +964,16 @@ kRevision_6_3_0_zh = u"【v6.3.0】 - 2024.09\n" + \
                      u"  改进: \n" + \
                      u"     1. [RT] 对FlexSPI NOR设备做擦除时，可自定义对齐长度 \n" + \
                      u"     2. [RT1170] 增加对英飞凌S28H系列Octal Flash支持 \n\n"
+kRevision_6_4_0_en =  "【v6.4.0】 - 2025.03\n" + \
+                      "  Feature: \n" + \
+                      "     1. [RTxxx] Support i.MXRT700 B0\n" + \
+                      "  Improvement: \n" + \
+                      "     1. Better character alignment in boot device memory window \n\n"
+kRevision_6_4_0_zh = u"【v6.4.0】 - 2025.03\n" + \
+                     u"  特性: \n" + \
+                     u"     1. [RTxxx] 支持i.MXRT700 B0\n" + \
+                     u"  改进: \n" + \
+                     u"     1. 通用编程器窗口显示等宽字符显示 \n\n"
 
 kMsgLanguageContentDict = {
         'homePage_title':                     ['Home Page',                             u"项目主页"],
@@ -1011,6 +1021,7 @@ kMsgLanguageContentDict = {
         'revisionHistory_v6_1_0':             [kRevision_6_1_0_en,                      kRevision_6_1_0_zh],
         'revisionHistory_v6_2_0':             [kRevision_6_2_0_en,                      kRevision_6_2_0_zh],
         'revisionHistory_v6_3_0':             [kRevision_6_3_0_en,                      kRevision_6_3_0_zh],
+        'revisionHistory_v6_4_0':             [kRevision_6_4_0_en,                      kRevision_6_4_0_zh],
 
         'bootDeviceInfo_hasOnchipSerialNor':  ['MCU has on-chip QSPI NOR Flash (4MB, 133MHz), so you don\'t need to configure this boot device!',
                                               u"微控制器内置4MB的QSPI NOR Flash，所以无需配置该启动设备！"],

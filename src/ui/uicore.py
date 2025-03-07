@@ -1196,6 +1196,9 @@ class secBootUi(secBootWin.secBootWin):
     def getFormattedHexValue( self, val32 ):
         return ('0x' + self.getFormattedFuseValue(val32))
 
+    def getFormattedUpperHexValue( self, val32 ):
+        return ('0x' + self.getFormattedFuseValue(val32).upper())
+
     def parseReadFuseValue( self, fuseValue ):
         if fuseValue != None:
             return self.getFormattedHexValue(fuseValue)

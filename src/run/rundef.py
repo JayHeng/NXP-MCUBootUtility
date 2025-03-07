@@ -1,5 +1,9 @@
 import sys, os
 
+kRomTargetVersionT100 = 0x54010000
+kRomTargetVersionT200 = 0x54020000
+kRomTargetVersionMainMask = 0xFFFF0000
+
 kUartSpeed_Blhost = ['115200', '57600', '19200', '9600', '4800']
 kUartSpeed_Sdphost = ['115200']
 
@@ -31,9 +35,14 @@ kFlexspiNorCfgOffset_BlockByteSize  = 0x1d0
 
 kXspiNorCfgTag_Xspi       = 0x42464346  # 'FCFB'
 kXspiNorCfgOffset_XspiTag           = 0x000
+# For RT700 A0
 kXspiNorCfgOffset_PageByteSize      = 0x200
 kXspiNorCfgOffset_SectorByteSize    = 0x204
 kXspiNorCfgOffset_BlockByteSize     = 0x210
+# For RT700 B0
+kXspiNorNewCfgOffset_PageByteSize      = 0x228
+kXspiNorNewCfgOffset_SectorByteSize    = 0x22C
+kXspiNorNewCfgOffset_BlockByteSize     = 0x238
 
 kXspiNorDefaultMemInfo_PageSize    = 0x100
 kXspiNorDefaultMemInfo_SectorSize  = 0x1000

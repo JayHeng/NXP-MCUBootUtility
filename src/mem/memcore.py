@@ -43,7 +43,7 @@ class secBootMem(runcore.secBootRun):
     def getOneLineContentToShow( self, addr, memLeft, fileObj ):
         memContent = ''
         padBytesBefore= addr % 16
-        contentToShow = self.getFormattedHexValue(addr - padBytesBefore) + '    '
+        contentToShow = self.getFormattedUpperHexValue(addr - padBytesBefore) + '    '
         if (padBytesBefore + memLeft) > 16:
             memContent = fileObj.read(16 - padBytesBefore)
         else:
@@ -53,9 +53,9 @@ class secBootMem(runcore.secBootRun):
             if i >= padBytesBefore and \
                i < padBytesBefore + len(memContent):
                 halfbyteStr = str(hex((ord(memContent[i-padBytesBefore]) & 0xF0)>> 4))
-                contentToShow += halfbyteStr[2]
+                contentToShow += halfbyteStr[2].upper()
                 halfbyteStr = str(hex((ord(memContent[i-padBytesBefore]) & 0x0F)>> 0))
-                contentToShow += halfbyteStr[2] + ' '
+                contentToShow += halfbyteStr[2].upper() + ' '
                 if memContent[i-padBytesBefore] >= s_visibleAsciiStart and \
                    memContent[i-padBytesBefore] <= s_visibleAsciiEnd:
                     visibleContent += memContent[i-padBytesBefore]

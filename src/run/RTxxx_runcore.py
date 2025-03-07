@@ -185,9 +185,16 @@ class secBootRTxxxRun(RTxxx_gencore.secBootRTxxxGen):
                 xspiNorCfgOffset_SectorByteSize = rundef.kFlexspiNorCfgOffset_SectorByteSize
                 xspiNorCfgOffset_BlockByteSize = rundef.kFlexspiNorCfgOffset_BlockByteSize
             elif self.bootDevice == RTxxx_uidef.kBootDevice_XspiNor:
-                xspiNorCfgOffset_PageByteSize = rundef.kXspiNorCfgOffset_PageByteSize
-                xspiNorCfgOffset_SectorByteSize = rundef.kXspiNorCfgOffset_SectorByteSize
-                xspiNorCfgOffset_BlockByteSize = rundef.kXspiNorCfgOffset_BlockByteSize
+                if self.tgt.romTargetVersion == rundef.kRomTargetVersionT100:
+                    xspiNorCfgOffset_PageByteSize = rundef.kXspiNorCfgOffset_PageByteSize
+                    xspiNorCfgOffset_SectorByteSize = rundef.kXspiNorCfgOffset_SectorByteSize
+                    xspiNorCfgOffset_BlockByteSize = rundef.kXspiNorCfgOffset_BlockByteSize
+                elif self.tgt.romTargetVersion == rundef.kRomTargetVersionT200:
+                    xspiNorCfgOffset_PageByteSize = rundef.kXspiNorNewCfgOffset_PageByteSize
+                    xspiNorCfgOffset_SectorByteSize = rundef.kXspiNorNewCfgOffset_SectorByteSize
+                    xspiNorCfgOffset_BlockByteSize = rundef.kXspiNorNewCfgOffset_BlockByteSize
+                else:
+                    pass
             pageByteSize = self.getVal32FromBinFile(filepath, xspiNorCfgOffset_PageByteSize)
             sectorByteSize = self.getVal32FromBinFile(filepath, xspiNorCfgOffset_SectorByteSize)
             blockByteSize = self.getVal32FromBinFile(filepath, xspiNorCfgOffset_BlockByteSize)

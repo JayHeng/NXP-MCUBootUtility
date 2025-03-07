@@ -62,6 +62,7 @@ class secBootRun(gencore.secBootGen):
         status, results, cmdStr = self.blhost.getProperty(boot.properties.kPropertyTag_TargetVersion)
         self.printLog(cmdStr)
         if status == boot.status.kStatus_Success:
+            self.tgt.romTargetVersion = results[0] & rundef.kRomTargetVersionMainMask
             self.printDeviceStatus('Target Version   = ' + self._formatBootloaderVersion(results[0]))
         else:
             pass

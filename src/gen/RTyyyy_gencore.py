@@ -133,6 +133,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         self.destAppContainerOffset = None
         self.destAppExecAddr = 0
         self.destAppRawBinFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'raw_application.bin')
+        self.destAppContainerWithPaddingFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'container_application.bin')
         self.destAppContainerFilename = os.path.join(self.exeTopRoot, 'gen', 'bootable_image', 'container_application_nopadding.bin')
         self.edgelockContainerName = 'edgelock_cntr.bin'
         self.edgelockFwName = 'edgelock_fw.bin'
@@ -1322,6 +1323,7 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
         else:
             pass
         self.destAppContainerFilename = os.path.join(destAppPath, destAppName + '_nopadding' + destAppType)
+        self.destAppContainerWithPaddingFilename = os.path.join(destAppPath, destAppName + destAppType)
 
     def _genCompleteContainerData( self, imageData ):
         containerStruct = uiheader.containerStruct()
@@ -1385,6 +1387,10 @@ class secBootRTyyyyGen(RTyyyy_uicore.secBootRTyyyyUi):
             fileObj.write(finalBtAppData)
             fileObj.close()
         self.printLog('Bootable image is generated: ' + self.destAppContainerFilename)
+        # This file is mainly for blhost loadImage cmd
+        with open(self.destAppContainerWithPaddingFilename, 'wb') as fileObj:
+            fileObj.write(self.genPaddingByteArrayStr(0x400, 0x00) + finalBtAppData)
+            fileObj.close()
 
     def RTyyyy_genBootableImage( self ):
         if self.tgt.bootHeaderType == gendef.kBootHeaderType_IVT:

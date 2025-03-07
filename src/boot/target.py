@@ -49,6 +49,7 @@ class Target(object):
         self.reservedRegionDict = misc.get_dict_default(kwargs, 'reservedRegionDict', {})
         self.availableCommands = misc.get_dict_default(kwargs, 'availableCommands', 0)
         self.availablePeripherals = misc.get_dict_default(kwargs, 'availablePeripherals', 0)
+        self.romTargetVersion = misc.get_dict_default(kwargs, 'romTargetVersion', None)
         self.romUsbVid = misc.get_dict_default(kwargs, 'romUsbVid', None)
         self.romUsbPid = misc.get_dict_default(kwargs, 'romUsbPid', None)
         self.hasSdpReadRegisterCmd = misc.get_dict_default(kwargs, 'hasSdpReadRegisterCmd', None)

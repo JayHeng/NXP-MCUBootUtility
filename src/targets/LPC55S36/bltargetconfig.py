@@ -41,6 +41,7 @@ compiler = 'iar'
 build = 'Release'
 
 availablePeripherals = 0x17
+romTargetVersion = None
 romUsbVid = '0x1FC9'
 romUsbPid = '0x0025'
 hasSdpReadRegisterCmd = None
